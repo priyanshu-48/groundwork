@@ -30,5 +30,9 @@ class Chunk(IdMixin, Base):
     token_count: Mapped[int]
     embedding: Mapped[Any] = mapped_column(Vector(768))
     tsv: Mapped[Any] = mapped_column(
-        TSVECTOR, Computed("to_tsvector('english', content)", persisted=True)
+        TSVECTOR,
+        Computed(
+            r"to_tsvector('english', regexp_replace(content, '(?<=\w)-(?=\w)', ' ', 'g'))",
+            persisted=True,
+        ),
     )

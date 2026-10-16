@@ -75,3 +75,17 @@ async def rows(deps: Deps, sql: str, **params: Any) -> list[Any]:
 async def make_due(deps: Deps) -> None:
     async with deps.maker.begin() as s:
         await s.execute(text("UPDATE jobs SET run_after = now() WHERE status = 'queued'"))
+
+
+async def ingest_corpus(deps: Deps, org_id: uuid.UUID, gt: dict[str, Any], out: Any) -> None:
+    """Upload every generated PDF under its real filename, then run the worker until idle."""
+    from app.worker.runner import process_one
+
+    for v in gt["vendors"]:
+        name = v["contract"]["filename"]
+        await seed(deps, org_id, (out / "contracts" / name).read_bytes(), "contract", name)
+    for inv in gt["invoices"]:
+        name = inv["filename"]
+        await seed(deps, org_id, (out / "invoices" / name).read_bytes(), "invoice", name)
+    while await process_one(deps, "w"):
+        pass

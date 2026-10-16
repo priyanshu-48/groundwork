@@ -1,3 +1,4 @@
+import re
 import uuid
 from dataclasses import dataclass
 
@@ -75,3 +76,69 @@ async def vector_search(
     # relaxed_order may return rows slightly out of order; sorting the final few is cheap.
     rows.sort(key=lambda r: r.distance)
     return [Hit(r.id, r.document_id, r.filename, r.page, r.content, 1 - r.distance) for r in rows]
+
+
+_IDENTIFIER = re.compile(r'(?<![\w"-])(\w+(?:-\w+)+)(?![\w"-])')
+_INNER_HYPHEN = re.compile(r"(?<=\w)-(?=\w)")
+
+
+def prepare_keyword_query(q: str) -> str:
+    """Make hyphenated identifiers (invoice numbers, dates) match the same way on both sides.
+
+    The default Postgres parser tokenizes 'V02-2025-0003' differently depending on the words around
+    it ('-2025' parsed as a signed number, compound token sometimes kept, sometimes not), so exact
+    IDs matched in some invoice layouts and not others. The tsv column splits word-internal hyphens
+    into spaces (migration 0005); here the query gets the same treatment, with each identifier
+    wrapped in quotes so it must match as an adjacent phrase: "v02 2025 0003"."""
+    return _INNER_HYPHEN.sub(" ", _IDENTIFIER.sub(lambda m: f'"{m.group(1)}"', q))
+
+
+def specific_terms(prepared: str) -> list[str]:
+    """Query tokens that contain a digit (ids, dates, amounts). They are rare in a corpus, but
+    ts_rank_cd has no IDF, so a chunk repeating a common word like 'invoice' would otherwise
+    outrank the one chunk holding the exact identifier. Capped to keep the SQL small."""
+    tokens = re.findall(r'"[^"]+"|[^\s"]+', prepared)
+    return [t for t in tokens if any(c.isdigit() for c in t)][:6]
+
+
+async def keyword_search(
+    session: AsyncSession,
+    org_id: uuid.UUID,
+    query: str,
+    kind: DocKind | None,
+    limit: int,
+) -> list[Hit]:
+    """Full-text search over chunks.tsv (GIN index). websearch_to_tsquery safely parses free text
+    but joins terms with AND, which finds nothing for a natural-language question when one word is
+    absent from the page; swapping ' & ' for ' | ' gives OR semantics, and ts_rank_cd then ranks
+    chunks matching more of the terms first (docs/decisions/0005)."""
+    kind_filter = "AND d.kind = CAST(:kind AS doc_kind)" if kind is not None else ""
+    prepared = prepare_keyword_query(query)
+    specific = specific_terms(prepared)
+    # One point per matched identifier-like term, then ts_rank_cd breaks ties (see specific_terms).
+    boost = (
+        " + ".join(
+            f"(c.tsv @@ websearch_to_tsquery('english', :s{i}))::int" for i in range(len(specific))
+        )
+        or "CAST(0 AS int)"  # a bare 0 would be read as ORDER BY column position 0
+    )
+    stmt = text(f"""
+        SELECT c.id, c.document_id, d.filename, c.page, c.content,
+               ts_rank_cd(c.tsv, q.query) AS score
+        FROM chunks c
+        JOIN documents d ON d.id = c.document_id
+        CROSS JOIN (
+            SELECT replace(
+                websearch_to_tsquery('english', :q)::text, ' & ', ' | '
+            )::tsquery AS query
+        ) q
+        WHERE c.org_id = :org AND c.tsv @@ q.query {kind_filter}
+        ORDER BY ({boost}) DESC, score DESC, c.id
+        LIMIT :lim
+    """)  # noqa: S608 - only a constant fragment is interpolated; user input is bound
+    params: dict[str, object] = {"q": prepared, "org": org_id, "lim": limit}
+    params |= {f"s{i}": t for i, t in enumerate(specific)}
+    if kind is not None:
+        params["kind"] = kind.value
+    rows = (await session.execute(stmt, params)).all()
+    return [Hit(r.id, r.document_id, r.filename, r.page, r.content, float(r.score)) for r in rows]
