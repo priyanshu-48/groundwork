@@ -176,3 +176,15 @@ async def test_search_indexes_exist(deps: Deps) -> None:
         for r in await rows(deps, "SELECT indexdef FROM pg_indexes WHERE tablename='chunks'")
     )
     assert "hnsw" in defs and "vector_cosine_ops" in defs and "gin" in defs
+
+
+async def test_extraction_disabled_still_indexes_the_invoice_text(deps: Deps) -> None:
+    off = dataclasses.replace(
+        deps, settings=deps.settings.model_copy(update={"extraction_enabled": False})
+    )
+    org = await new_org(deps)
+    doc_id = await seed(deps, org, make_pdf([invoice_text()]), "invoice")
+    await process_one(off, "w1")
+    assert (await _doc(deps, doc_id))["status"] == "ready"
+    assert await _chunks(deps, doc_id) >= 1
+    assert await scalar(deps, "SELECT count(*) FROM invoices WHERE document_id = :d", d=doc_id) == 0

@@ -43,7 +43,7 @@ async def ingest_document(deps: Deps, document_id: uuid.UUID) -> None:
     vectors = await deps.embedder.embed([c.content for c in chunks], "document")
 
     fields: InvoiceFields | None = None
-    if kind == DocKind.invoice:
+    if kind == DocKind.invoice and s.extraction_enabled:
         fields = await deps.extractor.extract("\n".join(pages))
 
     async with deps.maker.begin() as session:  # the only write: all or nothing

@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     # Minimum seconds between Gemini calls (0 = off). Keeps bulk loads inside free-tier quotas.
     embedding_min_interval_s: float = 0
     extraction_min_interval_s: float = 0
+    # Free-tier generate_content quotas can be ~20 requests/day; with this off, invoices are
+    # still chunked and embedded (searchable) but no invoice row is extracted.
+    extraction_enabled: bool = True
     # Cost / runaway guards: a document over these limits fails instead of being embedded.
     max_pages: int = 200
     max_chunks: int = 2000

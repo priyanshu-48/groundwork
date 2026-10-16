@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "docs/journal.md": {
-    "mtime": 1792175054.763065,
-    "seen": 1792175093.0326896,
-    "ast_hash": "edb139e14057170230f241de42abbe8e",
+    "mtime": 1792180977.6782687,
+    "seen": 1792180981.0964136,
+    "ast_hash": "7dc6adf281a9b80b2c88634762808e95",
     "semantic_hash": ""
   },
   "backend/alembic/env.py": {
@@ -54,9 +54,9 @@
     "semantic_hash": ""
   },
   "backend/app/config.py": {
-    "mtime": 1792174809.8001144,
-    "seen": 1792175093.0326896,
-    "ast_hash": "bc898263f39778321bbbb3e35090d8bc",
+    "mtime": 1792179912.9042377,
+    "seen": 1792180000.0770147,
+    "ast_hash": "b76e93b4eb44bf3f38f31a35e78fec99",
     "semantic_hash": ""
   },
   "backend/app/db.py": {
@@ -126,9 +126,9 @@
     "semantic_hash": ""
   },
   "docker-compose.yml": {
-    "mtime": 1792174951.40319,
-    "seen": 1792175093.0326896,
-    "ast_hash": "ca071a0ee144431cffaf818358d0d5dd",
+    "mtime": 1792179912.905239,
+    "seen": 1792180000.0770147,
+    "ast_hash": "b8199e84b0115f23458f4e5152460095",
     "semantic_hash": ""
   },
   "docs/decisions/0001-local-s3-rustfs.md": {
@@ -336,15 +336,15 @@
     "semantic_hash": ""
   },
   "backend/app/services/gemini.py": {
-    "mtime": 1792174809.8001144,
-    "seen": 1792175093.0326896,
-    "ast_hash": "4c4685ab7be42f84922743697c10c366",
+    "mtime": 1792179912.9042377,
+    "seen": 1792180000.0770147,
+    "ast_hash": "7d9fc08ecaec3cca7c6c1f604c97bd0f",
     "semantic_hash": ""
   },
   "backend/app/services/ingestion.py": {
-    "mtime": 1792173842.150803,
-    "seen": 1792174049.16273,
-    "ast_hash": "7534a054ee1401a65849c41378f2c3f8",
+    "mtime": 1792179912.9042377,
+    "seen": 1792180000.0770147,
+    "ast_hash": "3f644e50403b98f54bb5961475b53c28",
     "semantic_hash": ""
   },
   "backend/app/services/parsing.py": {
@@ -378,9 +378,9 @@
     "semantic_hash": ""
   },
   "backend/tests/integration/test_ingestion.py": {
-    "mtime": 1792173887.4154708,
-    "seen": 1792174049.16273,
-    "ast_hash": "c3b0e373669c548069d61e3691520145",
+    "mtime": 1792179918.98045,
+    "seen": 1792180000.0770147,
+    "ast_hash": "a3234cabfd73b0e98388ce3553cf9920",
     "semantic_hash": ""
   },
   "backend/tests/integration/test_runner.py": {
@@ -396,9 +396,9 @@
     "semantic_hash": ""
   },
   "backend/tests/unit/test_embeddings.py": {
-    "mtime": 1792173699.3722725,
-    "seen": 1792174049.16273,
-    "ast_hash": "da33739129ec3c0c4b5f245cd817d3e5",
+    "mtime": 1792179912.932528,
+    "seen": 1792180000.0770147,
+    "ast_hash": "185c5179b1f59a4651524613ba7a88b0",
     "semantic_hash": ""
   },
   "backend/tests/unit/test_extraction.py": {
@@ -426,9 +426,9 @@
     "semantic_hash": ""
   },
   "backend/tests/integration/test_eval_harness.py": {
-    "mtime": 1792174810.0603466,
-    "seen": 1792175093.0326896,
-    "ast_hash": "650608e53970fe9c9b752e9cfc127698",
+    "mtime": 1792180940.4553597,
+    "seen": 1792180981.0964136,
+    "ast_hash": "0d39e603a1a78797778452c895bbec86",
     "semantic_hash": ""
   },
   "backend/tests/integration/test_retrieval.py": {
@@ -486,9 +486,9 @@
     "semantic_hash": ""
   },
   "evals/load_corpus.py": {
-    "mtime": 1792174851.013716,
-    "seen": 1792175093.0326896,
-    "ast_hash": "a2f42cc3f1054252353c868814c09936",
+    "mtime": 1792176282.3661592,
+    "seen": 1792180000.0770147,
+    "ast_hash": "194f480284a0ca31b3208c26d0133a4d",
     "semantic_hash": ""
   },
   "evals/metrics.py": {
@@ -498,9 +498,9 @@
     "semantic_hash": ""
   },
   "evals/run_evals.py": {
-    "mtime": 1792174851.015401,
-    "seen": 1792175093.0326896,
-    "ast_hash": "015910814865752ce71383b0767b98b8",
+    "mtime": 1792180939.9919863,
+    "seen": 1792180981.0964136,
+    "ast_hash": "17b33c85a21b246f041cec8b11854006",
     "semantic_hash": ""
   },
   "docs/decisions/0004-synthetic-corpus-design.md": {
@@ -510,9 +510,9 @@
     "semantic_hash": ""
   },
   "docs/evals.md": {
-    "mtime": 1792175054.6579103,
-    "seen": 1792175093.0326896,
-    "ast_hash": "bdf342bcceea8c37808dc27bf99f0ed5",
+    "mtime": 1792180940.0494213,
+    "seen": 1792180981.0964136,
+    "ast_hash": "85ba38675e99174eb71f683fb9d70292",
     "semantic_hash": ""
   }
 }

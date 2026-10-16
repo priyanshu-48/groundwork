@@ -60,3 +60,17 @@ def test_fake_embedder_numbers_never_reach_docs_without_opt_in(tmp_path: Path) -
     assert "abc1234" in text and "50.0%" in text and "<!-- evals:end -->" in text
     append_docs_row(docs, row, allow_fake=True)
     assert "fake (harness check only)" in docs.read_text(encoding="utf8")
+
+
+def test_eval_queries_are_never_throttled(monkeypatch: pytest.MonkeyPatch) -> None:
+    from evals.run_evals import eval_settings
+
+    from app.config import get_settings
+
+    monkeypatch.setenv("EMBEDDING_MIN_INTERVAL_S", "2")
+    get_settings.cache_clear()
+    try:
+        assert get_settings().embedding_min_interval_s == 2
+        assert eval_settings().embedding_min_interval_s == 0
+    finally:
+        get_settings.cache_clear()

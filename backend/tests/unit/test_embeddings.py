@@ -91,3 +91,11 @@ async def test_gemini_rejects_wrong_dimensionality() -> None:
     m = StubModels(dims=8)
     with pytest.raises(EmbeddingError):
         await _provider(m).embed(["x"], "document")
+
+
+def test_daily_quota_429_is_not_retried_but_per_minute_429_is() -> None:
+    from app.services.gemini import is_retryable
+
+    daily = errors.APIError(429, {"error": {"message": "quotaId GenerateRequestsPerDayPerProject"}})
+    per_min = errors.APIError(429, {"error": {"message": "rate limit per minute"}})
+    assert not is_retryable(daily) and is_retryable(per_min)
