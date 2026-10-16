@@ -83,17 +83,23 @@ async def complete(session: AsyncSession, job_id: uuid.UUID) -> None:
 
 _FAIL = text("""
 UPDATE jobs SET
-    status = (CASE WHEN attempts < max_attempts THEN 'queued' ELSE 'failed' END)::job_status,
-    run_after = CASE WHEN attempts < max_attempts
+    status = (CASE WHEN retry THEN 'queued' ELSE 'failed' END)::job_status,
+    run_after = CASE WHEN retry
                      THEN now() + make_interval(secs => power(2, attempts) + random())
                      ELSE run_after END,
     locked_at = NULL, locked_by = NULL, last_error = :err
-WHERE id = :i
-RETURNING status
+FROM (SELECT id AS jid, (NOT CAST(:perm AS boolean) AND attempts < max_attempts) AS retry
+      FROM jobs WHERE id = :i) AS r
+WHERE jobs.id = r.jid
+RETURNING jobs.status
 """)
 
 
-async def fail(session: AsyncSession, job_id: uuid.UUID, error: str) -> str:
+async def fail(
+    session: AsyncSession, job_id: uuid.UUID, error: str, permanent: bool = False
+) -> str:
     """Retry with exponential backoff (2^attempts s + jitter) until max_attempts, then give up.
-    Returns the job's new status. The caller marks the owning document failed on 'failed'."""
-    return str((await session.execute(_FAIL, {"i": job_id, "err": error[:2000]})).scalar_one())
+    permanent=True skips the retries (retrying a corrupt file cannot help). Returns the job's
+    new status; the caller marks the owning document failed on 'failed'."""
+    params = {"i": job_id, "err": error[:2000], "perm": permanent}
+    return str((await session.execute(_FAIL, params)).scalar_one())

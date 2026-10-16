@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Literal
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -20,6 +21,17 @@ class Settings(BaseSettings):
     max_upload_bytes: int = 20 * 1024 * 1024
     job_visibility_timeout_s: float = 300
     reaper_interval_s: float = 30
+    ai_provider: Literal["gemini", "fake"] = "gemini"
+    gemini_api_key: str | None = None
+    # Model names change; both are settings. Verify against the Gemini docs on first real run.
+    gemini_model: str = "gemini-3.5-flash"
+    embedding_model: str = "gemini-embedding-001"
+    embedding_dims: int = 768
+    ai_timeout_s: float = 30
+    # Cost / runaway guards: a document over these limits fails instead of being embedded.
+    max_pages: int = 200
+    max_chunks: int = 2000
+    worker_poll_s: float = 1.0
     check_timeout_s: float = 3.0
 
 
