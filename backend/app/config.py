@@ -38,6 +38,14 @@ class Settings(BaseSettings):
     max_pages: int = 200
     max_chunks: int = 2000
     worker_poll_s: float = 1.0
+    # Retrieval: the default mode used by the agent's search tool (M6).
+    # hybrid: best recall on the hard set at ~40 ms; hybrid_rerank costs ~2 s and was worse on
+    # exact-ID queries (docs/evals.md). Revisit after reranker tuning.
+    search_mode: Literal["vector", "hybrid", "hybrid_rerank"] = "hybrid"
+    rerank_model: str = "ms-marco-MiniLM-L-12-v2"
+    rerank_cache_dir: str = ".flashrank"
+    candidate_k: int = 20
+    rrf_k: int = 60
     check_timeout_s: float = 3.0
 
 

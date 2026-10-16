@@ -1,4 +1,5 @@
 from collections.abc import AsyncIterator
+from pathlib import Path
 
 import pytest
 from sqlalchemy import text
@@ -29,3 +30,14 @@ async def deps(configured: None) -> AsyncIterator[Deps]:
         await session.execute(text("TRUNCATE jobs"))  # isolate queue state per test
     yield d
     await engine.dispose()
+
+
+@pytest.fixture(scope="module")
+def small(tmp_path_factory: pytest.TempPathFactory) -> tuple[dict, Path]:
+    """A small generated corpus (6 contracts, 24 invoices) shared by a test module."""
+    from evals.generate_corpus import build_ground_truth, render_corpus
+
+    out = tmp_path_factory.mktemp("small-corpus")
+    gt = build_ground_truth(seed=42, n_vendors=6, n_invoices=24)
+    render_corpus(gt, out, seed=42)
+    return gt, out
