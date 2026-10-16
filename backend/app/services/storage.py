@@ -39,3 +39,10 @@ async def put_pdf(client: "S3Client", bucket: str, key: str, data: bytes) -> Non
     await asyncio.to_thread(
         client.put_object, Bucket=bucket, Key=key, Body=data, ContentType="application/pdf"
     )
+
+
+async def get_bytes(client: "S3Client", bucket: str, key: str) -> bytes:
+    def read() -> bytes:
+        return client.get_object(Bucket=bucket, Key=key)["Body"].read()
+
+    return await asyncio.to_thread(read)
