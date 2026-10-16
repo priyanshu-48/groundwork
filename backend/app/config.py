@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     embedding_model: str = "gemini-embedding-001"
     embedding_dims: int = 768
     ai_timeout_s: float = 30
+    # Minimum seconds between Gemini calls (0 = off). Keeps bulk loads inside free-tier quotas.
+    embedding_min_interval_s: float = 0
+    extraction_min_interval_s: float = 0
     # Cost / runaway guards: a document over these limits fails instead of being embedded.
     max_pages: int = 200
     max_chunks: int = 2000

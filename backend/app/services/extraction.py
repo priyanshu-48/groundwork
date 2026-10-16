@@ -5,7 +5,7 @@ from typing import Any, Protocol
 
 from pydantic import BaseModel, ValidationError, field_validator
 
-from app.services.gemini import call_with_retry
+from app.services.gemini import Throttle, call_with_retry
 
 _MAX_CHARS = 20_000  # bound the prompt (and the bill) for huge documents
 
@@ -103,8 +103,8 @@ _SYSTEM = (
 
 
 class GeminiInvoiceExtractor:
-    def __init__(self, client: Any, model: str) -> None:
-        self._client, self._model = client, model
+    def __init__(self, client: Any, model: str, throttle: Throttle | None = None) -> None:
+        self._client, self._model, self._throttle = client, model, throttle
 
     async def extract(self, text: str) -> InvoiceFields:
         from google.genai import types
@@ -115,6 +115,8 @@ class GeminiInvoiceExtractor:
             response_json_schema=_LLMInvoice.model_json_schema(),
             temperature=0,
         )
+        if self._throttle:
+            await self._throttle.wait()
         resp = await call_with_retry(
             lambda: self._client.models.generate_content(
                 model=self._model,

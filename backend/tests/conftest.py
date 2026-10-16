@@ -1,7 +1,9 @@
 import asyncio
 import os
+import sys
 import time
 from collections.abc import Iterator
+from pathlib import Path
 from typing import Any
 
 import boto3
@@ -16,6 +18,9 @@ from testcontainers.postgres import PostgresContainer
 from alembic import command
 from app.config import get_settings
 from app.db import make_engine
+
+# Lets tests import the repo-root `evals` package.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 BUCKET = "test-bucket"
 S3_KEY = "test-access-key"

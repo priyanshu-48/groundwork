@@ -87,3 +87,13 @@ def test_orgs_are_isolated(client: TestClient) -> None:
     assert a.json()["id"] != b.json()["id"]
     assert [d["id"] for d in client.get("/documents", headers=ha).json()] == [a.json()["id"]]
     assert [d["id"] for d in client.get("/documents", headers=hb).json()] == [b.json()["id"]]
+
+
+def test_list_paginates_without_gaps_or_repeats(client: TestClient) -> None:
+    h, _ = _org(client)
+    ids = [_upload(client, h, _pdf()).json()["id"] for _ in range(5)]
+    seen: list[str] = []
+    for offset in (0, 2, 4):
+        page = client.get("/documents", headers=h, params={"limit": 2, "offset": offset}).json()
+        seen += [d["id"] for d in page]
+    assert sorted(seen) == sorted(ids)

@@ -1,5 +1,6 @@
 import asyncio
 import random
+import time
 from collections.abc import Awaitable, Callable
 from typing import Any
 
@@ -41,3 +42,26 @@ async def call_with_retry[T](
                 raise
             await sleep(2 ** (attempt - 1) + random.random())
     raise AssertionError("unreachable")
+
+
+class Throttle:
+    """Spaces calls at least `min_interval_s` apart so bulk loads stay inside per-minute quotas."""
+
+    def __init__(
+        self,
+        min_interval_s: float,
+        clock: Callable[[], float] = time.monotonic,
+        sleep: Callable[[float], Awaitable[Any]] = asyncio.sleep,
+    ) -> None:
+        self._interval, self._clock, self._sleep = min_interval_s, clock, sleep
+        self._next_at = 0.0
+        self._lock = asyncio.Lock()
+
+    async def wait(self) -> None:
+        if self._interval <= 0:
+            return
+        async with self._lock:
+            now = self._clock()
+            if now < self._next_at:
+                await self._sleep(self._next_at - now)
+            self._next_at = max(now, self._next_at) + self._interval
