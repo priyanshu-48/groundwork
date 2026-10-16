@@ -12,6 +12,7 @@ Retrieval is scored on the 35 contract-lookup questions of the synthetic eval se
 
 | Date | Git SHA | Label | Mode | Embedder | Recall@5 | MRR@10 | Doc recall@5 | p50 ms | p95 ms |
 |---|---|---|---|---|---|---|---|---|---|
+| 2026-10-17 | 3aadc7b | baseline | vector | gemini | 100.0% | 0.986 | 100.0% | 470 | 496 |
 <!-- evals:end -->
 
 ## Reproduce
@@ -28,5 +29,7 @@ uv run python ../evals/run_evals.py --modes vector --label baseline
 Set `EMBEDDING_MIN_INTERVAL_S=2` and `EXTRACTION_MIN_INTERVAL_S=6.5` on the worker to stay inside
 free-tier per-minute limits (check your quotas in AI Studio); invoice extraction is the slow part.
 
-**Status:** harness verified end to end with the fake embedder; the real Gemini baseline row is
-still to be recorded.
+**Status:** real Gemini baseline recorded (vector search only). It is already at the ceiling on
+this question set (the questions name the vendor and echo the clause wording), so M5 adds a harder
+retrieval set before comparing vector, hybrid and rerank. Latency is dominated by the query-embedding
+round trip to Gemini. Git SHA is the code commit; the tree was clean apart from regenerated graph files.

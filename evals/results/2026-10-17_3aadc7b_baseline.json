@@ -1,0 +1,291 @@
+{
+  "date": "2026-10-17",
+  "git_sha": "3aadc7b",
+  "label": "baseline",
+  "embedder": "gemini",
+  "embedding_model": "gemini-embedding-001",
+  "modes": {
+    "vector": {
+      "mode": "vector",
+      "n": 35,
+      "recall@5": 1.0,
+      "mrr@10": 0.9857142857142858,
+      "doc_recall@5": 1.0,
+      "p50_ms": 470.2185000060126,
+      "p95_ms": 495.6077800015919,
+      "by_fact": {
+        "auto_renewal": {
+          "n": 6,
+          "recall@5": 1.0
+        },
+        "governing_law": {
+          "n": 5,
+          "recall@5": 1.0
+        },
+        "late_fee": {
+          "n": 6,
+          "recall@5": 1.0
+        },
+        "liability_cap": {
+          "n": 6,
+          "recall@5": 1.0
+        },
+        "payment_terms": {
+          "n": 6,
+          "recall@5": 1.0
+        },
+        "termination_notice": {
+          "n": 6,
+          "recall@5": 1.0
+        }
+      },
+      "rows": [
+        {
+          "id": "c01",
+          "fact": "termination_notice",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 691.7310999997426
+        },
+        {
+          "id": "c02",
+          "fact": "termination_notice",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 486.8000000133179
+        },
+        {
+          "id": "c03",
+          "fact": "liability_cap",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 492.76220001047477
+        },
+        {
+          "id": "c04",
+          "fact": "liability_cap",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 468.51420000893995
+        },
+        {
+          "id": "c05",
+          "fact": "late_fee",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 468.91960001084954
+        },
+        {
+          "id": "c06",
+          "fact": "governing_law",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 481.28030000953004
+        },
+        {
+          "id": "c07",
+          "fact": "payment_terms",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 467.2774000209756
+        },
+        {
+          "id": "c08",
+          "fact": "governing_law",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 464.1321999952197
+        },
+        {
+          "id": "c09",
+          "fact": "termination_notice",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 487.65339999226853
+        },
+        {
+          "id": "c10",
+          "fact": "payment_terms",
+          "page_rank": 2,
+          "doc_rank": 1,
+          "ms": 468.439699994633
+        },
+        {
+          "id": "c11",
+          "fact": "late_fee",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 469.1280999977607
+        },
+        {
+          "id": "c12",
+          "fact": "governing_law",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 459.22720001544803
+        },
+        {
+          "id": "c13",
+          "fact": "governing_law",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 476.1387000035029
+        },
+        {
+          "id": "c14",
+          "fact": "auto_renewal",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 439.8911999887787
+        },
+        {
+          "id": "c15",
+          "fact": "auto_renewal",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 493.5379000089597
+        },
+        {
+          "id": "c16",
+          "fact": "liability_cap",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 476.0810000007041
+        },
+        {
+          "id": "c17",
+          "fact": "auto_renewal",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 470.2185000060126
+        },
+        {
+          "id": "c18",
+          "fact": "termination_notice",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 491.4519999874756
+        },
+        {
+          "id": "c19",
+          "fact": "payment_terms",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 500.43749998440035
+        },
+        {
+          "id": "c20",
+          "fact": "late_fee",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 478.6829999939073
+        },
+        {
+          "id": "c21",
+          "fact": "auto_renewal",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 479.93729999870993
+        },
+        {
+          "id": "c22",
+          "fact": "auto_renewal",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 476.9391000154428
+        },
+        {
+          "id": "c23",
+          "fact": "late_fee",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 488.8226999901235
+        },
+        {
+          "id": "c24",
+          "fact": "liability_cap",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 488.158200023463
+        },
+        {
+          "id": "c25",
+          "fact": "termination_notice",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 437.0168999885209
+        },
+        {
+          "id": "c26",
+          "fact": "payment_terms",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 452.7589000063017
+        },
+        {
+          "id": "c27",
+          "fact": "payment_terms",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 482.7456000202801
+        },
+        {
+          "id": "c28",
+          "fact": "governing_law",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 444.8271000001114
+        },
+        {
+          "id": "c29",
+          "fact": "liability_cap",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 461.3220999890473
+        },
+        {
+          "id": "c30",
+          "fact": "late_fee",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 469.6049000194762
+        },
+        {
+          "id": "c31",
+          "fact": "payment_terms",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 450.13359998119995
+        },
+        {
+          "id": "c32",
+          "fact": "termination_notice",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 457.8695000091102
+        },
+        {
+          "id": "c33",
+          "fact": "auto_renewal",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 448.1932000198867
+        },
+        {
+          "id": "c34",
+          "fact": "liability_cap",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 469.1607999848202
+        },
+        {
+          "id": "c35",
+          "fact": "late_fee",
+          "page_rank": 1,
+          "doc_rank": 1,
+          "ms": 477.3988999950234
+        }
+      ]
+    }
+  }
+}
