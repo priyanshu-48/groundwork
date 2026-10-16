@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     # No usable default: the app refuses to start without a real secret (see main.lifespan).
     jwt_secret: str = ""
     jwt_ttl_minutes: int = 60
+    max_upload_bytes: int = 20 * 1024 * 1024
+    job_visibility_timeout_s: float = 300
+    reaper_interval_s: float = 30
     check_timeout_s: float = 3.0
 
 

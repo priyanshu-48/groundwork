@@ -1,17 +1,21 @@
+import asyncio
 import os
 import time
 from collections.abc import Iterator
+from typing import Any
 
 import boto3
 import pytest
 from alembic.config import Config
 from botocore.config import Config as BotoConfig
 from fastapi.testclient import TestClient
+from sqlalchemy import Row, text
 from testcontainers.core.container import DockerContainer
 from testcontainers.postgres import PostgresContainer
 
 from alembic import command
 from app.config import get_settings
+from app.db import make_engine
 
 BUCKET = "test-bucket"
 S3_KEY = "test-access-key"
@@ -77,3 +81,21 @@ def client(configured: None) -> Iterator[TestClient]:
 
     with TestClient(create_app()) as c:  # context manager runs the lifespan
         yield c
+
+
+@pytest.fixture
+def sql(configured: None):  # type: ignore[no-untyped-def]
+    """Run a raw SELECT against the test DB from sync tests (own engine, own event loop)."""
+
+    def run(stmt: str, **params: object) -> list[Row[Any]]:
+        async def go() -> list[Row[Any]]:
+            engine = make_engine(get_settings().database_url)
+            try:
+                async with engine.connect() as conn:
+                    return list((await conn.execute(text(stmt), params)).all())
+            finally:
+                await engine.dispose()
+
+        return asyncio.run(go())
+
+    return run
