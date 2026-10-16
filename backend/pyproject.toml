@@ -10,6 +10,9 @@ dependencies = [
     "alembic>=1.13",
     "pydantic-settings>=2.4",
     "boto3>=1.35",
+    "argon2-cffi>=23.1",
+    "pyjwt>=2.9",
+    "email-validator>=2.2",
 ]
 
 [dependency-groups]
@@ -38,3 +41,6 @@ plugins = ["pydantic.mypy"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]

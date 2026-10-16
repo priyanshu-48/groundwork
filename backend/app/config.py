@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     # Leave empty on AWS so boto3 uses the EC2 instance role (no keys on disk).
     s3_access_key: str | None = None
     s3_secret_key: str | None = None
+    # No usable default: the app refuses to start without a real secret (see main.lifespan).
+    jwt_secret: str = ""
+    jwt_ttl_minutes: int = 60
     check_timeout_s: float = 3.0
 
 
