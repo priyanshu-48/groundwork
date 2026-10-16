@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+evals/corpus/
+graphify-out/cache/
+.claude/settings.local.json
+graphify-out/cache/
+*.graphify-bak
