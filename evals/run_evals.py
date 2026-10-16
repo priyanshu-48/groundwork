@@ -139,8 +139,14 @@ def _git_sha() -> str:
         return "unknown"
 
 
+def eval_settings() -> Any:
+    """The min-interval throttle exists for bulk ingestion. Left on, every query would wait 2 s and
+    the latency numbers would just measure the throttle (35 queries is far below any quota)."""
+    return get_settings().model_copy(update={"embedding_min_interval_s": 0.0})
+
+
 async def _main(args: argparse.Namespace) -> None:
-    s = get_settings()
+    s = eval_settings()
     deps, engine = build_deps(s)
     try:
         async with deps.maker() as session:

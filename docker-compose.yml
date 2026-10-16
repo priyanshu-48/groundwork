@@ -63,8 +63,11 @@ services:
       # Set GEMINI_API_KEY in your shell or a git-ignored .env; AI_PROVIDER=fake runs without one.
       AI_PROVIDER: ${AI_PROVIDER:-gemini}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gemini-embedding-001}
       EMBEDDING_MIN_INTERVAL_S: ${EMBEDDING_MIN_INTERVAL_S:-0}
       EXTRACTION_MIN_INTERVAL_S: ${EXTRACTION_MIN_INTERVAL_S:-0}
+      EXTRACTION_ENABLED: ${EXTRACTION_ENABLED:-true}
 
 volumes:
   pgdata:

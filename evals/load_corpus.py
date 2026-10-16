@@ -18,6 +18,18 @@ ROOT = Path(__file__).resolve().parents[1]
 PASSWORD = os.environ.get("EVAL_PASSWORD", "eval-local-only-password")
 
 
+async def _retry(fn):  # type: ignore[no-untyped-def]
+    """Retry transport errors. Polling every 5 s lands exactly on uvicorn's 5 s keep-alive timeout,
+    so a reused connection is sometimes already closed: harmless, just reconnect."""
+    for attempt in range(1, 6):
+        try:
+            return await fn()
+        except httpx.TransportError:
+            if attempt == 5:
+                raise
+            await asyncio.sleep(0.5 * attempt)
+
+
 async def _auth(c: httpx.AsyncClient, email: str) -> dict[str, str]:
     body = {"email": email, "password": PASSWORD}
     r = await c.post("/auth/signup", json={**body, "org_name": "Eval Org"})
@@ -28,12 +40,15 @@ async def _auth(c: httpx.AsyncClient, email: str) -> dict[str, str]:
 
 
 async def _upload(c, h, sem, path: Path, kind: str) -> None:  # type: ignore[no-untyped-def]
+    data = path.read_bytes()
     async with sem:
-        r = await c.post(
-            "/documents",
-            headers=h,
-            data={"kind": kind},
-            files={"file": (path.name, path.read_bytes(), "application/pdf")},
+        r = await _retry(
+            lambda: c.post(
+                "/documents",
+                headers=h,
+                data={"kind": kind},
+                files={"file": (path.name, data, "application/pdf")},
+            )
         )
         r.raise_for_status()
 
@@ -42,9 +57,10 @@ async def _statuses(c: httpx.AsyncClient, h: dict[str, str]) -> dict[str, int]:
     counts: dict[str, int] = {}
     offset = 0
     while True:
-        page = (
-            await c.get("/documents", headers=h, params={"limit": 100, "offset": offset})
-        ).json()
+        r = await _retry(
+            lambda: c.get("/documents", headers=h, params={"limit": 100, "offset": offset})
+        )
+        page = r.json()
         for d in page:
             counts[d["status"]] = counts.get(d["status"], 0) + 1
         if len(page) < 100:

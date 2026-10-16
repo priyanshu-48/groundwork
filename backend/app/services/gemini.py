@@ -23,6 +23,8 @@ def is_retryable(e: Exception) -> bool:
     """429 and 5xx are worth retrying; other 4xx mean our request is wrong and never will work."""
     code = getattr(e, "code", None)
     if isinstance(code, int):
+        if code == 429 and "PerDay" in str(e):
+            return False  # daily quota: retrying within seconds only burns more requests
         return code == 429 or code >= 500
     return isinstance(e, TimeoutError | httpx.TransportError)
 
