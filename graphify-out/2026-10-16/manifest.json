@@ -1,0 +1,140 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1792171403.214491,
+    "seen": 1792171408.7186646,
+    "ast_hash": "9c2d2953896b49ce574a97e78019ad45",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1792171413.0756989,
+    "seen": 1792172901.8909185,
+    "ast_hash": "5b1e551e15b99c48005202a278577f5b",
+    "semantic_hash": ""
+  },
+  "SPEC.md": {
+    "mtime": 1792171367.5000727,
+    "seen": 1792171408.7186646,
+    "ast_hash": "c8383acce34550a1efcd88449720354a",
+    "semantic_hash": ""
+  },
+  "docs/journal.md": {
+    "mtime": 1792172879.5208423,
+    "seen": 1792172901.8909185,
+    "ast_hash": "61c6fe6586645a709f3487e45e748dbf",
+    "semantic_hash": ""
+  },
+  "backend/alembic/env.py": {
+    "mtime": 1792172391.7467947,
+    "seen": 1792172901.8909185,
+    "ast_hash": "51fa941664942384bdb2a79dfb1a93dd",
+    "semantic_hash": ""
+  },
+  "backend/alembic/versions/0001_initial.py": {
+    "mtime": 1792172391.6780224,
+    "seen": 1792172901.8909185,
+    "ast_hash": "c93af28dc9eca64363d21ae7cc9c22e2",
+    "semantic_hash": ""
+  },
+  "backend/app/__init__.py": {
+    "mtime": 1792172350.720016,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/api/__init__.py": {
+    "mtime": 1792172350.7202656,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/api/health.py": {
+    "mtime": 1792172394.4594882,
+    "seen": 1792172901.8909185,
+    "ast_hash": "f93d6665dbcab7d9e439168772840f06",
+    "semantic_hash": ""
+  },
+  "backend/app/config.py": {
+    "mtime": 1792172350.7659118,
+    "seen": 1792172901.8909185,
+    "ast_hash": "e7077071b4df7e989ac2b5040618fd68",
+    "semantic_hash": ""
+  },
+  "backend/app/db.py": {
+    "mtime": 1792172350.7843697,
+    "seen": 1792172901.8909185,
+    "ast_hash": "f90c730cb7b157740113a40aab22cca3",
+    "semantic_hash": ""
+  },
+  "backend/app/main.py": {
+    "mtime": 1792172350.8428538,
+    "seen": 1792172901.8909185,
+    "ast_hash": "6d889deaec6ecd9172895e141fedb719",
+    "semantic_hash": ""
+  },
+  "backend/app/services/__init__.py": {
+    "mtime": 1792172350.7205243,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/services/storage.py": {
+    "mtime": 1792172350.8038535,
+    "seen": 1792172901.8909185,
+    "ast_hash": "28681e4600e35f56368a8b9e6667512c",
+    "semantic_hash": ""
+  },
+  "backend/pyproject.toml": {
+    "mtime": 1792172350.7446847,
+    "seen": 1792172901.8909185,
+    "ast_hash": "3786eac2837b07ed52b73f96fdb2ac4a",
+    "semantic_hash": ""
+  },
+  "backend/tests/__init__.py": {
+    "mtime": 1792172350.7211206,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/tests/conftest.py": {
+    "mtime": 1792172703.4518259,
+    "seen": 1792172901.8909185,
+    "ast_hash": "a26bd4c6550eca5efea2fe0c1ac3ded7",
+    "semantic_hash": ""
+  },
+  "backend/tests/integration/__init__.py": {
+    "mtime": 1792172350.7213666,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/tests/integration/test_health.py": {
+    "mtime": 1792172391.679029,
+    "seen": 1792172901.8909185,
+    "ast_hash": "ebe30564363fd3af60a712efd9f95a8d",
+    "semantic_hash": ""
+  },
+  "backend/tests/unit/__init__.py": {
+    "mtime": 1792172350.7216089,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1792172380.9176824,
+    "seen": 1792172901.8909185,
+    "ast_hash": "bf4b9b8fd23c700afadb4de5c7cf485c",
+    "semantic_hash": ""
+  },
+  "docker-compose.yml": {
+    "mtime": 1792172764.5749145,
+    "seen": 1792172901.8909185,
+    "ast_hash": "47e9d94618e78d102565601d51e6f3a6",
+    "semantic_hash": ""
+  },
+  "docs/decisions/0001-local-s3-rustfs.md": {
+    "mtime": 1792172879.4695082,
+    "seen": 1792172901.8909185,
+    "ast_hash": "b558ed54c07885a40fb6df6e1eb24a17",
+    "semantic_hash": ""
+  }
+}

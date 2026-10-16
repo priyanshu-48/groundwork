@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1792171403.2030506,
-    "seen": 1792171408.7186646,
-    "ast_hash": "7f3fb1e73956b6b64cca8e0a74aefb75",
+    "mtime": 1792171413.0756989,
+    "seen": 1792172901.8909185,
+    "ast_hash": "5b1e551e15b99c48005202a278577f5b",
     "semantic_hash": ""
   },
   "SPEC.md": {
@@ -18,9 +18,207 @@
     "semantic_hash": ""
   },
   "docs/journal.md": {
-    "mtime": 1792171383.3440268,
-    "seen": 1792171408.7186646,
-    "ast_hash": "d0c0913e8a5ec18b69727104cdfceb40",
+    "mtime": 1792173085.302493,
+    "seen": 1792173091.014098,
+    "ast_hash": "c78a88f803751df0d4682a28393030cb",
+    "semantic_hash": ""
+  },
+  "backend/alembic/env.py": {
+    "mtime": 1792173028.8927443,
+    "seen": 1792173091.014098,
+    "ast_hash": "2f7342f5c456bd483f358be5b026875e",
+    "semantic_hash": ""
+  },
+  "backend/alembic/versions/0001_initial.py": {
+    "mtime": 1792172391.6780224,
+    "seen": 1792172901.8909185,
+    "ast_hash": "c93af28dc9eca64363d21ae7cc9c22e2",
+    "semantic_hash": ""
+  },
+  "backend/app/__init__.py": {
+    "mtime": 1792172350.720016,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/api/__init__.py": {
+    "mtime": 1792172350.7202656,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/api/health.py": {
+    "mtime": 1792172394.4594882,
+    "seen": 1792172901.8909185,
+    "ast_hash": "f93d6665dbcab7d9e439168772840f06",
+    "semantic_hash": ""
+  },
+  "backend/app/config.py": {
+    "mtime": 1792173027.5994713,
+    "seen": 1792173091.014098,
+    "ast_hash": "af56b3ca4006ba081c89dfc4b48ba153",
+    "semantic_hash": ""
+  },
+  "backend/app/db.py": {
+    "mtime": 1792172350.7843697,
+    "seen": 1792172901.8909185,
+    "ast_hash": "f90c730cb7b157740113a40aab22cca3",
+    "semantic_hash": ""
+  },
+  "backend/app/main.py": {
+    "mtime": 1792173027.65001,
+    "seen": 1792173091.014098,
+    "ast_hash": "b29e1d4349a9bcc9fd8ebcbb4bb9de77",
+    "semantic_hash": ""
+  },
+  "backend/app/services/__init__.py": {
+    "mtime": 1792172350.7205243,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/services/storage.py": {
+    "mtime": 1792172350.8038535,
+    "seen": 1792172901.8909185,
+    "ast_hash": "28681e4600e35f56368a8b9e6667512c",
+    "semantic_hash": ""
+  },
+  "backend/pyproject.toml": {
+    "mtime": 1792173034.0477836,
+    "seen": 1792173091.014098,
+    "ast_hash": "ca4e661072a9fcc48dc1bc307d0e3269",
+    "semantic_hash": ""
+  },
+  "backend/tests/__init__.py": {
+    "mtime": 1792172350.7211206,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/tests/conftest.py": {
+    "mtime": 1792172966.640082,
+    "seen": 1792173091.014098,
+    "ast_hash": "ac51e01093191e2fce001d3ae162f035",
+    "semantic_hash": ""
+  },
+  "backend/tests/integration/__init__.py": {
+    "mtime": 1792172350.7213666,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/tests/integration/test_health.py": {
+    "mtime": 1792172391.679029,
+    "seen": 1792172901.8909185,
+    "ast_hash": "ebe30564363fd3af60a712efd9f95a8d",
+    "semantic_hash": ""
+  },
+  "backend/tests/unit/__init__.py": {
+    "mtime": 1792172350.7216089,
+    "seen": 1792172901.8909185,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1792172380.9176824,
+    "seen": 1792172901.8909185,
+    "ast_hash": "bf4b9b8fd23c700afadb4de5c7cf485c",
+    "semantic_hash": ""
+  },
+  "docker-compose.yml": {
+    "mtime": 1792173027.65001,
+    "seen": 1792173091.014098,
+    "ast_hash": "2c5d2bfeeb22141953b1f29e6c4bbf17",
+    "semantic_hash": ""
+  },
+  "docs/decisions/0001-local-s3-rustfs.md": {
+    "mtime": 1792172879.4695082,
+    "seen": 1792172901.8909185,
+    "ast_hash": "b558ed54c07885a40fb6df6e1eb24a17",
+    "semantic_hash": ""
+  },
+  "backend/alembic/versions/0002_orgs_users.py": {
+    "mtime": 1792173028.8887444,
+    "seen": 1792173091.014098,
+    "ast_hash": "8050964aa2d8cbb23e9004d6e8604c2b",
+    "semantic_hash": ""
+  },
+  "backend/app/api/auth.py": {
+    "mtime": 1792173019.4142246,
+    "seen": 1792173091.014098,
+    "ast_hash": "94d090ff23303b77801bf7217c38ddd7",
+    "semantic_hash": ""
+  },
+  "backend/app/api/deps.py": {
+    "mtime": 1792173019.3832564,
+    "seen": 1792173091.014098,
+    "ast_hash": "858a7e8f588d136a0c4c9a02a3824a2e",
+    "semantic_hash": ""
+  },
+  "backend/app/models/__init__.py": {
+    "mtime": 1792173019.1959975,
+    "seen": 1792173091.014098,
+    "ast_hash": "5939bb685b7e4ce11a61a7eabddf7510",
+    "semantic_hash": ""
+  },
+  "backend/app/models/base.py": {
+    "mtime": 1792173019.0952747,
+    "seen": 1792173091.014098,
+    "ast_hash": "2fe6b8c8b2af19d2d784dd6d93ce3e68",
+    "semantic_hash": ""
+  },
+  "backend/app/models/org.py": {
+    "mtime": 1792173019.1347651,
+    "seen": 1792173091.014098,
+    "ast_hash": "59b717654300b0850491cf7e6e8b2951",
+    "semantic_hash": ""
+  },
+  "backend/app/models/user.py": {
+    "mtime": 1792173019.1603434,
+    "seen": 1792173091.014098,
+    "ast_hash": "cd560c41a7b0f5623e2dfae41790d297",
+    "semantic_hash": ""
+  },
+  "backend/app/repositories/__init__.py": {
+    "mtime": 1792172966.5398905,
+    "seen": 1792173091.014098,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/repositories/users.py": {
+    "mtime": 1792173019.273686,
+    "seen": 1792173091.014098,
+    "ast_hash": "1a5f4dd1cf335d6b1d61d6a1cf6e11ac",
+    "semantic_hash": ""
+  },
+  "backend/app/schemas/__init__.py": {
+    "mtime": 1792172966.5401103,
+    "seen": 1792173091.014098,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
+  },
+  "backend/app/schemas/auth.py": {
+    "mtime": 1792173019.3252718,
+    "seen": 1792173091.014098,
+    "ast_hash": "b18e7d25d38ed1d1a991093494a31a65",
+    "semantic_hash": ""
+  },
+  "backend/app/services/security.py": {
+    "mtime": 1792173019.2476454,
+    "seen": 1792173091.014098,
+    "ast_hash": "d9d9a4d814e8f867249ad022ce8d123a",
+    "semantic_hash": ""
+  },
+  "backend/tests/integration/test_auth.py": {
+    "mtime": 1792173028.9753065,
+    "seen": 1792173091.014098,
+    "ast_hash": "fe52eae0b195d415ba5105c50e019e7d",
+    "semantic_hash": ""
+  },
+  "backend/tests/unit/test_security.py": {
+    "mtime": 1792172966.5654314,
+    "seen": 1792173091.014098,
+    "ast_hash": "cba3d6815861e102bdd5d1de39462ae3",
     "semantic_hash": ""
   }
 }

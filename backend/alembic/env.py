@@ -5,9 +5,9 @@ from sqlalchemy.engine import Connection
 from alembic import context
 from app.config import get_settings
 from app.db import make_engine
+from app.models import Base  # noqa: E402
 
-# M0 has no tables; later milestones set target_metadata to their models' metadata.
-target_metadata = None
+target_metadata = Base.metadata
 
 
 def _run(connection: Connection) -> None:

@@ -59,6 +59,7 @@ def s3() -> Iterator[str]:
 def configured(pg: PostgresContainer, s3: str) -> Iterator[None]:
     os.environ.update(
         DATABASE_URL=pg.get_connection_url(),
+        JWT_SECRET="integration-test-secret-32-bytes-minimum",
         S3_BUCKET=BUCKET,
         S3_ENDPOINT_URL=s3,
         S3_ACCESS_KEY=S3_KEY,
