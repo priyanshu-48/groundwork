@@ -10,6 +10,7 @@
 | 2026-10-16 | No Co-Authored-By trailers in commits | Default attribution | Owner's preference: the repo history is the author's own work |
 | 2026-10-16 | RustFS replaces MinIO for local/test S3 | SeaweedFS, LocalStack, pinned old MinIO | MinIO's public images were removed; S3 API is the contract, so the app is unaffected (ADR 0001) |
 | 2026-10-16 | M1 auth: argon2 hashing off the event loop, HS256 JWT (sub, org_id, exp) with algorithm whitelist, signup creates org+user, identical 401 for unknown email vs wrong password (dummy-hash verify), app refuses to boot without a 32+ char JWT_SECRET | bcrypt, refresh tokens, invites | argon2 is the current OWASP pick; to_thread keeps the loop responsive; whitelist blocks alg=none; no enumeration; fail-closed secret. org_id only ever comes from the verified token |
+| 2026-10-16 | M2: upload does S3 put first, then document+job in one DB transaction; reaper fails jobs already at max_attempts instead of requeueing; PDF checked by magic bytes and read in 1 MB chunks capped at 20 MB; native Postgres enums | DB first then S3; plain requeue in reaper; trust content-type | Deterministic key makes S3 retries harmless and avoids rows pointing at missing files; a poison job that kills workers must not loop forever; content-type is client-controlled; never buffer attacker-sized bodies |
 | 2026-10-16 | graphify knowledge graph for repo navigation | Raw grep each session | Cheaper context, persistent architecture map |
 
 ## Roadblocks

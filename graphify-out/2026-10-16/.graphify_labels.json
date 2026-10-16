@@ -2,12 +2,12 @@
   "0": "Groundwork: Build Spec",
   "1": "8. Milestones (about 3 weeks, one Claude Code session each)",
   "2": "Groundwork: instructions for Claude Code",
-  "3": "6. Key designs (know these well, because they are the interview questions)",
+  "3": "test_security.py",
   "4": "Groundwork journal (interview reference)",
-  "5": "storage.py",
+  "5": "base.py",
   "6": "conftest.py",
   "7": "get_settings",
-  "8": "main.py",
+  "8": "api/auth.py",
   "9": "0001_initial.py",
   "10": "0001-local-s3-rustfs.md",
   "11": "app/__init__.py",
@@ -15,5 +15,10 @@
   "13": "tests/__init__.py",
   "14": "integration/__init__.py",
   "15": "unit/__init__.py",
-  "16": "groundwork"
+  "16": "groundwork",
+  "17": "test_auth.py",
+  "18": "schemas/__init__.py",
+  "19": "storage.py",
+  "20": "get",
+  "21": "Request"
 }

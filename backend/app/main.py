@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
-from app.api import auth, health
+from app.api import auth, documents, health
 from app.config import get_settings
 from app.db import make_engine
 from app.services.storage import make_s3
@@ -26,6 +26,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Groundwork", lifespan=lifespan)
     app.include_router(health.router)
     app.include_router(auth.router)
+    app.include_router(documents.router)
     return app
 
 

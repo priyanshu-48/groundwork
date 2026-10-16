@@ -32,3 +32,10 @@ async def s3_ok(client: "S3Client", bucket: str) -> bool:
     except Exception:
         return False
     return True
+
+
+async def put_pdf(client: "S3Client", bucket: str, key: str, data: bytes) -> None:
+    """Idempotent: same key, same bytes (the key embeds the sha256), so retries are harmless."""
+    await asyncio.to_thread(
+        client.put_object, Bucket=bucket, Key=key, Body=data, ContentType="application/pdf"
+    )
