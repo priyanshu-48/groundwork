@@ -33,11 +33,14 @@ async def create_with_job(
     return doc
 
 
-async def list_for_org(session: AsyncSession, org_id: uuid.UUID, limit: int) -> Sequence[Document]:
+async def list_for_org(
+    session: AsyncSession, org_id: uuid.UUID, limit: int, offset: int = 0
+) -> Sequence[Document]:
     stmt = (
         select(Document)
         .where(Document.org_id == org_id)
-        .order_by(Document.created_at.desc())
+        .order_by(Document.created_at.desc(), Document.id)
         .limit(limit)
+        .offset(offset)
     )
     return (await session.execute(stmt)).scalars().all()

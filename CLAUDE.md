@@ -26,6 +26,9 @@ Read SPEC.md before any task. Implement ONLY the milestone I name.
 - Gemini API key: env var only, free tier, never committed. Cap batch sizes and retries so a bug cannot loop into a large bill.
 - Tear down or stop unused resources; list them in docs/journal.md when created.
 
+## Free-tier data
+The Gemini free tier may use submitted content to improve Google products. Synthetic corpus only; never upload real invoices or contracts while on the free tier. Eval numbers from the fake embedder never go into docs/evals.md.
+
 ## Hosting portability
 AWS free tier is temporary; the plan is to move to Oracle Cloud free tier. Keep the app host-agnostic: plain Docker Compose, S3-compatible storage via boto3 with a configurable endpoint, standard Postgres + pgvector. Moving hosts must need only config changes, not code. Avoid AWS-only services in app code.
 
@@ -38,7 +41,7 @@ After each milestone run `graphify update .` (details in the graphify section be
 ## Commands
 - Backend: `cd backend && uv run pytest`, `uv run alembic upgrade head`, `uv run python -m app.worker.runner`
 - Frontend: `cd frontend && npm run dev`, `npm test`
-- Evals: `uv run python evals/run_evals.py --mode hybrid_rerank`
+- Evals (from `backend/`): `uv run python ../evals/generate_corpus.py`, `build_questions.py`, `load_corpus.py`, `run_evals.py --modes vector --label baseline`
 
 ## graphify
 

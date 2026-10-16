@@ -12,7 +12,7 @@ from app.services.embeddings import (
     GeminiEmbeddingProvider,
 )
 from app.services.extraction import FakeInvoiceExtractor, GeminiInvoiceExtractor, InvoiceExtractor
-from app.services.gemini import make_client
+from app.services.gemini import Throttle, make_client
 from app.services.storage import make_s3
 
 log = logging.getLogger(__name__)
@@ -40,9 +40,14 @@ def build_deps(s: Settings) -> tuple[Deps, AsyncEngine]:
             )
         client = make_client(s)
         embedder: EmbeddingProvider = GeminiEmbeddingProvider(
-            client, s.embedding_model, s.embedding_dims
+            client,
+            s.embedding_model,
+            s.embedding_dims,
+            throttle=Throttle(s.embedding_min_interval_s),
         )
-        extractor: InvoiceExtractor = GeminiInvoiceExtractor(client, s.gemini_model)
+        extractor: InvoiceExtractor = GeminiInvoiceExtractor(
+            client, s.gemini_model, Throttle(s.extraction_min_interval_s)
+        )
     else:
         log.warning("AI_PROVIDER=fake: embeddings and extraction are NOT real")
         embedder, extractor = FakeEmbeddingProvider(s.embedding_dims), FakeInvoiceExtractor()

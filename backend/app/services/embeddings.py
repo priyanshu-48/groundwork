@@ -7,7 +7,7 @@ from typing import Any, Literal, Protocol
 
 from google.genai import types
 
-from app.services.gemini import call_with_retry
+from app.services.gemini import Throttle, call_with_retry
 
 Task = Literal["document", "query"]
 _TASK_TYPE = {"document": "RETRIEVAL_DOCUMENT", "query": "RETRIEVAL_QUERY"}
@@ -31,6 +31,11 @@ class FakeEmbeddingProvider:
     exercise real retrieval behaviour with no network and no key."""
 
     _TOKEN = re.compile(r"[a-z0-9]+")
+    # Common words carry no signal; without dropping them every text looks alike.
+    _STOP = frozenset(
+        "a an the is are was be of in on at to for and or by with this that it as from what which "
+        "who how does do shall any each".split()
+    )
 
     def __init__(self, dims: int = 768) -> None:
         self.dims = dims
@@ -41,6 +46,8 @@ class FakeEmbeddingProvider:
     def _one(self, text: str) -> list[float]:
         v = [0.0] * self.dims
         for word in self._TOKEN.findall(text.lower()):
+            if word in self._STOP:
+                continue
             h = hashlib.sha256(word.encode()).digest()
             v[int.from_bytes(h[:4], "big") % self.dims] += 1.0 if h[4] & 1 else -1.0
         if not any(v):
@@ -60,8 +67,10 @@ class GeminiEmbeddingProvider:
         batch_size: int = 50,
         max_tries: int = 4,
         sleep: Callable[[float], Awaitable[Any]] = asyncio.sleep,
+        throttle: Throttle | None = None,
     ) -> None:
         self._client, self._model, self._dims = client, model, dims
+        self._throttle = throttle
         self._batch, self._max_tries, self._sleep = batch_size, max_tries, sleep
 
     async def embed(self, texts: list[str], task: Task) -> list[list[float]]:
@@ -72,6 +81,8 @@ class GeminiEmbeddingProvider:
 
     async def _embed_batch(self, batch: list[str], task_type: str) -> list[list[float]]:
         cfg = types.EmbedContentConfig(task_type=task_type, output_dimensionality=self._dims)
+        if self._throttle:
+            await self._throttle.wait()
         try:
             resp = await call_with_retry(
                 lambda: self._client.models.embed_content(

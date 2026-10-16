@@ -48,7 +48,9 @@ async def new_org(deps: Deps) -> uuid.UUID:
         return user.org_id
 
 
-async def seed(deps: Deps, org_id: uuid.UUID, pdf: bytes, kind: str = "contract") -> uuid.UUID:
+async def seed(
+    deps: Deps, org_id: uuid.UUID, pdf: bytes, kind: str = "contract", filename: str = "t.pdf"
+) -> uuid.UUID:
     """What POST /documents does, minus HTTP: S3 object + document row + ingest job."""
     import hashlib
 
@@ -56,7 +58,7 @@ async def seed(deps: Deps, org_id: uuid.UUID, pdf: bytes, kind: str = "contract"
     key = f"orgs/{org_id}/docs/{sha}.pdf"
     await put_pdf(deps.s3, deps.bucket, key, pdf)
     async with deps.maker.begin() as s:
-        doc = await documents.create_with_job(s, org_id, "t.pdf", key, sha, DocKind(kind))
+        doc = await documents.create_with_job(s, org_id, filename, key, sha, DocKind(kind))
         return doc.id
 
 

@@ -79,7 +79,8 @@ async def upload(
 @router.get("", response_model=list[DocumentOut])
 async def list_documents(
     limit: Annotated[int, Query(ge=1, le=100)] = 50,
+    offset: Annotated[int, Query(ge=0)] = 0,
     p: Principal = Depends(current_user),
     session: AsyncSession = Depends(get_session),
 ) -> object:
-    return await documents.list_for_org(session, p.org_id, limit)
+    return await documents.list_for_org(session, p.org_id, limit, offset)
