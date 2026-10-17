@@ -17,6 +17,12 @@ Retrieval is scored on questions with a known gold **document and page** from th
 | Date | Git SHA | Label | Set | Mode | Embedder | Reranker | Recall@5 | MRR@10 | Doc recall@5 | search p50 ms | search p95 ms |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 2026-10-17 | 3aadc7b | baseline (M4) | easy | vector | gemini | - | 100.0% | 0.986 | 100.0% | 470* | 496* |
+| 2026-10-17 | 3159355 | m5 | easy | vector | gemini | - | 100.0% | 0.986 | 100.0% | 11 | 24 |
+| 2026-10-17 | 3159355 | m5 | easy | hybrid | gemini | - | 97.1% | 0.940 | 100.0% | 18 | 41 |
+| 2026-10-17 | 3159355 | m5 | easy | hybrid_rerank | gemini | flashrank:ms-marco-MiniLM-L-12-v2 | 100.0% | 1.000 | 100.0% | 1458 | 1550 |
+| 2026-10-17 | 3159355 | m5 | hard | vector | gemini | - | 81.7% | 0.704 | 81.7% | 13 | 65 |
+| 2026-10-17 | 3159355 | m5 | hard | hybrid | gemini | - | 93.3% | 0.733 | 96.7% | 36 | 59 |
+| 2026-10-17 | 3159355 | m5 | hard | hybrid_rerank | gemini | flashrank:ms-marco-MiniLM-L-12-v2 | 78.3% | 0.714 | 80.0% | 1373 | 1585 |
 <!-- evals:end -->
 
 \* includes the ~0.5 s Gemini query-embedding round trip (measured before M5 separated it out).
