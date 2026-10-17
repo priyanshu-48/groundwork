@@ -61,7 +61,16 @@ def test_schema_cleaner_drops_keys_gemini_rejects() -> None:
 
 def test_every_tool_schema_survives_cleaning_with_its_fields() -> None:
     names = {s.name for s in specs()}
-    assert names == set(TOOLS) == {"search_documents", "read_chunks", "query_invoices"}
+    assert (
+        names
+        == set(TOOLS)
+        == {
+            "search_documents",
+            "read_chunks",
+            "query_invoices",
+            "query_contracts",
+        }
+    )
     for s in specs():
         cleaned = clean_schema(s.parameters)
         assert "additionalProperties" not in str(cleaned) and "title" not in str(cleaned)

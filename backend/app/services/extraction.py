@@ -2,11 +2,14 @@ import json
 import re
 from datetime import date
 from decimal import Decimal, InvalidOperation
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
 
 from pydantic import BaseModel, ValidationError, field_validator
 
 from app.services.gemini import ModelChain, Throttle, call_with_retry
+
+if TYPE_CHECKING:
+    from app.services.contract_extraction import ContractFields
 
 _MAX_CHARS = 20_000  # bound the prompt (and the bill) for huge documents
 
@@ -52,6 +55,10 @@ class InvoiceExtractor(Protocol):
         """One result per input, in order. Real models batch these into a single request."""
         ...
 
+    async def extract_contract(self, text: str) -> "ContractFields": ...
+
+    async def extract_contracts_many(self, texts: list[str]) -> list["ContractFields"]: ...
+
 
 def _date(v: str | None) -> date | None:
     try:
@@ -91,6 +98,14 @@ class FakeInvoiceExtractor:
 
     async def extract_many(self, texts: list[str]) -> list[InvoiceFields]:
         return [await self.extract(t) for t in texts]
+
+    async def extract_contract(self, text: str) -> "ContractFields":
+        from app.services.contract_extraction import fake_extract
+
+        return fake_extract(text)
+
+    async def extract_contracts_many(self, texts: list[str]) -> list["ContractFields"]:
+        return [await self.extract_contract(t) for t in texts]
 
     async def extract(self, text: str) -> InvoiceFields:
         kv = {k.strip().lower(): v for k, v in self._LINE.findall(text)}
@@ -205,3 +220,24 @@ class GeminiInvoiceExtractor:
         except (ValueError, KeyError, TypeError, ValidationError):
             pass  # whatever parsed stays; the rest become all-null and get flagged for review
         return [found.get(i, InvoiceFields()) for i in range(1, len(texts) + 1)]
+
+    async def extract_contract(self, text: str) -> "ContractFields":
+        return (await self.extract_contracts_many([text]))[0]
+
+    async def extract_contracts_many(self, texts: list[str]) -> list["ContractFields"]:
+        from app.services import contract_extraction as ce
+
+        if not texts:
+            return []
+        docs = "\n".join(
+            f"<document index={i}>\n" + t[: ce.DOC_CHARS] + "\n</document>"
+            for i, t in enumerate(texts, start=1)
+        )
+        body = await self._generate(docs, ce.SYSTEM, ce.BATCH_SCHEMA)
+        found: dict[int, ce.ContractFields] = {}
+        try:
+            for item in json.loads(body).get("contracts", []):
+                found[int(item["index"])] = ce.to_fields(item)
+        except (ValueError, KeyError, TypeError, AttributeError, ValidationError):
+            pass  # whatever parsed stays; the rest become empty and get flagged for review
+        return [found.get(i, ce.ContractFields()) for i in range(1, len(texts) + 1)]

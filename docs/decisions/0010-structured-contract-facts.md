@@ -1,0 +1,6 @@
+# 0010: Structured contract facts for set-membership questions
+- **Context:** the live agent scored 30% on multi-hop ("which net-30 vendor billed most in March?"). A trace showed six contract searches and no answer: search returns the 8 best pages and cannot enumerate "all vendors with net-30 terms".
+- **Decision:** extract contract facts (payment terms, late fee, notice, renewal, liability cap, governing law) into a `contracts` table at ingest, like invoices. New `query_contracts` tool; `query_invoices` gains `payment_terms_days`, filtering invoices by their vendor's contract (EXISTS on a case-insensitive vendor match, so duplicate contract documents cannot double-count). Aggregates group vendors case- and whitespace-insensitively.
+- **Same safety rules as invoices:** tolerant parsing, never guessing; implausible or incomplete rows are stored flagged and excluded from the tool (ADR 0003); `org_id` only from the token.
+- **Limits:** one contract per vendor is assumed; vendors link by name, so a renamed vendor breaks the join; page numbers are not in the table, so cited clauses still come from search.
+- **Eval hygiene:** the agent eval cache key now includes the tool definitions, not just the prompt.

@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1792227309.0273185,
-    "seen": 1792227333.8011947,
-    "ast_hash": "2eaeb95494c73c9a2fb1b2498b39f0c0",
+    "mtime": 1792232514.7788978,
+    "seen": 1792232531.7011976,
+    "ast_hash": "ade4fa53da1912918bc810f3642e3967",
     "semantic_hash": ""
   },
   "SPEC.md": {
@@ -156,9 +156,9 @@
     "semantic_hash": ""
   },
   "backend/app/models/__init__.py": {
-    "mtime": 1792226494.2047305,
-    "seen": 1792227333.8011947,
-    "ast_hash": "8d92738694240886ecff1e792b6c4012",
+    "mtime": 1792231987.9563124,
+    "seen": 1792232531.7011976,
+    "ast_hash": "1341b4b1efd40060fa7df7458a470fa0",
     "semantic_hash": ""
   },
   "backend/app/models/base.py": {
@@ -312,9 +312,9 @@
     "semantic_hash": ""
   },
   "backend/app/repositories/invoices.py": {
-    "mtime": 1792226568.0665326,
-    "seen": 1792227333.8011947,
-    "ast_hash": "6dd603d404f32fc98420dbe76f3be331",
+    "mtime": 1792232306.7932847,
+    "seen": 1792232531.7011976,
+    "ast_hash": "584dbbc6e87fb54417bc0cd03785138a",
     "semantic_hash": ""
   },
   "backend/app/services/chunking.py": {
@@ -330,9 +330,9 @@
     "semantic_hash": ""
   },
   "backend/app/services/extraction.py": {
-    "mtime": 1792229359.6309395,
-    "seen": 1792229593.0165322,
-    "ast_hash": "6b8c851d4789068b12a730c1aecaf107",
+    "mtime": 1792232013.0826418,
+    "seen": 1792232531.7011976,
+    "ast_hash": "9b95d596039c5a399b7ad0fff5bc9d88",
     "semantic_hash": ""
   },
   "backend/app/services/gemini.py": {
@@ -342,9 +342,9 @@
     "semantic_hash": ""
   },
   "backend/app/services/ingestion.py": {
-    "mtime": 1792226909.6829362,
-    "seen": 1792227333.8011947,
-    "ast_hash": "7fdd6695a4dbdb855e5e792843e36971",
+    "mtime": 1792232073.8183017,
+    "seen": 1792232531.7011976,
+    "ast_hash": "b699ff81b35c74ba76ea5220e4967d93",
     "semantic_hash": ""
   },
   "backend/app/services/parsing.py": {
@@ -606,9 +606,9 @@
     "semantic_hash": ""
   },
   "backend/app/agent/prompts.py": {
-    "mtime": 1792226598.9100466,
-    "seen": 1792227333.8011947,
-    "ast_hash": "cbf59b014367f312f90a3488a8795fc2",
+    "mtime": 1792232238.447495,
+    "seen": 1792232531.7011976,
+    "ast_hash": "5f16321222152c518d87976fba1077e9",
     "semantic_hash": ""
   },
   "backend/app/agent/service.py": {
@@ -618,9 +618,9 @@
     "semantic_hash": ""
   },
   "backend/app/agent/tools.py": {
-    "mtime": 1792228629.2951505,
-    "seen": 1792228675.6609683,
-    "ast_hash": "7fd46232a5a5ddadbce5ef60f9799663",
+    "mtime": 1792232238.5845551,
+    "seen": 1792232531.7011976,
+    "ast_hash": "76317ab51c163da7142ebc55306e56e4",
     "semantic_hash": ""
   },
   "backend/app/models/agent.py": {
@@ -642,9 +642,9 @@
     "semantic_hash": ""
   },
   "backend/tests/integration/test_agent_evals.py": {
-    "mtime": 1792227136.9186583,
-    "seen": 1792227333.8011947,
-    "ast_hash": "b60bef8945606fb2aeca57f825af7963",
+    "mtime": 1792232349.9579532,
+    "seen": 1792232531.7011976,
+    "ast_hash": "f8db74c35db3ddf56691a8b21f73d20a",
     "semantic_hash": ""
   },
   "backend/tests/integration/test_agent_loop.py": {
@@ -660,9 +660,9 @@
     "semantic_hash": ""
   },
   "backend/tests/integration/test_migrations.py": {
-    "mtime": 1792227165.8556354,
-    "seen": 1792227333.8011947,
-    "ast_hash": "1670377b4cb3fcac6027e1da73fd3fd6",
+    "mtime": 1792232349.7435763,
+    "seen": 1792232531.7011976,
+    "ast_hash": "2ba1a442934fa13014f14e631a32cba2",
     "semantic_hash": ""
   },
   "backend/tests/integration/test_query_invoices.py": {
@@ -678,9 +678,9 @@
     "semantic_hash": ""
   },
   "backend/tests/unit/test_gemini_llm.py": {
-    "mtime": 1792230348.3034503,
-    "seen": 1792230435.6255424,
-    "ast_hash": "1e3c22ca27edbd2c4f5dd5874215fc3d",
+    "mtime": 1792232489.1659791,
+    "seen": 1792232531.7011976,
+    "ast_hash": "83d10ab5269afa1f2559e80159bbc6ab",
     "semantic_hash": ""
   },
   "backend/tests/unit/test_model_chain.py": {
@@ -696,9 +696,9 @@
     "semantic_hash": ""
   },
   "evals/run_agent_evals.py": {
-    "mtime": 1792230411.2529306,
-    "seen": 1792230435.6255424,
-    "ast_hash": "c261259146d652877b2bf08f03d437fb",
+    "mtime": 1792232238.7861052,
+    "seen": 1792232531.7011976,
+    "ast_hash": "87df6620cc48d82bad5d2d21cee880b7",
     "semantic_hash": ""
   },
   "evals/scoring.py": {
@@ -735,6 +735,66 @@
     "mtime": 1792231603.3672235,
     "seen": 1792231609.15034,
     "ast_hash": "1c41f0478221bd90c7118396ca758282",
+    "semantic_hash": ""
+  },
+  "backend/alembic/versions/0007_contracts.py": {
+    "mtime": 1792231988.1480174,
+    "seen": 1792232531.700594,
+    "ast_hash": "04e288a58f6bb8a952d206d820fb5c65",
+    "semantic_hash": ""
+  },
+  "backend/app/models/contract.py": {
+    "mtime": 1792231987.2900841,
+    "seen": 1792232531.7011976,
+    "ast_hash": "939fb97d9a1068c0a297fee5b8b40349",
+    "semantic_hash": ""
+  },
+  "backend/app/repositories/contracts.py": {
+    "mtime": 1792231988.0680933,
+    "seen": 1792232531.7011976,
+    "ast_hash": "1fb9656e85b2470ded117335b4f646e6",
+    "semantic_hash": ""
+  },
+  "backend/app/repositories/util.py": {
+    "mtime": 1792231987.9822514,
+    "seen": 1792232531.7011976,
+    "ast_hash": "3e52ee273ef07fa596e91f124d23363a",
+    "semantic_hash": ""
+  },
+  "backend/app/services/contract_extraction.py": {
+    "mtime": 1792231988.2310162,
+    "seen": 1792232531.7011976,
+    "ast_hash": "0cffffc6d8dc3532adb13a94cf004515",
+    "semantic_hash": ""
+  },
+  "backend/app/worker/backfill_contracts.py": {
+    "mtime": 1792232038.8857858,
+    "seen": 1792232531.7011976,
+    "ast_hash": "e1b415f35928d251893c16931a7d4014",
+    "semantic_hash": ""
+  },
+  "backend/tests/integration/test_contracts.py": {
+    "mtime": 1792232275.9529076,
+    "seen": 1792232531.7011976,
+    "ast_hash": "1d01cd6e70460da8c3ef0cafa2269590",
+    "semantic_hash": ""
+  },
+  "backend/tests/unit/test_contract_extraction.py": {
+    "mtime": 1792232013.836112,
+    "seen": 1792232531.7011976,
+    "ast_hash": "718c97bc7a051a3a7f045edb91128ef2",
+    "semantic_hash": ""
+  },
+  "evals/check_extraction.py": {
+    "mtime": 1792232349.956825,
+    "seen": 1792232531.7011976,
+    "ast_hash": "a89ae266dcf4bc222c2864a1f58467ef",
+    "semantic_hash": ""
+  },
+  "docs/decisions/0010-structured-contract-facts.md": {
+    "mtime": 1792232514.7303147,
+    "seen": 1792232531.7011976,
+    "ast_hash": "9b23f550853a29143ce706c76338a0e4",
     "semantic_hash": ""
   }
 }

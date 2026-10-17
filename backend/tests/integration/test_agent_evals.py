@@ -1,3 +1,4 @@
+import dataclasses
 import uuid
 from pathlib import Path
 from typing import Any
@@ -117,3 +118,16 @@ def test_docs_rows_only_for_complete_types_and_never_for_fakes(tmp_path: Path) -
     assert "| contract_lookup | m1 | 2/2 | 50.0% | n/a |" in text
     with pytest.raises(ValueError, match="fake"):
         append_agent_rows(docs, meta, {"contract_lookup": done}, fake=True)
+
+
+def test_cache_misses_when_a_tool_definition_changes(monkeypatch: pytest.MonkeyPatch) -> None:
+    import evals.run_agent_evals as ev
+
+    before = cache_key(["m"], QS[0], "hybrid")
+    real = ev.specs
+    monkeypatch.setattr(
+        ev,
+        "specs",
+        lambda: [dataclasses.replace(t, description=t.description + " (changed)") for t in real()],
+    )
+    assert cache_key(["m"], QS[0], "hybrid") != before  # old answers are not reused for a new tool
