@@ -55,4 +55,17 @@ ordered list of models and their daily limits from AI Studio (ADR 0009).
 extracted and validated; vendor, issue date, due date, currency and total match the ground truth on
 every invoice, subtotal on 299/300.
 
-**Status:** harness and scoring verified with scripted models; no live agent answer numbers recorded yet.
+**Reading the agent table:** contract lookups and invoice aggregates are solved on this corpus. Multi-hop
+(30%) fails because the agent cannot enumerate "all vendors on net-30 terms" through search (14 of 20
+runs hit the step limit); see the journal and ADR 0010 once written. Scoring rules and their limits: ADR 0008.
+
+## Agent answers
+
+Real agent (tools + model), answers scored by rules in `evals/scoring.py` (docs/decisions/0008). Citation precision = share of cited chunks that hold the answer, over answers that cite anything (not defined for multi-hop).
+
+| Date | Git SHA | Label | Type | Model(s) | Answered | Accuracy | Citation precision | Avg steps | Avg tokens in/out | p50 s | p95 s |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-10-17 | f238874 | m6 | contract_lookup | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 2912/57 | 9.0 | 9.5 |
+| 2026-10-17 | f238874 | m6 | invoice_aggregate | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 1785/110 | 9.0 | 9.4 |
+| 2026-10-17 | f238874 | m6 | multi_hop | gemini-3.5-flash-lite | 20/20 | 30.0% | n/a | 5.0 | 24810/214 | 27.1 | 27.5 |
+<!-- agent:end -->
