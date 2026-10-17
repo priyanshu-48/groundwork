@@ -1,0 +1,2301 @@
+{
+  "date": "2026-10-17",
+  "git_sha": "3159355",
+  "label": "m5",
+  "embedder": "gemini",
+  "embedding_model": "gemini-embedding-001",
+  "reranker": "flashrank:ms-marco-MiniLM-L-12-v2",
+  "query_embed_ms": {
+    "p50": 486.33150000023306,
+    "p95": 514.7227100009331
+  },
+  "sets": {
+    "easy": {
+      "vector": {
+        "mode": "vector",
+        "n": 35,
+        "recall@5": 1.0,
+        "mrr@10": 0.9857142857142858,
+        "doc_recall@5": 1.0,
+        "p50_ms": 11.369599997124169,
+        "p95_ms": 23.62486000092757,
+        "by_group": {
+          "auto_renewal": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "governing_law": {
+            "n": 5,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "late_fee": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "liability_cap": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "payment_terms": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 0.9166666666666666
+          },
+          "termination_notice": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          }
+        },
+        "rows": [
+          {
+            "id": "c01",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 81.68810000279336
+          },
+          {
+            "id": "c02",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.295899999822723
+          },
+          {
+            "id": "c03",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.369599997124169
+          },
+          {
+            "id": "c04",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.588000001211185
+          },
+          {
+            "id": "c05",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.356700000964338
+          },
+          {
+            "id": "c06",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.314999999740394
+          },
+          {
+            "id": "c07",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.363000001234468
+          },
+          {
+            "id": "c08",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.625700000469806
+          },
+          {
+            "id": "c09",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.627300001942785
+          },
+          {
+            "id": "c10",
+            "group": "payment_terms",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 9.633300000132294
+          },
+          {
+            "id": "c11",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 8.80200000028708
+          },
+          {
+            "id": "c12",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.151700000482379
+          },
+          {
+            "id": "c13",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.973500000342028
+          },
+          {
+            "id": "c14",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.187200001586461
+          },
+          {
+            "id": "c15",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.505400001828093
+          },
+          {
+            "id": "c16",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 14.542400000209454
+          },
+          {
+            "id": "c17",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 15.260899999702815
+          },
+          {
+            "id": "c18",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 13.297199999215081
+          },
+          {
+            "id": "c19",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.11990000208607
+          },
+          {
+            "id": "c20",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 27.05009999772301
+          },
+          {
+            "id": "c21",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.853299998212606
+          },
+          {
+            "id": "c22",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.559099999023601
+          },
+          {
+            "id": "c23",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.197600000334205
+          },
+          {
+            "id": "c24",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.795900001539849
+          },
+          {
+            "id": "c25",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 20.86760000020149
+          },
+          {
+            "id": "c26",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.46289999835426
+          },
+          {
+            "id": "c27",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 17.090200002712663
+          },
+          {
+            "id": "c28",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 14.689400002680486
+          },
+          {
+            "id": "c29",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 13.212000001658453
+          },
+          {
+            "id": "c30",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 16.490100002556574
+          },
+          {
+            "id": "c31",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 19.85400000194204
+          },
+          {
+            "id": "c32",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 22.156900002300972
+          },
+          {
+            "id": "c33",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 16.32909999898402
+          },
+          {
+            "id": "c34",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 7.610299999214476
+          },
+          {
+            "id": "c35",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 7.533799998782342
+          }
+        ]
+      },
+      "hybrid": {
+        "mode": "hybrid",
+        "n": 35,
+        "recall@5": 0.9714285714285714,
+        "mrr@10": 0.939795918367347,
+        "doc_recall@5": 1.0,
+        "p50_ms": 18.2862000001478,
+        "p95_ms": 40.86790000001199,
+        "by_group": {
+          "auto_renewal": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "governing_law": {
+            "n": 5,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "late_fee": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "liability_cap": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "payment_terms": {
+            "n": 6,
+            "recall@5": 0.8333333333333334,
+            "mrr@10": 0.7321428571428572
+          },
+          "termination_notice": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 0.9166666666666666
+          }
+        },
+        "rows": [
+          {
+            "id": "c01",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 103.55459999846062
+          },
+          {
+            "id": "c02",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 25.618700001359684
+          },
+          {
+            "id": "c03",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 38.77869999996619
+          },
+          {
+            "id": "c04",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 45.74270000011893
+          },
+          {
+            "id": "c05",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 20.980699999199715
+          },
+          {
+            "id": "c06",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 26.922599998215446
+          },
+          {
+            "id": "c07",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 15.733399999589892
+          },
+          {
+            "id": "c08",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.13129999753437
+          },
+          {
+            "id": "c09",
+            "group": "termination_notice",
+            "page_rank": 2,
+            "doc_rank": 2,
+            "ms": 31.320899997808738
+          },
+          {
+            "id": "c10",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 24.86270000008517
+          },
+          {
+            "id": "c11",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.283999999752268
+          },
+          {
+            "id": "c12",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.527099999104394
+          },
+          {
+            "id": "c13",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 8.880500001396285
+          },
+          {
+            "id": "c14",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 8.951400002843002
+          },
+          {
+            "id": "c15",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.139800000411924
+          },
+          {
+            "id": "c16",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.076300000742776
+          },
+          {
+            "id": "c17",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 18.35429999846383
+          },
+          {
+            "id": "c18",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.861000002274523
+          },
+          {
+            "id": "c19",
+            "group": "payment_terms",
+            "page_rank": 4,
+            "doc_rank": 1,
+            "ms": 18.89899999878253
+          },
+          {
+            "id": "c20",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.723499999992782
+          },
+          {
+            "id": "c21",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 21.870999997190665
+          },
+          {
+            "id": "c22",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 29.801700002280995
+          },
+          {
+            "id": "c23",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 28.660299998591654
+          },
+          {
+            "id": "c24",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 17.26810000036494
+          },
+          {
+            "id": "c25",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 20.806900000025053
+          },
+          {
+            "id": "c26",
+            "group": "payment_terms",
+            "page_rank": 7,
+            "doc_rank": 1,
+            "ms": 18.2862000001478
+          },
+          {
+            "id": "c27",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 17.57739999811747
+          },
+          {
+            "id": "c28",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 15.673199999582721
+          },
+          {
+            "id": "c29",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.455899999418762
+          },
+          {
+            "id": "c30",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 24.759199997788528
+          },
+          {
+            "id": "c31",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 14.187299999321112
+          },
+          {
+            "id": "c32",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 13.238300001830794
+          },
+          {
+            "id": "c33",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.114400000224123
+          },
+          {
+            "id": "c34",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 25.639799998316448
+          },
+          {
+            "id": "c35",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 22.681200000079116
+          }
+        ]
+      },
+      "hybrid_rerank": {
+        "mode": "hybrid_rerank",
+        "n": 35,
+        "recall@5": 1.0,
+        "mrr@10": 1.0,
+        "doc_recall@5": 1.0,
+        "p50_ms": 1457.9809999995632,
+        "p95_ms": 1550.2866700000595,
+        "by_group": {
+          "auto_renewal": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "governing_law": {
+            "n": 5,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "late_fee": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "liability_cap": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "payment_terms": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "termination_notice": {
+            "n": 6,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          }
+        },
+        "rows": [
+          {
+            "id": "c01",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1566.3949999980105
+          },
+          {
+            "id": "c02",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1433.7885999993887
+          },
+          {
+            "id": "c03",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1587.861600000906
+          },
+          {
+            "id": "c04",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1434.8548000016308
+          },
+          {
+            "id": "c05",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1457.9809999995632
+          },
+          {
+            "id": "c06",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1477.5133000002825
+          },
+          {
+            "id": "c07",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1466.5090999988024
+          },
+          {
+            "id": "c08",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1448.024000001169
+          },
+          {
+            "id": "c09",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1458.329999997659
+          },
+          {
+            "id": "c10",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1521.4553999976488
+          },
+          {
+            "id": "c11",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1493.4033999998064
+          },
+          {
+            "id": "c12",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1346.7540000019653
+          },
+          {
+            "id": "c13",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1395.4273000017565
+          },
+          {
+            "id": "c14",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1413.112899997941
+          },
+          {
+            "id": "c15",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1543.3831000009377
+          },
+          {
+            "id": "c16",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1453.7679999993998
+          },
+          {
+            "id": "c17",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1404.7097000002395
+          },
+          {
+            "id": "c18",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1478.9663000010478
+          },
+          {
+            "id": "c19",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1381.247400000575
+          },
+          {
+            "id": "c20",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1482.3163000000932
+          },
+          {
+            "id": "c21",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1449.2397000030905
+          },
+          {
+            "id": "c22",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1439.2028000002028
+          },
+          {
+            "id": "c23",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1385.6555000020307
+          },
+          {
+            "id": "c24",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1483.1209000003582
+          },
+          {
+            "id": "c25",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1440.5507000010402
+          },
+          {
+            "id": "c26",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1367.6500000001397
+          },
+          {
+            "id": "c27",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1466.2032999985968
+          },
+          {
+            "id": "c28",
+            "group": "governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1485.7013000000734
+          },
+          {
+            "id": "c29",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1388.3483999998134
+          },
+          {
+            "id": "c30",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1486.6274999985762
+          },
+          {
+            "id": "c31",
+            "group": "payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1540.2633999983664
+          },
+          {
+            "id": "c32",
+            "group": "termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1429.1365999997652
+          },
+          {
+            "id": "c33",
+            "group": "auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1343.9863000021433
+          },
+          {
+            "id": "c34",
+            "group": "liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1497.7006999979494
+          },
+          {
+            "id": "c35",
+            "group": "late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1493.5668999969494
+          }
+        ]
+      }
+    },
+    "hard": {
+      "vector": {
+        "mode": "vector",
+        "n": 60,
+        "recall@5": 0.8166666666666667,
+        "mrr@10": 0.7037698412698412,
+        "doc_recall@5": 0.8166666666666667,
+        "p50_ms": 12.733949999528704,
+        "p95_ms": 65.4640399990967,
+        "by_group": {
+          "invoice_fields": {
+            "n": 16,
+            "recall@5": 1.0,
+            "mrr@10": 0.9114583333333334
+          },
+          "invoice_id": {
+            "n": 20,
+            "recall@5": 0.5,
+            "mrr@10": 0.325
+          },
+          "paraphrase/auto_renewal": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.875
+          },
+          "paraphrase/governing_law": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.75
+          },
+          "paraphrase/late_fee": {
+            "n": 4,
+            "recall@5": 0.75,
+            "mrr@10": 0.7857142857142857
+          },
+          "paraphrase/liability_cap": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "paraphrase/payment_terms": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "paraphrase/termination_notice": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.875
+          }
+        },
+        "rows": [
+          {
+            "id": "hi01",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 62.0959000007133
+          },
+          {
+            "id": "hi02",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 76.11259999976028
+          },
+          {
+            "id": "hi03",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 73.11399999889545
+          },
+          {
+            "id": "hi04",
+            "group": "invoice_id",
+            "page_rank": 5,
+            "doc_rank": 5,
+            "ms": 62.716299999010516
+          },
+          {
+            "id": "hi05",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 53.45630000010715
+          },
+          {
+            "id": "hi06",
+            "group": "invoice_id",
+            "page_rank": 4,
+            "doc_rank": 4,
+            "ms": 54.05350000000908
+          },
+          {
+            "id": "hi07",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 47.22319999928004
+          },
+          {
+            "id": "hi08",
+            "group": "invoice_id",
+            "page_rank": 4,
+            "doc_rank": 4,
+            "ms": 52.48990000109188
+          },
+          {
+            "id": "hi09",
+            "group": "invoice_id",
+            "page_rank": 10,
+            "doc_rank": 10,
+            "ms": 43.06019999785349
+          },
+          {
+            "id": "hi10",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 50.84979999810457
+          },
+          {
+            "id": "hi11",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 65.13479999921401
+          },
+          {
+            "id": "hi12",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 71.71959999686806
+          },
+          {
+            "id": "hi13",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 42.89760000028764
+          },
+          {
+            "id": "hi14",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.780500001099426
+          },
+          {
+            "id": "hi15",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 11.63549999910174
+          },
+          {
+            "id": "hi16",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 11.672000000544358
+          },
+          {
+            "id": "hi17",
+            "group": "invoice_id",
+            "page_rank": 2,
+            "doc_rank": 2,
+            "ms": 10.38170000174432
+          },
+          {
+            "id": "hi18",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.353100002452265
+          },
+          {
+            "id": "hi19",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 12.462299997423543
+          },
+          {
+            "id": "hi20",
+            "group": "invoice_id",
+            "page_rank": 5,
+            "doc_rank": 5,
+            "ms": 10.502100001758663
+          },
+          {
+            "id": "hf01",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.852899999008514
+          },
+          {
+            "id": "hf02",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 14.125599998806138
+          },
+          {
+            "id": "hf03",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 15.272300002834527
+          },
+          {
+            "id": "hf04",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 17.718900002364535
+          },
+          {
+            "id": "hf05",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 14.134900000499329
+          },
+          {
+            "id": "hf06",
+            "group": "invoice_fields",
+            "page_rank": 3,
+            "doc_rank": 3,
+            "ms": 12.346999999863328
+          },
+          {
+            "id": "hf07",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.435399999958463
+          },
+          {
+            "id": "hf08",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.687399997957982
+          },
+          {
+            "id": "hf09",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.787499999831198
+          },
+          {
+            "id": "hf10",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 13.919700002588797
+          },
+          {
+            "id": "hf11",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 12.388000002829358
+          },
+          {
+            "id": "hf12",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.290900001768023
+          },
+          {
+            "id": "hf13",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.707000001479173
+          },
+          {
+            "id": "hf14",
+            "group": "invoice_fields",
+            "page_rank": 4,
+            "doc_rank": 4,
+            "ms": 10.862600000109524
+          },
+          {
+            "id": "hf15",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 17.57010000073933
+          },
+          {
+            "id": "hf16",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.134900003526127
+          },
+          {
+            "id": "hp01",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 13.139500002580462
+          },
+          {
+            "id": "hp02",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.47819999823696
+          },
+          {
+            "id": "hp03",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.075599999254337
+          },
+          {
+            "id": "hp04",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.709499998483807
+          },
+          {
+            "id": "hp05",
+            "group": "paraphrase/late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.176200001500547
+          },
+          {
+            "id": "hp06",
+            "group": "paraphrase/late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.92349999837461
+          },
+          {
+            "id": "hp07",
+            "group": "paraphrase/late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 13.999499999044929
+          },
+          {
+            "id": "hp08",
+            "group": "paraphrase/late_fee",
+            "page_rank": 7,
+            "doc_rank": 7,
+            "ms": 15.880800001468742
+          },
+          {
+            "id": "hp09",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 11.74410000021453
+          },
+          {
+            "id": "hp10",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 14.054299997951603
+          },
+          {
+            "id": "hp11",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 14.624799998273375
+          },
+          {
+            "id": "hp12",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 14.870400002109818
+          },
+          {
+            "id": "hp13",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 21.626599998853635
+          },
+          {
+            "id": "hp14",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.72310000017751
+          },
+          {
+            "id": "hp15",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 9.821200001169927
+          },
+          {
+            "id": "hp16",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.848400000919355
+          },
+          {
+            "id": "hp17",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 10.12560000162921
+          },
+          {
+            "id": "hp18",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 9.929100000590552
+          },
+          {
+            "id": "hp19",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 6.930200001079356
+          },
+          {
+            "id": "hp20",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 6.354500001179986
+          },
+          {
+            "id": "hp21",
+            "group": "paraphrase/governing_law",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 43.22210000100313
+          },
+          {
+            "id": "hp22",
+            "group": "paraphrase/governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 32.57320000193431
+          },
+          {
+            "id": "hp23",
+            "group": "paraphrase/governing_law",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 11.276900000666501
+          },
+          {
+            "id": "hp24",
+            "group": "paraphrase/governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 8.525299999746494
+          }
+        ]
+      },
+      "hybrid": {
+        "mode": "hybrid",
+        "n": 60,
+        "recall@5": 0.9333333333333333,
+        "mrr@10": 0.7325,
+        "doc_recall@5": 0.9666666666666667,
+        "p50_ms": 35.76154999973369,
+        "p95_ms": 59.21205999893573,
+        "by_group": {
+          "invoice_fields": {
+            "n": 16,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "invoice_id": {
+            "n": 20,
+            "recall@5": 1.0,
+            "mrr@10": 0.8416666666666666
+          },
+          "paraphrase/auto_renewal": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.35
+          },
+          "paraphrase/governing_law": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.5208333333333334
+          },
+          "paraphrase/late_fee": {
+            "n": 4,
+            "recall@5": 0.5,
+            "mrr@10": 0.35833333333333334
+          },
+          "paraphrase/liability_cap": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.5625
+          },
+          "paraphrase/payment_terms": {
+            "n": 4,
+            "recall@5": 0.5,
+            "mrr@10": 0.3125
+          },
+          "paraphrase/termination_notice": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.675
+          }
+        },
+        "rows": [
+          {
+            "id": "hi01",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 56.40560000028927
+          },
+          {
+            "id": "hi02",
+            "group": "invoice_id",
+            "page_rank": 2,
+            "doc_rank": 2,
+            "ms": 52.76429999867105
+          },
+          {
+            "id": "hi03",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 24.74670000083279
+          },
+          {
+            "id": "hi04",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 36.506299999018665
+          },
+          {
+            "id": "hi05",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 55.10379999759607
+          },
+          {
+            "id": "hi06",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 46.252000000094995
+          },
+          {
+            "id": "hi07",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 30.97649999835994
+          },
+          {
+            "id": "hi08",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 28.047200001310557
+          },
+          {
+            "id": "hi09",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 17.034599997714395
+          },
+          {
+            "id": "hi10",
+            "group": "invoice_id",
+            "page_rank": 2,
+            "doc_rank": 2,
+            "ms": 13.811299999360926
+          },
+          {
+            "id": "hi11",
+            "group": "invoice_id",
+            "page_rank": 2,
+            "doc_rank": 2,
+            "ms": 22.31749999918975
+          },
+          {
+            "id": "hi12",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 17.943700000614626
+          },
+          {
+            "id": "hi13",
+            "group": "invoice_id",
+            "page_rank": 2,
+            "doc_rank": 2,
+            "ms": 18.936500000563683
+          },
+          {
+            "id": "hi14",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 22.74060000127065
+          },
+          {
+            "id": "hi15",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 19.508700002916157
+          },
+          {
+            "id": "hi16",
+            "group": "invoice_id",
+            "page_rank": 2,
+            "doc_rank": 2,
+            "ms": 15.510499997617444
+          },
+          {
+            "id": "hi17",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 40.66129999773693
+          },
+          {
+            "id": "hi18",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 54.415399998106295
+          },
+          {
+            "id": "hi19",
+            "group": "invoice_id",
+            "page_rank": 3,
+            "doc_rank": 3,
+            "ms": 50.57460000170977
+          },
+          {
+            "id": "hi20",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 61.557699998957105
+          },
+          {
+            "id": "hf01",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 52.41819999719155
+          },
+          {
+            "id": "hf02",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 52.21890000029816
+          },
+          {
+            "id": "hf03",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 41.69039999760571
+          },
+          {
+            "id": "hf04",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 25.325200000224868
+          },
+          {
+            "id": "hf05",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 21.103399998537498
+          },
+          {
+            "id": "hf06",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 29.088800001773052
+          },
+          {
+            "id": "hf07",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 24.696799999219365
+          },
+          {
+            "id": "hf08",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 27.392300002247794
+          },
+          {
+            "id": "hf09",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 59.769899999082554
+          },
+          {
+            "id": "hf10",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 59.182699998928
+          },
+          {
+            "id": "hf11",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 44.398300000466406
+          },
+          {
+            "id": "hf12",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 36.73999999955413
+          },
+          {
+            "id": "hf13",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 60.246500001085224
+          },
+          {
+            "id": "hf14",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 56.31550000180141
+          },
+          {
+            "id": "hf15",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 49.385000002075685
+          },
+          {
+            "id": "hf16",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 35.53950000059558
+          },
+          {
+            "id": "hp01",
+            "group": "paraphrase/payment_terms",
+            "page_rank": null,
+            "doc_rank": 2,
+            "ms": 35.12929999851622
+          },
+          {
+            "id": "hp02",
+            "group": "paraphrase/payment_terms",
+            "page_rank": null,
+            "doc_rank": 5,
+            "ms": 35.92859999844222
+          },
+          {
+            "id": "hp03",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 4,
+            "doc_rank": 1,
+            "ms": 35.59450000102515
+          },
+          {
+            "id": "hp04",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 30.464200001006247
+          },
+          {
+            "id": "hp05",
+            "group": "paraphrase/late_fee",
+            "page_rank": 10,
+            "doc_rank": 8,
+            "ms": 44.001800000842195
+          },
+          {
+            "id": "hp06",
+            "group": "paraphrase/late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 41.110899997875094
+          },
+          {
+            "id": "hp07",
+            "group": "paraphrase/late_fee",
+            "page_rank": 3,
+            "doc_rank": 1,
+            "ms": 26.280600002792198
+          },
+          {
+            "id": "hp08",
+            "group": "paraphrase/late_fee",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 38.78470000199741
+          },
+          {
+            "id": "hp09",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 5,
+            "doc_rank": 1,
+            "ms": 29.26149999984773
+          },
+          {
+            "id": "hp10",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 41.401200000109384
+          },
+          {
+            "id": "hp11",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 46.426000000792556
+          },
+          {
+            "id": "hp12",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 27.967600002739346
+          },
+          {
+            "id": "hp13",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 5,
+            "doc_rank": 1,
+            "ms": 32.00179999839747
+          },
+          {
+            "id": "hp14",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 5,
+            "doc_rank": 1,
+            "ms": 38.55710000061663
+          },
+          {
+            "id": "hp15",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 37.251500001730165
+          },
+          {
+            "id": "hp16",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 38.214100000914186
+          },
+          {
+            "id": "hp17",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 46.87970000304631
+          },
+          {
+            "id": "hp18",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 38.61089999918477
+          },
+          {
+            "id": "hp19",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 4,
+            "doc_rank": 1,
+            "ms": 21.8313000004855
+          },
+          {
+            "id": "hp20",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 22.969199999351986
+          },
+          {
+            "id": "hp21",
+            "group": "paraphrase/governing_law",
+            "page_rank": 3,
+            "doc_rank": 1,
+            "ms": 34.957899999426445
+          },
+          {
+            "id": "hp22",
+            "group": "paraphrase/governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 24.675399999978254
+          },
+          {
+            "id": "hp23",
+            "group": "paraphrase/governing_law",
+            "page_rank": 4,
+            "doc_rank": 1,
+            "ms": 33.88040000209003
+          },
+          {
+            "id": "hp24",
+            "group": "paraphrase/governing_law",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 29.196600000432227
+          }
+        ]
+      },
+      "hybrid_rerank": {
+        "mode": "hybrid_rerank",
+        "n": 60,
+        "recall@5": 0.7833333333333333,
+        "mrr@10": 0.7140674603174604,
+        "doc_recall@5": 0.8,
+        "p50_ms": 1372.6030999987415,
+        "p95_ms": 1585.0323799992111,
+        "by_group": {
+          "invoice_fields": {
+            "n": 16,
+            "recall@5": 0.8125,
+            "mrr@10": 0.7866071428571428
+          },
+          "invoice_id": {
+            "n": 20,
+            "recall@5": 0.7,
+            "mrr@10": 0.7162499999999999
+          },
+          "paraphrase/auto_renewal": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.7083333333333334
+          },
+          "paraphrase/governing_law": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 0.75
+          },
+          "paraphrase/late_fee": {
+            "n": 4,
+            "recall@5": 0.5,
+            "mrr@10": 0.40625
+          },
+          "paraphrase/liability_cap": {
+            "n": 4,
+            "recall@5": 0.75,
+            "mrr@10": 0.46875
+          },
+          "paraphrase/payment_terms": {
+            "n": 4,
+            "recall@5": 0.75,
+            "mrr@10": 0.65
+          },
+          "paraphrase/termination_notice": {
+            "n": 4,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          }
+        },
+        "rows": [
+          {
+            "id": "hi01",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1529.5049000014842
+          },
+          {
+            "id": "hi02",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1541.6615000031015
+          },
+          {
+            "id": "hi03",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1303.544200000033
+          },
+          {
+            "id": "hi04",
+            "group": "invoice_id",
+            "page_rank": 10,
+            "doc_rank": 10,
+            "ms": 1169.8800999984087
+          },
+          {
+            "id": "hi05",
+            "group": "invoice_id",
+            "page_rank": 8,
+            "doc_rank": 8,
+            "ms": 1273.1542000001355
+          },
+          {
+            "id": "hi06",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 1237.9798000001756
+          },
+          {
+            "id": "hi07",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1258.1785000002128
+          },
+          {
+            "id": "hi08",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1300.0006999973266
+          },
+          {
+            "id": "hi09",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1218.2834000013827
+          },
+          {
+            "id": "hi10",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1260.7945000017935
+          },
+          {
+            "id": "hi11",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1293.2598999977927
+          },
+          {
+            "id": "hi12",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1228.718200000003
+          },
+          {
+            "id": "hi13",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1269.2890999969677
+          },
+          {
+            "id": "hi14",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 1269.8839000004227
+          },
+          {
+            "id": "hi15",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1266.7365000015707
+          },
+          {
+            "id": "hi16",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1255.077199999505
+          },
+          {
+            "id": "hi17",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1198.283799996716
+          },
+          {
+            "id": "hi18",
+            "group": "invoice_id",
+            "page_rank": null,
+            "doc_rank": null,
+            "ms": 1270.4830000002403
+          },
+          {
+            "id": "hi19",
+            "group": "invoice_id",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1253.3956000006583
+          },
+          {
+            "id": "hi20",
+            "group": "invoice_id",
+            "page_rank": 10,
+            "doc_rank": 10,
+            "ms": 1183.8858999981312
+          },
+          {
+            "id": "hf01",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1242.6248000010673
+          },
+          {
+            "id": "hf02",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1535.7211000009556
+          },
+          {
+            "id": "hf03",
+            "group": "invoice_fields",
+            "page_rank": 7,
+            "doc_rank": 7,
+            "ms": 1333.4056999992754
+          },
+          {
+            "id": "hf04",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1450.956299999234
+          },
+          {
+            "id": "hf05",
+            "group": "invoice_fields",
+            "page_rank": 5,
+            "doc_rank": 5,
+            "ms": 1268.1609999999637
+          },
+          {
+            "id": "hf06",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1219.0773000002082
+          },
+          {
+            "id": "hf07",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1278.4614999982296
+          },
+          {
+            "id": "hf08",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1506.3780000018596
+          },
+          {
+            "id": "hf09",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1627.4069999999483
+          },
+          {
+            "id": "hf10",
+            "group": "invoice_fields",
+            "page_rank": 10,
+            "doc_rank": 10,
+            "ms": 1500.9553000018059
+          },
+          {
+            "id": "hf11",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1267.529900000227
+          },
+          {
+            "id": "hf12",
+            "group": "invoice_fields",
+            "page_rank": 7,
+            "doc_rank": 7,
+            "ms": 1377.8705000004265
+          },
+          {
+            "id": "hf13",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1206.8847000009555
+          },
+          {
+            "id": "hf14",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1306.8701999982295
+          },
+          {
+            "id": "hf15",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1207.0375000002969
+          },
+          {
+            "id": "hf16",
+            "group": "invoice_fields",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1318.1255999988934
+          },
+          {
+            "id": "hp01",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 1584.1509999991104
+          },
+          {
+            "id": "hp02",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1492.4037999990105
+          },
+          {
+            "id": "hp03",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 10,
+            "doc_rank": 1,
+            "ms": 1479.6258000023954
+          },
+          {
+            "id": "hp04",
+            "group": "paraphrase/payment_terms",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1442.4486999996589
+          },
+          {
+            "id": "hp05",
+            "group": "paraphrase/late_fee",
+            "page_rank": 8,
+            "doc_rank": 6,
+            "ms": 1493.167299999186
+          },
+          {
+            "id": "hp06",
+            "group": "paraphrase/late_fee",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 1520.7374999990861
+          },
+          {
+            "id": "hp07",
+            "group": "paraphrase/late_fee",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1472.1467000017583
+          },
+          {
+            "id": "hp08",
+            "group": "paraphrase/late_fee",
+            "page_rank": null,
+            "doc_rank": 7,
+            "ms": 1458.5700999996334
+          },
+          {
+            "id": "hp09",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1449.6351000016148
+          },
+          {
+            "id": "hp10",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1420.3875000021071
+          },
+          {
+            "id": "hp11",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1476.5306999979657
+          },
+          {
+            "id": "hp12",
+            "group": "paraphrase/termination_notice",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1574.5611999991524
+          },
+          {
+            "id": "hp13",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1601.7786000011256
+          },
+          {
+            "id": "hp14",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 3,
+            "doc_rank": 1,
+            "ms": 1627.8354999994917
+          },
+          {
+            "id": "hp15",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 1548.709400001826
+          },
+          {
+            "id": "hp16",
+            "group": "paraphrase/auto_renewal",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1451.1691999978211
+          },
+          {
+            "id": "hp17",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 4,
+            "doc_rank": 4,
+            "ms": 1367.3356999970565
+          },
+          {
+            "id": "hp18",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 1470.7374999998137
+          },
+          {
+            "id": "hp19",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 8,
+            "doc_rank": 8,
+            "ms": 1445.6112000007124
+          },
+          {
+            "id": "hp20",
+            "group": "paraphrase/liability_cap",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1465.7542999993893
+          },
+          {
+            "id": "hp21",
+            "group": "paraphrase/governing_law",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 1357.2586000009323
+          },
+          {
+            "id": "hp22",
+            "group": "paraphrase/governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1481.0639999996056
+          },
+          {
+            "id": "hp23",
+            "group": "paraphrase/governing_law",
+            "page_rank": 1,
+            "doc_rank": 1,
+            "ms": 1423.4455000005255
+          },
+          {
+            "id": "hp24",
+            "group": "paraphrase/governing_law",
+            "page_rank": 2,
+            "doc_rank": 1,
+            "ms": 1505.336599999282
+          }
+        ]
+      }
+    }
+  }
+}
