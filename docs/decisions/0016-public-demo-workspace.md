@@ -1,0 +1,6 @@
+# 0016: Public demo workspace (read-only, per-visit user, daily cap)
+- **Context:** recruiters should see the product on a pre-loaded corpus without an invite code, but every question spends the owner's free Gemini quota and signup is gated for that reason (M9).
+- **Decision:** `POST /auth/demo` creates a fresh user inside the demo org (the account named by `DEMO_ACCOUNT_EMAIL`, which loaded the synthetic corpus) and returns a 2-hour token with `demo: true`. Demo tokens cannot upload (403) and only see their own conversations (queries filter on `user_id`). Questions are capped across all visitors per 24 hours (`DEMO_DAILY_CHAT_CAP`), counted from the database so restarts do not reset it; at the cap the API answers 429 with a plain message.
+- **Alternatives:** one shared account with public credentials (shared chat history, no cap); invite code only (friction, no pre-loaded corpus); a separate demo deployment (second bill, second host).
+- **Why a user per visit:** isolation of conversations with no new tables; the org is the unit that holds documents, the user is the unit that holds chats.
+- **Limits:** one user row per visit, bounded by the per-IP limiter (no pruning job yet); the demo org's rate limits are shared by all visitors; the cap counts the owner's own questions in that org too.
