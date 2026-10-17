@@ -19,3 +19,5 @@ graphify-out/cache/
 evals/.cache/
 .coverage
 deploy/aws/state.env
+# deploy bundle made by `git archive` for CloudShell upload
+*.tgz

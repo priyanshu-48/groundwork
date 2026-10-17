@@ -58,6 +58,9 @@
 | 2026-10-17 | First k6 warm-search p95 of 419 ms contradicted the 15 ms median | k6 `__ITER` is per-VU, so the cold phase covered only half the queries and the warm phase still had cache misses | Scenario-wide counter (`iterationInTest`); warm p95 became 24 ms | Check that a benchmark measures what its label says before quoting it |
 | 2026-10-17 | Shell scripts written from Windows had CRLF line endings (shellcheck: literal carriage return); they would fail on Linux | Windows editors and Python's `write_text` write CRLF; Git's autocrlf hides it until the file runs on Linux | Converted to LF; `.gitattributes` pins `*.sh` and `deploy/**` to `eol=lf` | Anything that runs on Linux needs an explicit line-ending rule, and a linter in the loop catches it |
 | 2026-10-17 | Smoke test failed 'request id header' against a working stack | nginx re-cases upstream headers (`X-Request-Id`), my check looked for `X-Request-ID` | Lower-case all header names before comparing | HTTP header names are case-insensitive; compare them that way |
+| 2026-10-17 | First deploy: api container unhealthy, `dependency failed to start`, nothing else in the output | Compose passes unset variables as empty strings; boto3 raises `Invalid endpoint:` for an empty `S3_ENDPOINT_URL`, so the API crashed at startup. The local dry run set real S3 values and could not catch it | S3 settings treat empty as unset (instance role is used); unit test with empty env | A rehearsal only covers the paths it exercises: test the production configuration shape (empty values), not just a working one |
+| 2026-10-17 | Preflight warned `t4g.small` was not allowed although it was in the printed list | The API separates names with tabs and newlines; my `case` matched spaces only | Normalise whitespace before matching | Check a parser against the real output, not an imagined one |
+| 2026-10-17 | CloudShell upload refused: file already exists | CloudShell never overwrites an uploaded file | Delete the old archive first (`rm -f`) or upload under a new name; added to the runbook | Document the unfriendly parts of the tool you ask users to use |
 
 ## AWS resources (M9)
 
@@ -65,9 +68,9 @@ Created by `deploy/aws/02-create-infra.sh`, removed by `99-teardown.sh`. Region 
 
 | Resource | Name / id | Created | Notes |
 |---|---|---|---|
-| S3 bucket | groundwork-<account>-ap-southeast-2 | not yet | private, lifecycle rules |
-| IAM role + profile | groundwork-ec2 | not yet | read /groundwork* params, one bucket |
-| Security group | groundwork-sg | not yet | 80/443 only |
-| EC2 | t4g.small | not yet | stop when not demoing |
-| Elastic IP | - | not yet | billed while allocated |
-| SSM parameters | /groundwork/* | not yet | secrets |
+| S3 bucket | groundwork-<account>-ap-southeast-2 | 2026-10-17 | private, encrypted, TLS-only; bundles 30 d, backups 14 d |
+| IAM role + profile | groundwork-ec2 | 2026-10-17 | read /groundwork* params, one bucket, SSM |
+| Security group | groundwork-sg (sg-03bb40ac6a05cd2cd) | 2026-10-17 | 80/443 only, no SSH |
+| EC2 | t4g.small, i-01156ae3f19254511 | 2026-10-17 | stop.sh when not demoing |
+| Elastic IP | 16.178.109.242 (16-178-109-242.sslip.io) | 2026-10-17 | billed while allocated, also when stopped |
+| SSM parameters | /groundwork/* | 2026-10-17 | JWT_SECRET, ADMIN_TOKEN, POSTGRES_PASSWORD, SIGNUP_CODE, GEMINI_API_KEY (values never recorded) |

@@ -16,7 +16,7 @@ On your laptop, after the commit you want to deploy:
 git archive --format=tar.gz -o groundwork.tgz HEAD
 ```
 
-In CloudShell: **Actions → Upload file** → `groundwork.tgz`, then:
+In CloudShell: delete any older archive first (`rm -f ~/groundwork.tgz`, CloudShell never overwrites an upload), then **Actions → Upload file** → `groundwork.tgz`, then:
 
 ```bash
 mkdir -p ~/groundwork && tar -xzf groundwork.tgz -C ~/groundwork && cd ~/groundwork
