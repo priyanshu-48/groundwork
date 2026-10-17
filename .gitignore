@@ -14,3 +14,4 @@ evals/corpus/
 .flashrank/
 evals/.cache/
 .coverage
+deploy/aws/state.env

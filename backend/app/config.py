@@ -68,6 +68,8 @@ class Settings(BaseSettings):
     # estimate (null), never a guessed price. Free tier is billed $0 whatever this says.
     model_prices: str = ""
     log_level: str = "INFO"
+    # Public demo guard: when set, signup must include this code (protects the Gemini free quota).
+    signup_code: str = ""
 
 
 def model_chain_names(s: Settings) -> list[str]:

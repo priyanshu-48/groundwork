@@ -166,14 +166,14 @@ def test_chat_is_unavailable_without_a_model_but_the_rest_still_works(client: Te
     conv = new_conv(client, h)
     client.app.state.agent_deps = None  # type: ignore[attr-defined]
     assert chat(client, h, conv).status_code == 503
-    assert client.get("/meta").json() == {"chat": "unavailable"}
+    assert client.get("/meta").json()["chat"] == "unavailable"
     assert client.get("/documents", headers=h).status_code == 200  # uploads and listing unaffected
 
 
 def test_meta_says_honestly_what_is_answering(client: TestClient) -> None:
-    assert client.get("/meta").json() == {"chat": "demo"}  # AI_PROVIDER=fake in tests
+    assert client.get("/meta").json()["chat"] == "demo"  # AI_PROVIDER=fake in tests
     set_llm(client, FakeLLM([]))
-    assert client.get("/meta").json() == {"chat": "model"}
+    assert client.get("/meta").json()["chat"] == "model"
 
 
 # --------------------------------------------------------------- conversations API

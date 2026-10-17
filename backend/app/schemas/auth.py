@@ -15,6 +15,7 @@ class _EmailIn(BaseModel):
 class SignupIn(_EmailIn):
     org_name: str = Field(min_length=1, max_length=100)
     password: str = Field(min_length=10, max_length=128)
+    invite_code: str | None = Field(default=None, max_length=100)
 
 
 class LoginIn(_EmailIn):

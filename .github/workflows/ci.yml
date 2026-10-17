@@ -24,6 +24,21 @@ jobs:
       - run: uv run mypy app
       - run: uv run pytest --cov=app --cov-report=term
 
+  deploy-scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: shellcheck -x -S warning deploy/aws/*.sh deploy/common/*.sh
+      - name: Prod compose file is valid
+        run: |
+          {
+            echo POSTGRES_PASSWORD=x
+            echo JWT_SECRET=x
+            echo S3_BUCKET=b
+            echo SITE_HOST=localhost
+          } > /tmp/ci.env
+          docker compose --env-file /tmp/ci.env -f docker-compose.prod.yml config -q
+
   frontend:
     runs-on: ubuntu-latest
     defaults:

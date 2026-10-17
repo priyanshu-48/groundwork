@@ -1,4 +1,5 @@
 import asyncio
+import hmac
 import uuid
 from datetime import timedelta
 
@@ -37,6 +38,11 @@ async def signup(
 ) -> TokenOut:
     if (wait := limits.signup.check(client_ip(request))) is not None:
         raise too_many(wait, "sign-up attempts")
+    required = get_settings().signup_code
+    # Checked before touching the database, so a wrong code reveals nothing (not even whether the
+    # email is registered) and costs no password hashing.
+    if required and not hmac.compare_digest(body.invite_code or "", required):
+        raise HTTPException(403, "A valid invite code is required to create a workspace")
     pw_hash = await asyncio.to_thread(hash_password, body.password)  # CPU-heavy: off the loop
     try:
         user = await users.create_org_with_user(session, body.org_name, body.email, pw_hash)
