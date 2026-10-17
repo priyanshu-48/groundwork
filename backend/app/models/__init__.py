@@ -1,6 +1,7 @@
 from app.models.agent import AgentRun, AgentStep, Conversation, Message
 from app.models.base import Base
 from app.models.chunk import Chunk
+from app.models.contract import Contract
 from app.models.document import Document
 from app.models.invoice import Invoice
 from app.models.job import Job
@@ -12,6 +13,7 @@ __all__ = [
     "AgentStep",
     "Base",
     "Chunk",
+    "Contract",
     "Conversation",
     "Document",
     "Invoice",

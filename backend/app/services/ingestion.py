@@ -11,11 +11,14 @@ import uuid
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.contract import Contract
 from app.models.document import DocKind, DocStatus, Document
 from app.models.invoice import Invoice
 from app.repositories import chunks as chunks_repo
+from app.repositories import contracts as contracts_repo
 from app.repositories import invoices as invoices_repo
 from app.services.chunking import chunk_pages
+from app.services.contract_extraction import ContractFields, review_contract
 from app.services.extraction import InvoiceFields, review_reason
 from app.services.parsing import PermanentError, extract_pages
 from app.services.storage import get_bytes
@@ -43,13 +46,19 @@ async def ingest_document(deps: Deps, document_id: uuid.UUID) -> None:
     vectors = await deps.embedder.embed([c.content for c in chunks], "document")
 
     fields: InvoiceFields | None = None
-    if kind == DocKind.invoice and s.extraction_enabled:
-        fields = await deps.extractor.extract("\n".join(pages))
+    contract_fields: ContractFields | None = None
+    if s.extraction_enabled:
+        if kind == DocKind.invoice:
+            fields = await deps.extractor.extract("\n".join(pages))
+        elif kind == DocKind.contract:
+            contract_fields = await deps.extractor.extract_contract("\n".join(pages))
 
     async with deps.maker.begin() as session:  # the only write: all or nothing
         await chunks_repo.replace_for_document(session, org_id, document_id, chunks, vectors)
         if fields is not None:
             await _store_invoice(session, org_id, document_id, fields)
+        if contract_fields is not None:
+            await _store_contract(session, org_id, document_id, contract_fields)
         await session.execute(
             update(Document)
             .where(Document.id == document_id)
@@ -85,6 +94,36 @@ async def _store_invoice(
             review_reason=reason,
         )
     )
+
+
+async def _store_contract(
+    session: AsyncSession, org_id: uuid.UUID, document_id: uuid.UUID, f: ContractFields
+) -> None:
+    """Replace this document's structured contract row; doubtful extractions are kept, flagged."""
+    await contracts_repo.delete_for_document(session, org_id, document_id)
+    reason = review_contract(f)
+    session.add(
+        Contract(
+            org_id=org_id,
+            document_id=document_id,
+            vendor=f.vendor,
+            payment_terms_days=f.payment_terms_days,
+            late_fee_percent=f.late_fee_percent,
+            termination_notice_days=f.termination_notice_days,
+            auto_renewal=f.auto_renewal,
+            liability_cap_amount=f.liability_cap_amount,
+            liability_cap_currency=f.liability_cap_currency,
+            governing_law=f.governing_law,
+            needs_review=reason is not None,
+            review_reason=reason,
+        )
+    )
+
+
+async def store_contract(
+    session: AsyncSession, org_id: uuid.UUID, document_id: uuid.UUID, f: ContractFields
+) -> None:
+    await _store_contract(session, org_id, document_id, f)
 
 
 async def store_invoice(

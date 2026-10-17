@@ -2,10 +2,12 @@ import uuid
 from datetime import date
 from typing import Any
 
-from sqlalchemy import delete, desc, func, or_, select
+from sqlalchemy import delete, desc, exists, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.contract import Contract
 from app.models.invoice import Invoice
+from app.repositories.util import like_pattern
 
 
 async def delete_for_document(
@@ -28,11 +30,9 @@ async def find_trusted(
     return (await session.execute(stmt)).scalar_one_or_none()
 
 
-def _like(v: str) -> str:
-    """Contains-match pattern with LIKE wildcards in the user's text neutralised."""
-    esc = "\\"
-    escaped = v.strip().replace(esc, esc * 2).replace("%", esc + "%").replace("_", esc + "_")
-    return f"%{escaped}%"
+# Vendors group case- and whitespace-insensitively: an extractor that writes "ACME Labs" on one
+# invoice and "Acme Labs " on another must not split one vendor's total in two.
+_vendor_key = func.lower(func.trim(Invoice.vendor))
 
 
 async def aggregate(
@@ -45,6 +45,7 @@ async def aggregate(
     date_to: date | None,
     group_by_vendor: bool,
     limit: int,
+    payment_terms_days: int | None = None,
 ) -> list[dict[str, Any]]:
     """Parameterised invoice aggregates for the agent. The LLM chooses values, never SQL.
 
@@ -52,7 +53,17 @@ async def aggregate(
     leak into a sum. Sums are grouped by currency because adding EUR to USD is meaningless."""
     conds: list[Any] = [Invoice.org_id == org_id, Invoice.needs_review.is_(False)]
     if vendors:
-        conds.append(or_(*[Invoice.vendor.ilike(_like(v), escape="\\") for v in vendors]))
+        conds.append(or_(*[Invoice.vendor.ilike(like_pattern(v), escape="\\") for v in vendors]))
+    if payment_terms_days is not None:
+        # EXISTS (not JOIN) so a vendor with two contract documents cannot double-count invoices
+        conds.append(
+            exists().where(
+                Contract.org_id == Invoice.org_id,
+                func.lower(func.trim(Contract.vendor)) == func.lower(func.trim(Invoice.vendor)),
+                Contract.needs_review.is_(False),
+                Contract.payment_terms_days == payment_terms_days,
+            )
+        )
     if date_from:
         conds.append(Invoice.issue_date >= date_from)
     if date_to:
@@ -81,15 +92,15 @@ async def aggregate(
         ]
         group: list[Any] = [Invoice.currency]
         if group_by_vendor:
-            cols.insert(0, Invoice.vendor)
-            group.insert(0, Invoice.vendor)
+            cols.insert(0, func.min(Invoice.vendor).label("vendor"))
+            group.insert(0, _vendor_key)
         stmt = select(*cols).where(*conds).group_by(*group).order_by(desc("total")).limit(limit)
     elif aggregate == "count":
         cols = [func.count().label("invoice_count")]
         group = []
         if group_by_vendor:
-            cols.insert(0, Invoice.vendor)
-            group.append(Invoice.vendor)
+            cols.insert(0, func.min(Invoice.vendor).label("vendor"))
+            group.append(_vendor_key)
         stmt = select(*cols).where(*conds)
         if group:
             stmt = stmt.group_by(*group).order_by(desc("invoice_count")).limit(limit)

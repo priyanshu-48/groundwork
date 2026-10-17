@@ -46,10 +46,15 @@ def test_every_migration_applies_from_scratch_and_the_agent_one_round_trips(
     try:
         command.upgrade(cfg, "head")
         assert AGENT_TABLES <= asyncio.run(_tables(scratch))
+        assert "contracts" in asyncio.run(_tables(scratch))
+        command.downgrade(cfg, "0006")
+        tables = asyncio.run(_tables(scratch))
+        assert "contracts" not in tables and AGENT_TABLES <= tables
         command.downgrade(cfg, "0005")
         assert not AGENT_TABLES & asyncio.run(_tables(scratch))
         command.upgrade(cfg, "head")
-        assert AGENT_TABLES <= asyncio.run(_tables(scratch))
+        tables = asyncio.run(_tables(scratch))
+        assert AGENT_TABLES <= tables and "contracts" in tables
     finally:
         os.environ["DATABASE_URL"] = previous
         get_settings.cache_clear()

@@ -28,6 +28,7 @@ from app.agent.llm import ToolSpec
 from app.config import Settings
 from app.models.document import DocKind
 from app.repositories import chunks as chunks_repo
+from app.repositories import contracts as contracts_repo
 from app.repositories import invoices as invoices_repo
 from app.repositories.chunks import Hit
 from app.services.embeddings import EmbeddingError, EmbeddingProvider
@@ -92,6 +93,7 @@ class QueryInvoicesArgs(_Args):
     )
     date_from: date | None = None
     date_to: date | None = None
+    payment_terms_days: int | None = Field(None, ge=1, le=365)
     aggregate: Literal["sum", "count", "list"]
     group_by_vendor: bool = False
     limit: int = Field(20, ge=1, le=50)
@@ -105,6 +107,14 @@ class QueryInvoicesArgs(_Args):
         if self.aggregate == "list" and self.group_by_vendor:
             raise ValueError("group_by_vendor works with sum or count, not list")
         return self
+
+
+class QueryContractsArgs(_Args):
+    vendor: Annotated[str, StringConstraints(max_length=200)] | None = None
+    payment_terms_days: int | None = Field(None, ge=1, le=365)
+    auto_renewal: bool | None = None
+    governing_law: Annotated[str, StringConstraints(max_length=100)] | None = None
+    limit: int = Field(25, ge=1, le=50)
 
 
 # ------------------------------------------------------------------ rendering
@@ -207,6 +217,7 @@ async def invoices_tool(ctx: AgentContext, a: QueryInvoicesArgs) -> ToolOutput:
             date_to=a.date_to,
             group_by_vendor=a.group_by_vendor,
             limit=a.limit,
+            payment_terms_days=a.payment_terms_days,
         )
         firsts = (
             await chunks_repo.first_chunks(session, ctx.org_id, [r["document_id"] for r in rows])
@@ -230,6 +241,37 @@ async def invoices_tool(ctx: AgentContext, a: QueryInvoicesArgs) -> ToolOutput:
     text = json.dumps(payload)
     return ToolOutput(
         truncate(text, ctx.settings.tool_result_char_budget), f"{a.aggregate}: {len(out_rows)} rows"
+    )
+
+
+async def contracts_tool(ctx: AgentContext, a: QueryContractsArgs) -> ToolOutput:
+    async with ctx.maker() as session:
+        rows = await contracts_repo.query(
+            session,
+            ctx.org_id,
+            vendor=a.vendor,
+            payment_terms_days=a.payment_terms_days,
+            auto_renewal=a.auto_renewal,
+            governing_law=a.governing_law,
+            limit=a.limit,
+        )
+        firsts = (
+            await chunks_repo.first_chunks(session, ctx.org_id, [r["document_id"] for r in rows])
+            if rows
+            else {}
+        )
+    out_rows: list[dict[str, Any]] = []
+    for r in rows:
+        row = {k: _jsonable(v) for k, v in r.items() if k != "document_id"}
+        if (chunk := firsts.get(r["document_id"])) is not None:
+            row["ref"] = ctx.register(chunk)  # the contract's opening page, for traceability
+        out_rows.append(row)
+    note = "Vendors whose contract matches. Only contracts that passed validation are listed."
+    if not out_rows:
+        note = "No matching contracts (vendor and law match by substring)."
+    text = json.dumps({"rows": out_rows, "note": note})
+    return ToolOutput(
+        truncate(text, ctx.settings.tool_result_char_budget), f"contracts: {len(out_rows)} rows"
     )
 
 
@@ -262,10 +304,21 @@ TOOLS: dict[str, Tool] = {
             read_tool,
         ),
         Tool(
+            "query_contracts",
+            "List vendors by structured contract terms: payment_terms_days (net-30 means 30), "
+            "auto_renewal, governing_law (substring), or one vendor. Returns each vendor's payment "
+            "terms, late fee % per month, termination notice days, auto-renewal, liability cap "
+            "and governing law. Use this for 'which vendors have ...' questions; unlike search it "
+            "returns every match.",
+            QueryContractsArgs,
+            contracts_tool,
+        ),
+        Tool(
             "query_invoices",
             "Exact invoice totals, counts or lists from the structured invoice table. Filter by "
-            "vendor name(s) and an inclusive issue-date range. aggregate=sum gives totals per "
-            "currency; group_by_vendor=true gives one row per vendor.",
+            "vendor name(s), an inclusive issue-date range, and payment_terms_days (only invoices "
+            "from vendors whose contract has those terms, so net-30 vendors = 30). aggregate=sum "
+            "gives totals per currency; group_by_vendor=true gives one row per vendor.",
             QueryInvoicesArgs,
             invoices_tool,
         ),

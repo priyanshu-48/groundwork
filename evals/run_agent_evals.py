@@ -31,6 +31,7 @@ from app.agent.llm import LLM, LLMResponse, Message, ToolSpec  # noqa: E402
 from app.agent.loop import run_agent  # noqa: E402
 from app.agent.prompts import SYSTEM  # noqa: E402
 from app.agent.service import make_context  # noqa: E402
+from app.agent.tools import specs  # noqa: E402
 from app.config import model_chain_names  # noqa: E402
 from app.worker.deps import Deps, build_deps  # noqa: E402
 from evals.metrics import percentile  # noqa: E402
@@ -65,7 +66,10 @@ class CountingLLM:
 
 
 def prompt_fingerprint() -> str:
-    return hashlib.sha256(SYSTEM.encode()).hexdigest()[:12]
+    """Prompt AND tool definitions: changing either changes what the model does, so cached
+    answers from before the change must not be reused."""
+    tools = json.dumps([[t.name, t.description, t.parameters] for t in specs()], sort_keys=True)
+    return hashlib.sha256((SYSTEM + tools).encode()).hexdigest()[:12]
 
 
 def cache_key(chain: list[str], q: dict[str, Any], mode: str) -> str:
