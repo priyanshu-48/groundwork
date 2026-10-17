@@ -24,6 +24,14 @@ VENDORS = ["Acme Labs", "Globex Cloud", "Initech Print"]
         ("auto_renewal", "no", "No, the agreement does not renew automatically.", True),
         ("auto_renewal", "no", "It renews automatically.", False),
         ("auto_renewal", "yes", "It does not renew automatically.", False),
+        (
+            "auto_renewal",
+            "yes",
+            "Yes, it renews automatically for successive one-year terms unless either party "
+            "gives written notice of non-renewal before the end of the term [C1].",
+            True,
+        ),
+        ("auto_renewal", "no", "No. The agreement expires at the end of its initial term.", True),
         ("liability_cap", "USD 250,000", "Liability is capped at USD 250,000 [C1].", True),
         ("liability_cap", "USD 250,000", "The cap is 1,000,000.", False),
         ("governing_law", "State of Delaware", "Delaware law governs.", True),

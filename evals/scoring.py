@@ -36,9 +36,13 @@ def _ints_in(text: str, allowed: set[int]) -> set[int]:
 
 
 def _auto_renewal(answer: str) -> str | None:
+    """'yes' / 'no' / None. Careful: a yes-answer routinely mentions 'notice of non-renewal'
+    (the clause lets either party stop the renewal), so that phrase must not read as a no."""
     a = answer.lower()
     if re.search(
-        r"(does not|doesn'?t|do not|will not|not)\s+(automatically\s+)?renew|no automatic|non-?renew|expires",
+        r"(does not|doesn'?t|do not|will not|won'?t|is not|isn'?t)\s+(automatically\s+)?renew"
+        r"|no automatic(ally)?\s+renew|not renew automatically|expires at the end"
+        r"|expires and does not",
         a,
     ):
         return "no"
