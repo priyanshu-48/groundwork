@@ -107,12 +107,16 @@ async def keyword_search(
     query: str,
     kind: DocKind | None,
     limit: int,
+    document_id: uuid.UUID | None = None,
 ) -> list[Hit]:
-    """Full-text search over chunks.tsv (GIN index). websearch_to_tsquery safely parses free text
+    """Full-text search over chunks.tsv (GIN index). document_id limits it to one document (used to
+    find which page of a known contract states a fact). websearch_to_tsquery safely parses free text
     but joins terms with AND, which finds nothing for a natural-language question when one word is
     absent from the page; swapping ' & ' for ' | ' gives OR semantics, and ts_rank_cd then ranks
     chunks matching more of the terms first (docs/decisions/0005)."""
     kind_filter = "AND d.kind = CAST(:kind AS doc_kind)" if kind is not None else ""
+    if document_id is not None:
+        kind_filter += " AND c.document_id = :doc"
     prepared = prepare_keyword_query(query)
     specific = specific_terms(prepared)
     # One point per matched identifier-like term, then ts_rank_cd breaks ties (see specific_terms).
@@ -140,6 +144,8 @@ async def keyword_search(
     params |= {f"s{i}": t for i, t in enumerate(specific)}
     if kind is not None:
         params["kind"] = kind.value
+    if document_id is not None:
+        params["doc"] = document_id
     rows = (await session.execute(stmt, params)).all()
     return [Hit(r.id, r.document_id, r.filename, r.page, r.content, float(r.score)) for r in rows]
 

@@ -71,16 +71,16 @@ real-world accuracy.
 
 ## Agent answers
 
-Real agent (tools + model), answers scored by rules in `evals/scoring.py` (docs/decisions/0008). Citation precision = share of cited chunks that hold the answer, over answers that cite anything (not defined for multi-hop).
+Real agent (tools + model), answers scored by rules in `evals/scoring.py` (docs/decisions/0008). Citation precision = share of cited chunks that hold the answer, over answers that cite anything (not defined for multi-hop). Cited answers = answers with at least one valid citation (coverage; precision ignores uncited answers; `-` = measured before this column existed).
 
-| Date | Git SHA | Label | Type | Model(s) | Answered | Accuracy | Citation precision | Avg steps | Avg tokens in/out | p50 s | p95 s |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-10-17 | f238874 | m6 | contract_lookup | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 2912/57 | 9.0 | 9.5 |
-| 2026-10-17 | f238874 | m6 | invoice_aggregate | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 1785/110 | 9.0 | 9.4 |
-| 2026-10-17 | f238874 | m6 | multi_hop | gemini-3.5-flash-lite | 20/20 | 30.0% | n/a | 5.0 | 24810/214 | 27.1 | 27.5 |
-| 2026-10-17 | 6c45814 | m6c | contract_lookup | gemini-3.1-flash-lite, gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.1 | 3445/50 | 9.2 | 26.6 |
-| 2026-10-17 | 6c45814 | m6c | invoice_aggregate | gemini-3.1-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 2503/115 | 9.1 | 27.7 |
-| 2026-10-17 | 6c45814 | m6c | multi_hop | gemini-3.1-flash-lite | 20/20 | 100.0% | n/a | 1.0 | 2509/104 | 8.7 | 22.3 |
+| Date | Git SHA | Label | Type | Model(s) | Answered | Accuracy | Citation precision | Cited answers | Avg steps | Avg tokens in/out | p50 s | p95 s |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-10-17 | f238874 | m6 | contract_lookup | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | - | 1.0 | 2912/57 | 9.0 | 9.5 |
+| 2026-10-17 | f238874 | m6 | invoice_aggregate | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | - | 1.0 | 1785/110 | 9.0 | 9.4 |
+| 2026-10-17 | f238874 | m6 | multi_hop | gemini-3.5-flash-lite | 20/20 | 30.0% | n/a | - | 5.0 | 24810/214 | 27.1 | 27.5 |
+| 2026-10-17 | 6c45814 | m6c | contract_lookup | gemini-3.1-flash-lite, gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 26/35 | 1.1 | 3445/50 | 9.2 | 26.6 |
+| 2026-10-17 | 6c45814 | m6c | invoice_aggregate | gemini-3.1-flash-lite | 35/35 | 100.0% | 100.0% | 10/35 | 1.0 | 2503/115 | 9.1 | 27.7 |
+| 2026-10-17 | 6c45814 | m6c | multi_hop | gemini-3.1-flash-lite | 20/20 | 100.0% | n/a | 0/20 | 1.0 | 2509/104 | 8.7 | 22.3 |
 <!-- agent:end -->
 
 ## Load tests (M8)

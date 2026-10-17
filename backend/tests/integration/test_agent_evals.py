@@ -58,6 +58,9 @@ async def test_accuracy_counts_right_and_wrong_answers(deps: Deps) -> None:
     assert (s["answered"], s["total"], s["correct"], s["complete"]) == (12, 12, 6, True)
     assert s["accuracy"] == 0.5 and r["llm_calls"] == 12
     assert s["avg_prompt_tokens"] == 10 and s["models"] == ["fake-model"]
+    assert (
+        s["cited_answers"] == 0
+    )  # the canned answers carry no valid citation: coverage counts that
 
 
 async def test_a_rerun_uses_the_cache_and_makes_no_llm_calls(deps: Deps, tmp_path: Path) -> None:
@@ -103,7 +106,7 @@ def test_cache_keys_change_with_the_model_chain_and_search_mode() -> None:
 def test_docs_rows_only_for_complete_types_and_never_for_fakes(tmp_path: Path) -> None:
     done = {
         "total": 2, "answered": 2, "correct": 1, "accuracy": 0.5, "citation_precision": None,
-        "cited_chunks": 0, "avg_steps": 2.0, "avg_prompt_tokens": 100.0,
+        "cited_chunks": 0, "cited_answers": 1, "avg_steps": 2.0, "avg_prompt_tokens": 100.0,
         "avg_completion_tokens": 20.0, "p50_s": 1.5, "p95_s": 2.5, "models": ["m1"],
         "complete": True,
     }  # fmt: skip
@@ -115,7 +118,7 @@ def test_docs_rows_only_for_complete_types_and_never_for_fakes(tmp_path: Path) -
     )
     text = docs.read_text(encoding="utf8")
     assert written == ["contract_lookup"] and "multi_hop" not in text
-    assert "| contract_lookup | m1 | 2/2 | 50.0% | n/a |" in text
+    assert "| contract_lookup | m1 | 2/2 | 50.0% | n/a | 1/2 |" in text
     with pytest.raises(ValueError, match="fake"):
         append_agent_rows(docs, meta, {"contract_lookup": done}, fake=True)
 

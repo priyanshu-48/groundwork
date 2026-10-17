@@ -45,10 +45,12 @@ AGENT_HEADER = (
     "\n## Agent answers\n\n"
     "Real agent (tools + model), answers scored by rules in `evals/scoring.py` "
     "(docs/decisions/0008). Citation precision = share of cited chunks that hold the answer, "
-    "over answers that cite anything (not defined for multi-hop).\n\n"
+    "over answers that cite anything (not defined for multi-hop). Cited answers = answers with at "
+    "least one valid citation (coverage; the other half of the picture, since precision ignores "
+    "uncited answers; `-` = measured before this column existed).\n\n"
     "| Date | Git SHA | Label | Type | Model(s) | Answered | Accuracy | Citation precision "
-    "| Avg steps | Avg tokens in/out | p50 s | p95 s |\n"
-    "|---|---|---|---|---|---|---|---|---|---|---|---|\n"
+    "| Cited answers | Avg steps | Avg tokens in/out | p50 s | p95 s |\n"
+    "|---|---|---|---|---|---|---|---|---|---|---|---|---|\n"
     "<!-- agent:end -->\n"
 )
 
@@ -167,6 +169,7 @@ async def evaluate_agent(
             "accuracy": (sum(r["correct"] for r in got) / len(got)) if got else None,
             "citation_precision": (rel / cited) if cited else None,
             "cited_chunks": cited,
+            "cited_answers": sum(1 for r in got if r["citations"]),
             "avg_steps": (sum(r["steps"] for r in got) / len(got)) if got else None,
             "avg_prompt_tokens": (sum(r["prompt_tokens"] for r in got) / len(got)) if got else None,
             "avg_completion_tokens": (sum(r["completion_tokens"] for r in got) / len(got))
@@ -206,7 +209,7 @@ def append_agent_rows(
         lines += (
             f"| {meta['date']} | {meta['git_sha']} | {meta['label']} | {t} | {', '.join(s['models'])} "
             f"| {s['answered']}/{s['total']} | {s['accuracy'] * 100:.1f}% | {prec} "
-            f"| {s['avg_steps']:.1f} | {s['avg_prompt_tokens']:.0f}/{s['avg_completion_tokens']:.0f} "
+            f"| {s['cited_answers']}/{s['answered']} | {s['avg_steps']:.1f} | {s['avg_prompt_tokens']:.0f}/{s['avg_completion_tokens']:.0f} "
             f"| {s['p50_s']:.1f} | {s['p95_s']:.1f} |\n"
         )
         written.append(t)
@@ -273,7 +276,8 @@ async def _main(args: argparse.Namespace) -> int:
             )
             print(
                 f"{t:<18} answered {v['answered']}/{v['total']}  accuracy {acc}  "
-                f"citation precision {prec}  models {v['models']}"
+                f"citation precision {prec}  cited answers {v['cited_answers']}/{v['answered']}  "
+                f"models {v['models']}"
             )
         if result["stopped_by_budget"]:
             print(
