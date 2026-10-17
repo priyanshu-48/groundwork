@@ -32,3 +32,14 @@ async def health(request: Request, response: Response) -> dict[str, str]:
         "db": "ok" if db else "down",
         "s3": "ok" if s3 else "down",
     }
+
+
+@router.get("/meta")
+async def meta(request: Request) -> dict[str, str]:
+    """Public, no secrets: lets the UI say honestly what is answering its questions."""
+    from app.agent.demo import DemoLLM
+
+    deps = getattr(request.app.state, "agent_deps", None)
+    if deps is None or deps.llm is None:
+        return {"chat": "unavailable"}
+    return {"chat": "demo" if isinstance(deps.llm, DemoLLM) else "model"}

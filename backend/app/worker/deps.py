@@ -4,6 +4,7 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
+from app.agent.demo import DemoLLM
 from app.agent.llm import GeminiLLM
 from app.config import Settings, model_chain_names
 from app.db import make_engine
@@ -34,8 +35,9 @@ class Deps:
     llm: Any = None  # app.agent.llm.LLM; None in fake mode (agent needs a scripted FakeLLM)
 
 
-def build_deps(s: Settings) -> tuple[Deps, AsyncEngine]:
-    engine = make_engine(s.database_url)
+def build_deps(s: Settings, engine: AsyncEngine | None = None) -> tuple[Deps, AsyncEngine]:
+    """Pass an existing engine to share its connection pool (the API does)."""
+    engine = engine or make_engine(s.database_url)
     if s.ai_provider == "gemini":
         if not s.gemini_api_key:
             # Refuse rather than quietly using fake embeddings that would poison the index.
@@ -53,10 +55,10 @@ def build_deps(s: Settings) -> tuple[Deps, AsyncEngine]:
         extractor: InvoiceExtractor = GeminiInvoiceExtractor(
             client, chain, Throttle(s.extraction_min_interval_s)
         )
-        llm: GeminiLLM | None = GeminiLLM(client, chain, Throttle(s.agent_min_interval_s))
+        llm: GeminiLLM | DemoLLM = GeminiLLM(client, chain, Throttle(s.agent_min_interval_s))
     else:
         log.warning("AI_PROVIDER=fake: embeddings and extraction are NOT real")
-        llm = None
+        llm = DemoLLM()  # deterministic, clearly labelled, no key needed
         embedder, extractor = FakeEmbeddingProvider(s.embedding_dims), FakeInvoiceExtractor()
     deps = Deps(
         maker=async_sessionmaker(engine, expire_on_commit=False),

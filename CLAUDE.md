@@ -40,7 +40,9 @@ After each milestone run `graphify update .` (details in the graphify section be
 
 ## Commands
 - Backend: `cd backend && uv run pytest`, `uv run alembic upgrade head`, `uv run python -m app.worker.runner`
-- Frontend: `cd frontend && npm run dev`, `npm test`
+- Frontend: `cd frontend && npm run dev`, `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`
+- Demo mode without a key: `AI_PROVIDER=fake docker compose up -d --build` (UI at http://localhost:8080 or `npm run dev` on :5173)
+- E2E (needs the demo-mode backend on :8000): `cd frontend && npm run e2e`
 - Invoice extraction backfill (from `backend/`): `uv run python -m app.worker.backfill_invoices`
 - Contract facts backfill (from `backend/`): `uv run python -m app.worker.backfill_contracts`; check against ground truth: `uv run python ../evals/check_extraction.py`
 - Agent evals (from `backend/`): `uv run python ../evals/run_agent_evals.py --types contract_lookup --max-llm-calls 25 --label m6`

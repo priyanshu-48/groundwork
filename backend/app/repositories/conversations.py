@@ -88,3 +88,56 @@ async def record_run(
     )
     await session.flush()
     return run
+
+
+async def list_conversations(
+    session: AsyncSession, org_id: uuid.UUID, limit: int = 50
+) -> list[Conversation]:
+    stmt = (
+        select(Conversation)
+        .where(Conversation.org_id == org_id)
+        .order_by(Conversation.created_at.desc(), Conversation.id)
+        .limit(limit)
+    )
+    return list((await session.execute(stmt)).scalars().all())
+
+
+async def runs_for_messages(
+    session: AsyncSession, message_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, dict[str, Any]]:
+    """Agent run summary and tool steps per assistant message, so history can show what the agent
+    did. Callers pass ids of messages they already scoped to an org."""
+    if not message_ids:
+        return {}
+    runs = (
+        (await session.execute(select(AgentRun).where(AgentRun.message_id.in_(message_ids))))
+        .scalars()
+        .all()
+    )
+    steps = (
+        (
+            await session.execute(
+                select(AgentStep)
+                .where(AgentStep.run_id.in_([r.id for r in runs]))
+                .order_by(AgentStep.run_id, AgentStep.step_no)
+            )
+        )
+        .scalars()
+        .all()
+    )
+    out: dict[uuid.UUID, dict[str, Any]] = {}
+    for r in runs:
+        out[r.message_id] = {"model": r.model, "latency_ms": r.latency_ms, "steps": []}
+    by_run = {r.id: r.message_id for r in runs}
+    for st in steps:
+        out[by_run[st.run_id]]["steps"].append(
+            {
+                "step_no": st.step_no,
+                "tool": st.tool_name,
+                "args": st.args,
+                "status": "ok",  # failed calls are not distinguished in storage; the preview says
+                "latency_ms": st.latency_ms,
+                "preview": st.result_preview,
+            }
+        )
+    return out
