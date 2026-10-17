@@ -13,4 +13,6 @@ export default tseslint.config(
     plugins: { "react-hooks": reactHooks },
     rules: { ...reactHooks.configs.recommended.rules },
   },
+  // Node dev scripts (e.g. the demo GIF capture)
+  { files: ["scripts/**/*.mjs"], languageOptions: { globals: globals.node } },
 );
