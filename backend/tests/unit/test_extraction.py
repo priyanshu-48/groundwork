@@ -1,6 +1,8 @@
 from datetime import date
 from decimal import Decimal
 
+import pytest
+
 from app.services.extraction import FakeInvoiceExtractor, InvoiceFields, review_reason
 from tests.helpers import invoice_text
 
@@ -51,3 +53,31 @@ async def test_fake_extractor_reads_labelled_lines() -> None:
     f = await FakeInvoiceExtractor().extract(invoice_text(vendor="Globex", total="110.00"))
     assert (f.vendor, f.invoice_number, f.total) == ("Globex", "INV-1", Decimal("110.00"))
     assert f.issue_date == date(2025, 3, 5)
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("1,155.05", "1155.05"),
+        ("USD 1,155.05", "1155.05"),
+        ("$ 76 049.20", "76049.20"),
+        ("1.155,05", "1155.05"),  # decimal comma
+        ("12,50", "12.50"),
+        ("1,155", "1155"),  # thousands separator, not a decimal comma
+        (13057.07, "13057.07"),
+        (100, "100"),
+        ("4936.83", "4936.83"),
+        ("-12.30", "-12.30"),
+    ],
+)
+def test_money_parsing_tolerates_formats_models_produce(raw: object, expected: str) -> None:
+    from app.services.extraction import _money
+
+    assert _money(raw) == Decimal(expected)  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("raw", [None, "", "n/a", "abc", "--", "."])
+def test_unparseable_money_is_none_not_a_guess(raw: object) -> None:
+    from app.services.extraction import _money
+
+    assert _money(raw) is None  # type: ignore[arg-type]

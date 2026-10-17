@@ -60,9 +60,26 @@ def _date(v: str | None) -> date | None:
         return None
 
 
-def _money(v: str | None) -> Decimal | None:
+def _money(v: str | int | float | None) -> Decimal | None:
+    """Parse an amount the model wrote, tolerating '1,155.05', 'USD 1,155.05', '1.155,05' and
+    bare numbers. Wrong guesses are caught later: review_reason checks subtotal + tax == total."""
+    if v is None or v == "":
+        return None
+    t = re.sub(r"[^\d.,\-]", "", str(v))  # drop currency codes, symbols, spaces
+    if "," in t and "." in t:
+        if t.rfind(",") > t.rfind("."):  # 1.234,56 (decimal comma)
+            t = t.replace(".", "").replace(",", ".")
+        else:  # 1,234.56
+            t = t.replace(",", "")
+    elif "," in t:
+        head, _, tail = t.rpartition(",")
+        t = (
+            head.replace(",", "") + "." + tail
+            if len(tail) == 2 and "," not in head
+            else t.replace(",", "")
+        )
     try:
-        return Decimal(v.strip()) if v else None
+        return Decimal(t)
     except InvalidOperation:
         return None
 
@@ -97,9 +114,10 @@ class _LLMInvoice(BaseModel):
     issue_date: str | None = None
     due_date: str | None = None
     currency: str | None = None
-    subtotal: str | None = None
-    tax: str | None = None
-    total: str | None = None
+    # models sometimes answer with a JSON number or a formatted string despite instructions
+    subtotal: str | int | float | None = None
+    tax: str | int | float | None = None
+    total: str | int | float | None = None
 
 
 _SYSTEM = (
