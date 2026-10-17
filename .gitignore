@@ -21,3 +21,5 @@ evals/.cache/
 deploy/aws/state.env
 # deploy bundle made by `git archive` for CloudShell upload
 *.tgz
+# machine-specific Claude Code settings (absolute paths); keep local
+.claude/
