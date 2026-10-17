@@ -11,6 +11,10 @@ to protect a free-tier API quota; if it is used up, it says so and resets the ne
 > All data here is synthetic. The corpus generator (`evals/generate_corpus.py`) has a fixed seed, so
 > every question has a known correct answer, which is what makes the evaluation numbers below possible.
 
+![Groundwork demo: a question, a streamed answer with a citation, the source page, and the tool steps](docs/demo.gif)
+
+*Captioned frames from the live demo (a storyboard, not a recording).*
+
 ## What it does
 - **Upload PDFs** (contracts, invoices). A crash-safe background worker parses, chunks, embeds and, for
   invoices and contracts, extracts structured fields (vendor, totals, payment terms, notice, renewal...).
