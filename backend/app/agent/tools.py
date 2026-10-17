@@ -30,7 +30,7 @@ from app.models.document import DocKind
 from app.repositories import chunks as chunks_repo
 from app.repositories import invoices as invoices_repo
 from app.repositories.chunks import Hit
-from app.services.embeddings import EmbeddingProvider
+from app.services.embeddings import EmbeddingError, EmbeddingProvider
 from app.services.rerank import Reranker
 from app.services.retrieval import search_documents
 
@@ -299,3 +299,8 @@ async def execute(ctx: AgentContext, name: str, raw_args: dict[str, Any]) -> Too
         return ToolOutput(f"Error: {msg}", msg, True)
     except ToolError as e:
         return ToolOutput(f"Error: {e}", str(e), True)
+    except EmbeddingError:
+        # e.g. the embedding quota is used up. The model can still try the SQL tool, so this is a
+        # tool result, not a crashed run.
+        msg = "search is temporarily unavailable; try query_invoices or answer from what you have"
+        return ToolOutput(f"Error: {msg}", msg, True)

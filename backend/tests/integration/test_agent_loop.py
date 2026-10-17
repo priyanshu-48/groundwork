@@ -309,3 +309,25 @@ async def test_ask_refuses_another_orgs_conversation(deps: Deps) -> None:
 async def test_make_context_uses_the_callers_org(deps: Deps) -> None:
     org = uuid.uuid4()
     assert make_context(deps, org).org_id == org
+
+
+async def test_search_outage_is_a_tool_error_and_the_run_still_finishes(deps: Deps) -> None:
+    from app.services.embeddings import EmbeddingError
+
+    class Down:
+        async def embed(self, texts: list[str], task: str) -> list[list[float]]:
+            raise EmbeddingError("quota")
+
+    org = await new_org(deps)
+    await add_invoice_row(deps, org, "Acme", "A-1", "2025-03-01", "10.00")
+    ctx = AgentContext(org, deps.maker, Down(), deps.settings)  # type: ignore[arg-type]
+    llm = FakeLLM(
+        [
+            call("search_documents", query="anything"),
+            call("query_invoices", aggregate="count"),
+            say("There is 1 invoice."),
+        ]
+    )
+    r = await run(ctx, llm)
+    assert r["status"] == "ok" and "unavailable" in r["steps"][0]["preview"]
+    assert [e.data["status"] for e in r["events"] if e.type == "step"][:2] == ["running", "error"]
