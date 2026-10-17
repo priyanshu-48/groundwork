@@ -142,3 +142,33 @@ async def keyword_search(
         params["kind"] = kind.value
     rows = (await session.execute(stmt, params)).all()
     return [Hit(r.id, r.document_id, r.filename, r.page, r.content, float(r.score)) for r in rows]
+
+
+async def fetch_by_ids(
+    session: AsyncSession, org_id: uuid.UUID, chunk_ids: list[uuid.UUID]
+) -> list[Hit]:
+    """Full chunks by id, scoped to the org: an id from another tenant simply is not found."""
+    stmt = (
+        select(Chunk.id, Chunk.document_id, Document.filename, Chunk.page, Chunk.content)
+        .join(Document, Document.id == Chunk.document_id)
+        .where(Chunk.org_id == org_id, Chunk.id.in_(chunk_ids))
+    )
+    return [
+        Hit(r.id, r.document_id, r.filename, r.page, r.content, 0.0)
+        for r in (await session.execute(stmt)).all()
+    ]
+
+
+async def first_chunks(
+    session: AsyncSession, org_id: uuid.UUID, document_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, Hit]:
+    """The opening chunk of each document (an invoice is one page, so this is its whole text)."""
+    stmt = (
+        select(Chunk.id, Chunk.document_id, Document.filename, Chunk.page, Chunk.content)
+        .join(Document, Document.id == Chunk.document_id)
+        .where(Chunk.org_id == org_id, Chunk.document_id.in_(document_ids), Chunk.ord == 0)
+    )
+    rows = (await session.execute(stmt)).all()
+    return {
+        r.document_id: Hit(r.id, r.document_id, r.filename, r.page, r.content, 0.0) for r in rows
+    }

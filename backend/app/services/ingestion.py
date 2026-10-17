@@ -87,6 +87,13 @@ async def _store_invoice(
     )
 
 
+async def store_invoice(
+    session: AsyncSession, org_id: uuid.UUID, document_id: uuid.UUID, f: InvoiceFields
+) -> None:
+    """Public entry point (also used by the backfill); resolves _store_invoice at call time."""
+    await _store_invoice(session, org_id, document_id, f)
+
+
 async def mark_failed(deps: Deps, document_id: uuid.UUID, error: str) -> None:
     async with deps.maker.begin() as session:
         await session.execute(

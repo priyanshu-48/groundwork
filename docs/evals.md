@@ -37,3 +37,18 @@ Free-tier limits that shaped the tooling (check AI Studio for your current numbe
 capped at about 1000 requests per day, and `generate_content` at about 20 per day. Query vectors are
 cached in `evals/.cache/` so reruns do not spend the embedding quota again; the worker can run with
 `EXTRACTION_ENABLED=false` to skip invoice extraction.
+
+## Agent evals (M6)
+
+```bash
+# from backend/, stack up and corpus loaded
+uv run python -m app.worker.backfill_invoices            # extract invoice rows, 10 per LLM call
+uv run python ../evals/run_agent_evals.py --types contract_lookup --max-llm-calls 25 --label m6
+```
+
+Free-tier notes: finished questions are cached in `evals/.cache/agent_runs.jsonl` (keyed by model
+chain, search mode, question and prompt), failed or quota-limited runs are never cached, and a
+type's row is written only when all of its questions have an answer. Set `GEMINI_MODELS` to an
+ordered list of models and their daily limits from AI Studio (ADR 0009).
+
+**Status:** harness and scoring verified with scripted models; no live agent numbers recorded yet.
