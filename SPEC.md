@@ -372,11 +372,11 @@ Read SPEC.md before any task. Implement ONLY the milestone I name.
 | MRR@10 (same three modes) | M4/M5 evals | __ → __ → __ |
 | Answer accuracy (lookup / aggregate / multi-hop) | M6 evals | __% / __% / __% |
 | Citation precision | M6 evals | __% |
-| p50/p95 end-to-end chat latency | M8 | __ s / __ s |
-| Search p95 under load (k6, N rps) | M8 | __ ms |
-| Ingestion throughput | M8 | __ pages/min |
+| p50/p95 end-to-end chat latency | M8 | 9.0 s / 9.5 s live Gemini lookups (free-tier throttled); our own overhead 122 ms / 190 ms (demo model, 10 users) |
+| Search p95 under load (k6, N rps) | M8 | 24 ms warm at 20 rps; 538 ms cold (real query embedding) |
+| Ingestion throughput | M8 | ~2,900 pages/min pipeline ceiling (fake AI, 1 worker); real runs are quota-bound |
 | Duplicate chunks after a worker killed mid-ingest | M3 test | 0 |
-| Tests / coverage | CI | __ tests, __% |
+| Tests / coverage | CI | 357 backend (93% line coverage) + 53 frontend, plus 1 Playwright e2e |
 
 ---
 

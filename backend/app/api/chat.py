@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from app.agent.service import ConversationNotFound, ask
 from app.api.deps import current_user
 from app.repositories import conversations
+from app.services.ratelimit import Limits, get_limits, too_many
 from app.services.security import Principal
 from app.worker.deps import Deps
 
@@ -42,6 +43,7 @@ async def send(
     body: MessageIn,
     request: Request,
     p: Principal = Depends(current_user),
+    limits: Limits = Depends(get_limits),
 ) -> StreamingResponse:
     deps: Deps | None = getattr(request.app.state, "agent_deps", None)
     if deps is None or deps.llm is None:
@@ -49,6 +51,13 @@ async def send(
     async with deps.maker() as session:
         if await conversations.get_conversation(session, p.org_id, conversation_id) is None:
             raise HTTPException(404, "Conversation not found")
+
+    key = str(p.org_id)
+    if (wait := limits.chat.check(key)) is not None:
+        raise too_many(wait, "questions")
+    slot = limits.chat_concurrent.acquire(key)
+    if slot is None:
+        raise too_many(2, "questions at once")
 
     async def stream() -> AsyncIterator[str]:
         try:
@@ -62,6 +71,8 @@ async def send(
         except Exception:
             log.exception("chat stream failed")
             yield sse("error", {"message": "Something went wrong while answering"})
+        finally:
+            limits.chat_concurrent.release(key, slot)  # also runs when the client disconnects
 
     return StreamingResponse(
         stream(),

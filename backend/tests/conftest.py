@@ -74,6 +74,13 @@ def configured(pg: PostgresContainer, s3: str) -> Iterator[None]:
         S3_ENDPOINT_URL=s3,
         S3_ACCESS_KEY=S3_KEY,
         S3_SECRET_KEY=S3_SECRET,
+        # Tests sign up many users from one "IP"; limiter tests install their own Limits.
+        SIGNUP_RATE_LIMIT_PER_MIN="100000",
+        LOGIN_RATE_LIMIT_PER_MIN="100000",
+        CHAT_RATE_LIMIT_PER_MIN="100000",
+        SEARCH_RATE_LIMIT_PER_MIN="100000",
+        ADMIN_TOKEN="test-admin-token",
+        MODEL_PRICES='{"priced-model": [1.0, 4.0]}',
     )
     get_settings.cache_clear()
     command.upgrade(Config("alembic.ini"), "head")

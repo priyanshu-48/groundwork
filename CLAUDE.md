@@ -40,6 +40,8 @@ After each milestone run `graphify update .` (details in the graphify section be
 
 ## Commands
 - Backend: `cd backend && uv run pytest`, `uv run alembic upgrade head`, `uv run python -m app.worker.runner`
+- Coverage: `cd backend && uv run pytest --cov=app`. Logs are JSON; metrics at `GET /admin/metrics` (docs/observability.md)
+- Load tests: `loadtest/README.md` (k6 via Docker)
 - Frontend: `cd frontend && npm run dev`, `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`
 - Demo mode without a key: `AI_PROVIDER=fake docker compose up -d --build` (UI at http://localhost:8080 or `npm run dev` on :5173)
 - E2E (needs the demo-mode backend on :8000): `cd frontend && npm run e2e`

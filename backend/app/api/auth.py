@@ -2,7 +2,7 @@ import asyncio
 import uuid
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,6 +10,7 @@ from app.api.deps import current_user, get_session
 from app.config import get_settings
 from app.repositories import users
 from app.schemas.auth import LoginIn, MeOut, SignupIn, TokenOut
+from app.services.ratelimit import Limits, client_ip, get_limits, too_many
 from app.services.security import (
     DUMMY_HASH,
     Principal,
@@ -28,7 +29,14 @@ def _token(user_id: uuid.UUID, org_id: uuid.UUID) -> TokenOut:
 
 
 @router.post("/signup", status_code=201, response_model=TokenOut)
-async def signup(body: SignupIn, session: AsyncSession = Depends(get_session)) -> TokenOut:
+async def signup(
+    body: SignupIn,
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+    limits: Limits = Depends(get_limits),
+) -> TokenOut:
+    if (wait := limits.signup.check(client_ip(request))) is not None:
+        raise too_many(wait, "sign-up attempts")
     pw_hash = await asyncio.to_thread(hash_password, body.password)  # CPU-heavy: off the loop
     try:
         user = await users.create_org_with_user(session, body.org_name, body.email, pw_hash)
@@ -40,7 +48,14 @@ async def signup(body: SignupIn, session: AsyncSession = Depends(get_session)) -
 
 
 @router.post("/login", response_model=TokenOut)
-async def login(body: LoginIn, session: AsyncSession = Depends(get_session)) -> TokenOut:
+async def login(
+    body: LoginIn,
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+    limits: Limits = Depends(get_limits),
+) -> TokenOut:
+    if (wait := limits.login.check(client_ip(request))) is not None:
+        raise too_many(wait, "login attempts")
     user = await users.get_user_by_email(session, body.email)
     ok = await asyncio.to_thread(
         verify_password, user.password_hash if user else DUMMY_HASH, body.password

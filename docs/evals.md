@@ -76,3 +76,25 @@ Real agent (tools + model), answers scored by rules in `evals/scoring.py` (docs/
 | 2026-10-17 | 6c45814 | m6c | invoice_aggregate | gemini-3.1-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 2503/115 | 9.1 | 27.7 |
 | 2026-10-17 | 6c45814 | m6c | multi_hop | gemini-3.1-flash-lite | 20/20 | 100.0% | n/a | 1.0 | 2509/104 | 8.7 | 22.3 |
 <!-- agent:end -->
+
+## Load tests (M8)
+
+Single dev laptop (Windows 11, Docker Desktop), one API process, one worker, Postgres + RustFS in
+containers, k6 in a container (`loadtest/`, commands in `loadtest/README.md`). Corpus: 325 documents,
+the eval org. Numbers are one run each; treat them as orders of magnitude, not guarantees.
+
+| Test | Setup | Result |
+|---|---|---|
+| Search, cold | `POST /search`, hybrid, ~1 req/s, 41 unique queries, real Gemini query embeddings | p50 483 ms, p95 538 ms, p99 627 ms, 0 errors |
+| Search, warm | same queries from the query-embedding cache, ramp to 20 req/s, 704 requests | p50 15 ms, p95 24 ms, p99 28 ms, 0 errors |
+| Chat overhead | 10 concurrent users, own org each, demo model (no Gemini), SSE + search + persistence, 2,921 requests | 72 req/s, p50 122 ms, p95 190 ms, p99 229 ms, 0 errors |
+| Per-org limit | 23 requests from one org with `CHAT_RATE_LIMIT_PER_MIN=20` | first 20 `200`, last 3 `429` with `Retry-After` |
+| Ingestion | 60 generated PDFs x 3 pages, fake embedder/extractor, 1 worker | 60/60 ready in 3.7 s: ~980 docs/min, ~2,900 pages/min |
+
+**Reading these:** the cold-vs-warm gap (483 ms vs 15 ms) is almost entirely the embedding API round
+trip; hybrid search itself is a few ms. A first run mixed cold and warm and showed a misleading warm
+p95 of 419 ms, because k6's per-VU iteration counter left half the queries uncached (the script now
+uses a scenario-wide counter). The ingestion figure is the pipeline's own ceiling; real ingestion is
+limited by the Gemini embedding quota and the min-interval throttle (about 1 request per 2 s on the
+free tier), so expect minutes, not seconds, for a real 300-document load. Real chat latency is
+dominated by the model (about 9 s per question in M6/M7 runs); our overhead is about 0.1 s.

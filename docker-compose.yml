@@ -51,6 +51,12 @@ services:
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gemini-embedding-001}
       SEARCH_MODE: ${SEARCH_MODE:-hybrid}
       AGENT_MIN_INTERVAL_S: ${AGENT_MIN_INTERVAL_S:-0}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+      MODEL_PRICES: ${MODEL_PRICES:-}
+      CHAT_RATE_LIMIT_PER_MIN: ${CHAT_RATE_LIMIT_PER_MIN:-20}
+      SEARCH_RATE_LIMIT_PER_MIN: ${SEARCH_RATE_LIMIT_PER_MIN:-60}
+      SIGNUP_RATE_LIMIT_PER_MIN: ${SIGNUP_RATE_LIMIT_PER_MIN:-5}
+      LOGIN_RATE_LIMIT_PER_MIN: ${LOGIN_RATE_LIMIT_PER_MIN:-10}
     ports: ["127.0.0.1:8000:8000"]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/health')"]
