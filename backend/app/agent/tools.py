@@ -244,6 +244,39 @@ async def invoices_tool(ctx: AgentContext, a: QueryInvoicesArgs) -> ToolOutput:
     )
 
 
+# One search phrase per fact in the contracts table (its schema is fixed), used to find the page
+# of a known contract that states it. They are the tuning knob if a cited page is ever wrong; a
+# test pins them against the generated contracts (tests/integration/test_contract_sources.py).
+FACT_QUERIES = {
+    # Built from the clause's own heading words, not generic ones ("written notice" also appears
+    # in indemnity and assignment clauses, which once outranked the real termination clause).
+    "payment_terms": "payment terms net invoice",
+    "late_fee": "late payment fee percent month",
+    "termination_notice": "termination for convenience terminate any reason",
+    "auto_renewal": "term and renewal renews automatically",
+    "liability_cap": "limitation of liability cap shall not exceed",
+    "governing_law": "governing law governed laws conflict",
+}
+MAX_CITED_CONTRACTS = (
+    3  # a lookup about a few vendors gets sources; a list ("which vendors...") not
+)
+
+
+async def contract_sources(
+    ctx: AgentContext, session: Any, document_id: uuid.UUID
+) -> dict[str, str]:
+    """fact -> ref of the chunk of THIS contract that states it. Refs are registered like search
+    results, so the answer's citations go through the usual validation and snippet code."""
+    sources: dict[str, str] = {}
+    for fact, query in FACT_QUERIES.items():
+        hits = await chunks_repo.keyword_search(
+            session, ctx.org_id, query, DocKind.contract, 1, document_id=document_id
+        )
+        if hits:
+            sources[fact] = ctx.register(hits[0])
+    return sources
+
+
 async def contracts_tool(ctx: AgentContext, a: QueryContractsArgs) -> ToolOutput:
     async with ctx.maker() as session:
         rows = await contracts_repo.query(
@@ -255,10 +288,23 @@ async def contracts_tool(ctx: AgentContext, a: QueryContractsArgs) -> ToolOutput
             governing_law=a.governing_law,
             limit=a.limit,
         )
-    # No refs here: a structured row has no page, so it cannot be cited. (An earlier version cited
-    # the contract's first page, which made citations point at the wrong page.)
-    out_rows = [{k: _jsonable(v) for k, v in r.items() if k != "document_id"} for r in rows]
+        # Structured rows have no page of their own (an earlier version cited each contract's first
+        # page, which pointed at the wrong page). For a lookup of a few vendors we find the real
+        # chunk that states each fact and hand out its ref; a long list gets no refs.
+        cited = (
+            [await contract_sources(ctx, session, r["document_id"]) for r in rows]
+            if 0 < len(rows) <= MAX_CITED_CONTRACTS
+            else [{} for _ in rows]
+        )
+    out_rows = []
+    for r, sources in zip(rows, cited, strict=True):
+        row = {k: _jsonable(v) for k, v in r.items() if k != "document_id"}
+        if sources:
+            row["sources"] = sources
+        out_rows.append(row)
     note = "Vendors whose contract matches. Only contracts that passed validation are listed."
+    if any(cited):
+        note += " Cite a fact with its ref from 'sources', for example [C3]."
     if not out_rows:
         note = "No matching contracts (vendor and law match by substring)."
     text = json.dumps({"rows": out_rows, "note": note})
@@ -301,8 +347,9 @@ TOOLS: dict[str, Tool] = {
             "auto_renewal, governing_law (substring), or one vendor. Returns each vendor's payment "
             "terms, late fee % per month, termination notice days, auto-renewal, liability cap "
             "and governing law. Use this for 'which vendors have ...' questions; unlike search it "
-            "returns every match. It gives no citations: to quote or cite one contract's clause, "
-            "use search_documents.",
+            "returns every match. For one to three vendors each row also has 'sources': a ref per "
+            "fact (like C3) pointing at the page that states it, which you cite. For longer lists "
+            "there are no sources. To quote a clause's exact wording, use search_documents.",
             QueryContractsArgs,
             contracts_tool,
         ),
