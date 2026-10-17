@@ -38,8 +38,9 @@ mkdir -p /opt/groundwork/releases
 chmod 700 /opt/groundwork
 
 # Nightly dump to the bucket at 03:15 UTC. backup.sh reads /opt/groundwork/runtime.env.
+# (release.sh rewrites this on every release, so it always matches the code on the host)
 cat >/etc/cron.d/groundwork-backup <<'CRON'
-15 3 * * * root /opt/groundwork/current/deploy/common/backup.sh >>/var/log/groundwork-backup.log 2>&1
+15 3 * * * root bash /opt/groundwork/current/deploy/common/backup.sh >>/var/log/groundwork-backup.log 2>&1
 CRON
 chmod 644 /etc/cron.d/groundwork-backup
 touch /opt/groundwork/.setup-done

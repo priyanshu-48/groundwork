@@ -28,6 +28,13 @@ else
 fi
 ln -sfn "$target" "$ROOT/current"
 
+# Bundles made on Windows lose the executable bit; fix it and (re)install the nightly backup job.
+chmod +x "$ROOT"/current/deploy/common/*.sh
+cat >/etc/cron.d/groundwork-backup <<'CRON'
+15 3 * * * root bash /opt/groundwork/current/deploy/common/backup.sh >>/var/log/groundwork-backup.log 2>&1
+CRON
+chmod 644 /etc/cron.d/groundwork-backup
+
 bash "$ROOT/current/deploy/common/fetch-env.sh"
 cd "$ROOT/current"
 docker compose --env-file "$ROOT/runtime.env" -f docker-compose.prod.yml up -d --build --remove-orphans
