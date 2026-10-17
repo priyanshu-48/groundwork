@@ -212,6 +212,6 @@ def parse_response(resp: Any, model: str) -> LLMResponse:
     u = resp.usage_metadata
     usage = Usage(
         (u.prompt_token_count or 0) if u else 0,
-        ((u.response_token_count or 0) + (u.thoughts_token_count or 0)) if u else 0,
+        ((u.candidates_token_count or 0) + (u.thoughts_token_count or 0)) if u else 0,
     )
     return LLMResponse(text=text, tool_calls=calls, usage=usage, model=model, raw=content)

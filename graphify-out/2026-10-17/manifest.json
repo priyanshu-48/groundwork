@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "docs/journal.md": {
-    "mtime": 1792227309.0273185,
-    "seen": 1792227333.8011947,
-    "ast_hash": "97ab785979352381a4892784209cd8a2",
+    "mtime": 1792229467.6308348,
+    "seen": 1792229593.0175314,
+    "ast_hash": "04f1c96bc3c907515a6d1e030f44bab8",
     "semantic_hash": ""
   },
   "backend/alembic/env.py": {
@@ -330,9 +330,9 @@
     "semantic_hash": ""
   },
   "backend/app/services/extraction.py": {
-    "mtime": 1792226931.712048,
-    "seen": 1792227333.8011947,
-    "ast_hash": "b3cc3d8c46723023bede697c22fa1084",
+    "mtime": 1792229359.6309395,
+    "seen": 1792229593.0165322,
+    "ast_hash": "6b8c851d4789068b12a730c1aecaf107",
     "semantic_hash": ""
   },
   "backend/app/services/gemini.py": {
@@ -402,9 +402,9 @@
     "semantic_hash": ""
   },
   "backend/tests/unit/test_extraction.py": {
-    "mtime": 1792173699.394897,
-    "seen": 1792174049.16273,
-    "ast_hash": "2970a117ad5e56f5555e180e634700ea",
+    "mtime": 1792229359.4735885,
+    "seen": 1792229593.0175314,
+    "ast_hash": "f2688d9de6acfe8b0d5d0a6c7778268c",
     "semantic_hash": ""
   },
   "docs/decisions/0002-approximate-token-counts.md": {
@@ -510,9 +510,9 @@
     "semantic_hash": ""
   },
   "docs/evals.md": {
-    "mtime": 1792227308.9462788,
-    "seen": 1792227333.8011947,
-    "ast_hash": "4beb461a5e05100912999de12db4c4b0",
+    "mtime": 1792229467.6313431,
+    "seen": 1792229593.0175314,
+    "ast_hash": "3e2ebf6b5e3fb8515350faa7e3c517dc",
     "semantic_hash": ""
   },
   "evals/results/2026-10-17_3aadc7b_baseline.json": {
@@ -636,9 +636,9 @@
     "semantic_hash": ""
   },
   "backend/app/worker/backfill_invoices.py": {
-    "mtime": 1792226922.1710455,
-    "seen": 1792227333.8011947,
-    "ast_hash": "cf5a581de09b520c6928a12ee8f56f1d",
+    "mtime": 1792229411.4304483,
+    "seen": 1792229593.0165322,
+    "ast_hash": "8100e028a6d15f6b73e320b10fd87f64",
     "semantic_hash": ""
   },
   "backend/tests/integration/test_agent_evals.py": {
@@ -654,9 +654,9 @@
     "semantic_hash": ""
   },
   "backend/tests/integration/test_backfill.py": {
-    "mtime": 1792226962.565486,
-    "seen": 1792227333.8011947,
-    "ast_hash": "de754a0c04e2008fa19791c1fb920c62",
+    "mtime": 1792229411.4304483,
+    "seen": 1792229593.0165322,
+    "ast_hash": "33026e1f154b8b25023b3697993bc8d0",
     "semantic_hash": ""
   },
   "backend/tests/integration/test_migrations.py": {
