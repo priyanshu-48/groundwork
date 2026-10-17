@@ -55,9 +55,13 @@ ordered list of models and their daily limits from AI Studio (ADR 0009).
 extracted and validated; vendor, issue date, due date, currency and total match the ground truth on
 every invoice, subtotal on 299/300.
 
-**Reading the agent table:** contract lookups and invoice aggregates are solved on this corpus. Multi-hop
-(30%) fails because the agent cannot enumerate "all vendors on net-30 terms" through search (14 of 20
-runs hit the step limit); see the journal and ADR 0010 once written. Scoring rules and their limits: ADR 0008.
+**Reading the agent table:** all 90 questions are answered correctly on this synthetic corpus. Multi-hop
+went from 30% to 100% once contract terms became structured data (ADR 0010). Models: the first 10
+answers came from gemini-3.5-flash-lite, which then hit its 500/day free quota, and the fallback chain
+finished on gemini-3.1-flash-lite (ADR 0009). Known gap: 9 of 35 contract-lookup answers carry no
+citation (precision is measured over cited chunks only). Scoring rules and limits: ADR 0008. These
+are templated questions over a synthetic corpus, a regression benchmark rather than a claim about
+real-world accuracy.
 
 ## Agent answers
 
@@ -68,4 +72,7 @@ Real agent (tools + model), answers scored by rules in `evals/scoring.py` (docs/
 | 2026-10-17 | f238874 | m6 | contract_lookup | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 2912/57 | 9.0 | 9.5 |
 | 2026-10-17 | f238874 | m6 | invoice_aggregate | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 1785/110 | 9.0 | 9.4 |
 | 2026-10-17 | f238874 | m6 | multi_hop | gemini-3.5-flash-lite | 20/20 | 30.0% | n/a | 5.0 | 24810/214 | 27.1 | 27.5 |
+| 2026-10-17 | 6c45814 | m6c | contract_lookup | gemini-3.1-flash-lite, gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 1.1 | 3445/50 | 9.2 | 26.6 |
+| 2026-10-17 | 6c45814 | m6c | invoice_aggregate | gemini-3.1-flash-lite | 35/35 | 100.0% | 100.0% | 1.0 | 2503/115 | 9.1 | 27.7 |
+| 2026-10-17 | 6c45814 | m6c | multi_hop | gemini-3.1-flash-lite | 20/20 | 100.0% | n/a | 1.0 | 2509/104 | 8.7 | 22.3 |
 <!-- agent:end -->
