@@ -10,9 +10,11 @@ from tests.helpers import invoice_text, make_pdf, new_org, rows, scalar, seed
 class CountingExtractor(FakeInvoiceExtractor):
     def __init__(self) -> None:
         self.many_calls = 0
+        self.seen_texts: list[str] = []
 
     async def extract_many(self, texts: list[str]) -> list[InvoiceFields]:
         self.many_calls += 1
+        self.seen_texts += texts
         return await super().extract_many(texts)
 
 
@@ -75,3 +77,21 @@ async def test_backfill_ignores_contracts_and_documents_still_processing(deps: D
     counting = CountingExtractor()
     result = await backfill(dataclasses.replace(deps, extractor=counting), batch_size=10)
     assert result.documents == 0 and counting.many_calls == 0
+
+
+async def test_retry_flagged_reextracts_once_per_run_without_looping(deps: Deps) -> None:
+    org = await new_org(deps)
+    await ingest_without_extraction(deps, org, 3, bad_total_at=1)
+    counting = CountingExtractor()
+    d = dataclasses.replace(deps, extractor=counting)
+    await backfill(d, batch_size=10)
+    assert counting.many_calls == 1
+
+    assert (await backfill(d, batch_size=10)).documents == 0  # default: flagged rows are left alone
+
+    counting.seen_texts.clear()
+    await backfill(d, batch_size=10, retry_flagged=True)
+    # Other tests leave flagged rows of their own orgs in the shared DB (the backfill is an
+    # org-agnostic operator tool), so look only at our flagged document: once, not repeatedly.
+    ours = [t for t in counting.seen_texts if "BF-001" in t]
+    assert len(ours) == 1

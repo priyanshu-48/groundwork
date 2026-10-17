@@ -618,9 +618,9 @@
     "semantic_hash": ""
   },
   "backend/app/agent/tools.py": {
-    "mtime": 1792226625.793607,
-    "seen": 1792227333.8011947,
-    "ast_hash": "34265579a4d7ab387e6734b13db2f04f",
+    "mtime": 1792228629.2951505,
+    "seen": 1792228675.6609683,
+    "ast_hash": "7fd46232a5a5ddadbce5ef60f9799663",
     "semantic_hash": ""
   },
   "backend/app/models/agent.py": {
@@ -648,9 +648,9 @@
     "semantic_hash": ""
   },
   "backend/tests/integration/test_agent_loop.py": {
-    "mtime": 1792226814.16962,
-    "seen": 1792227333.8011947,
-    "ast_hash": "926245cd58f679e74936df9677378db9",
+    "mtime": 1792228629.2951505,
+    "seen": 1792228675.6619692,
+    "ast_hash": "deb4a0afa6b2d78e145f0e4c9d91c506",
     "semantic_hash": ""
   },
   "backend/tests/integration/test_backfill.py": {
@@ -723,6 +723,12 @@
     "mtime": 1792227308.9118693,
     "seen": 1792227333.8011947,
     "ast_hash": "1ed25a4781e2b04dd61a188444618dbe",
+    "semantic_hash": ""
+  },
+  "evals/probe_models.py": {
+    "mtime": 1792227924.4697678,
+    "seen": 1792228675.6619692,
+    "ast_hash": "3f1e68b4c0bdeffe053064f21286f55d",
     "semantic_hash": ""
   }
 }

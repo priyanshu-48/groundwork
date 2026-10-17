@@ -51,4 +51,8 @@ chain, search mode, question and prompt), failed or quota-limited runs are never
 type's row is written only when all of its questions have an answer. Set `GEMINI_MODELS` to an
 ordered list of models and their daily limits from AI Studio (ADR 0009).
 
-**Status:** harness and scoring verified with scripted models; no live agent numbers recorded yet.
+**Invoice extraction (live, gemini-3.5-flash-lite, 30 batched calls + 2 retry calls):** 300/300 invoices
+extracted and validated; vendor, issue date, due date, currency and total match the ground truth on
+every invoice, subtotal on 299/300.
+
+**Status:** harness and scoring verified with scripted models; no live agent answer numbers recorded yet.

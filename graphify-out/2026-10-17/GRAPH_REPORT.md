@@ -1,17 +1,17 @@
 # Graph Report - groundwork  (2026-10-17)
 
 ## Corpus Check
-- 119 files · ~66,708 words
+- 120 files · ~67,205 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 11 file(s) not represented in the graph (top: (none) 5, .jsonl 2, .example 1)
 
 ## Summary
-- 1082 nodes · 3123 edges · 52 communities (33 shown, 19 thin omitted)
-- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 242 edges (avg confidence: 0.94)
+- 1107 nodes · 3122 edges · 69 communities (40 shown, 29 thin omitted)
+- Extraction: 94% EXTRACTED · 6% INFERRED · 0% AMBIGUOUS · INFERRED: 186 edges (avg confidence: 0.94)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `787aa0c7`
+- Built from commit: `fa71354f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -21,54 +21,62 @@
 - Groundwork: instructions for Claude Code
 - test_embeddings.py
 - Groundwork journal (interview reference)
-- sqlalchemy
-- worker/deps.py
-- run_agent_evals.py
-- api/auth.py
+- ingestion.py
+- probe_models.py
+- test_scoring.py
+- security.py
 - 0001-local-s3-rustfs.md
 - Deps
 - groundwork
-- test_eval_harness.py
-- test_queue.py
+- api/auth.py
+- runner.py
 - 0002-approximate-token-counts.md
 - test_search_modes.py
 - test_model_chain.py
-- get_settings
-- Hit
-- test_agent_loop.py
+- worker/deps.py
+- FlashRankReranker
+- typing
 - generate_corpus.py
 - test_rrf.py
 - tools.py
-- run_evals.py
+- explain_search.py
 - extraction.py
 - tests/conftest.py
-- ingestion.py
+- gemini.py
 - Evaluation results
 - 0004-synthetic-corpus-design.md
 - api/documents.py
 - upload
-- Document
+- build_ground_truth
 - 0006: EXPLAIN ANALYZE of the search queries (generated, do not edit by hand)
 - 0005_tsv_split_hyphens.py
 - 0005-keyword-search-design.md
-- test_migrations.py
+- test_auth.py
 - health.py
 - chunks.py
 - 0007-query-invoices-extensions.md
 - 0008-answer-scoring.md
 - 0009-model-fallback.md
+- run_agent_evals.py
+- small
+- ModelChain
+- FakeEmbeddingProvider
+- test_build_retrieval_questions.py
+- build_questions.py
+- pytest
+- chunk_pages
 
 ## God Nodes (most connected - your core abstractions)
-1. `Deps` - 112 edges
-2. `new_org()` - 46 edges
+1. `Deps` - 92 edges
+2. `new_org()` - 47 edges
 3. `get_settings()` - 34 edges
-4. `search_documents()` - 28 edges
-5. `process_one()` - 28 edges
-6. `seed()` - 28 edges
-7. `Hit` - 26 edges
-8. `DocKind` - 25 edges
-9. `build_deps()` - 25 edges
-10. `Message` - 22 edges
+4. `process_one()` - 28 edges
+5. `seed()` - 28 edges
+6. `search_documents()` - 28 edges
+7. `build_deps()` - 24 edges
+8. `Hit` - 23 edges
+9. `Message` - 21 edges
+10. `FakeEmbeddingProvider` - 21 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `M6 — Agent loop + tools + citations (Days 11–12)` --references--> `FakeLLM`  [INFERRED]
@@ -79,13 +87,13 @@
   SPEC.md → backend/app/services/retrieval.py
 - `M1 — Auth + tenancy (Day 2)` --references--> `current_user()`  [INFERRED]
   SPEC.md → backend/app/api/deps.py
-- `M3 — Ingestion worker (Days 5–6)` --references--> `EmbeddingProvider`  [INFERRED]
-  SPEC.md → backend/app/services/embeddings.py
+- `0003: Flag doubtful invoices instead of failing or trusting them` --references--> `review_reason()`  [INFERRED]
+  docs/decisions/0003-invoice-review-flag.md → backend/app/services/extraction.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (52 total, 19 thin omitted)
+## Communities (69 total, 29 thin omitted)
 
 ### Community 0 - "Groundwork: Build Spec"
 Cohesion: 0.06
@@ -100,104 +108,104 @@ Cohesion: 0.18
 Nodes (10): Commands, Free-tier data, Git, Graphify, graphify, Groundwork: instructions for Claude Code, Hosting portability, Interview journal (+2 more)
 
 ### Community 3 - "test_embeddings.py"
-Cohesion: 0.10
-Nodes (17): EmbeddingError, FakeEmbeddingProvider, GeminiEmbeddingProvider, _normalize(), is_retryable(), _cos(), _provider(), StubModels (+9 more)
+Cohesion: 0.22
+Nodes (12): EmbeddingError, embed(), _cos(), _provider(), StubModels, test_fake_related_text_scores_higher_than_unrelated(), test_gemini_batches_of_50_and_normalizes(), test_gemini_does_not_retry_client_errors() (+4 more)
 
 ### Community 4 - "Groundwork journal (interview reference)"
 Cohesion: 0.50
 Nodes (3): Groundwork journal (interview reference), Major decisions, Roadblocks
 
-### Community 5 - "sqlalchemy"
-Cohesion: 0.06
-Nodes (32): _base(), upgrade(), AgentRun, AgentStep, Conversation, Message, MessageRole, RunStatus (+24 more)
+### Community 5 - "ingestion.py"
+Cohesion: 0.05
+Nodes (31): _base(), upgrade(), Base, IdMixin, Chunk, DocKind, DocStatus, Document (+23 more)
 
-### Community 6 - "worker/deps.py"
-Cohesion: 0.15
-Nodes (7): model_chain_names(), Settings, EmbeddingProvider, make_client(), make_s3(), build_deps(), deps()
+### Community 6 - "probe_models.py"
+Cohesion: 0.31
+Nodes (3): list_models(), main(), probe()
 
-### Community 7 - "run_agent_evals.py"
-Cohesion: 0.08
-Nodes (36): CannedLLM, run(), test_a_rerun_uses_the_cache_and_makes_no_llm_calls(), test_accuracy_counts_right_and_wrong_answers(), test_cache_keys_change_with_the_model_chain_and_search_mode(), test_docs_rows_only_for_complete_types_and_never_for_fakes(), test_failed_runs_are_not_cached_and_are_retried(), test_the_call_budget_stops_early_and_the_next_run_resumes() (+28 more)
+### Community 7 - "test_scoring.py"
+Cohesion: 0.17
+Nodes (17): q(), test_citation_precision_for_aggregates_uses_vendor_and_date_range(), test_citation_precision_for_contract_lookups_needs_document_and_page(), test_contract_answers(), test_count_is_not_fooled_by_dates_or_invoice_numbers(), test_list_needs_exactly_the_right_invoices(), test_multi_hop_total_is_a_decimal_match(), test_multi_hop_vendor_must_be_named_alone() (+9 more)
 
-### Community 8 - "api/auth.py"
-Cohesion: 0.07
-Nodes (36): login(), me(), signup(), _token(), current_user(), _unauthorized(), _EmailIn, LoginIn (+28 more)
+### Community 8 - "security.py"
+Cohesion: 0.17
+Nodes (11): current_user(), _unauthorized(), create_token(), decode_token(), Principal, TokenError, test_alg_none_rejected(), test_expired_token_rejected() (+3 more)
 
 ### Community 12 - "Deps"
-Cohesion: 0.07
-Nodes (68): chunk_pages(), ingest_document(), mark_failed(), extract_pages(), PermanentError, backfill(), BackfillResult, Deps (+60 more)
+Cohesion: 0.06
+Nodes (83): call(), FakeLLM, say(), Usage, AgentContext, execute(), extract_pages(), put_pdf() (+75 more)
 
-### Community 17 - "test_eval_harness.py"
-Cohesion: 0.07
-Nodes (28): test_eval_queries_are_never_throttled(), test_every_mode_and_set_reports_all_metrics(), test_fake_embedder_numbers_never_reach_docs_without_opt_in(), test_fake_reranker_numbers_are_refused_too(), test_hard_set_exact_ids_are_found_by_keyword_modes(), test_precomputed_embedder_returns_the_stored_vectors(), test_empty_input_is_zero_not_a_crash(), test_mrr_at_k_ignores_hits_beyond_k_and_misses() (+20 more)
+### Community 17 - "api/auth.py"
+Cohesion: 0.17
+Nodes (13): login(), me(), signup(), _token(), _EmailIn, LoginIn, MeOut, SignupIn (+5 more)
 
-### Community 19 - "test_queue.py"
-Cohesion: 0.20
-Nodes (14): claim(), ClaimedJob, complete(), enqueue(), fail(), maker(), _row(), test_duplicate_idempotency_key_is_one_job() (+6 more)
+### Community 19 - "runner.py"
+Cohesion: 0.11
+Nodes (16): claim(), ClaimedJob, complete(), enqueue(), fail(), reap_stale(), run_reaper(), maker() (+8 more)
 
 ### Community 21 - "test_search_modes.py"
 Cohesion: 0.15
-Nodes (14): DocKind, keyword_search(), search_documents(), RecordingReranker, test_every_mode_respects_org_isolation_and_kind(), test_hybrid_recovers_a_keyword_hit_the_vector_side_misses(), test_keyword_finds_an_invoice_by_its_exact_number(), test_keyword_stop_words_only_returns_nothing() (+6 more)
+Nodes (13): keyword_search(), search_documents(), corpus(), test_every_mode_respects_org_isolation_and_kind(), test_hybrid_recovers_a_keyword_hit_the_vector_side_misses(), test_keyword_finds_an_invoice_by_its_exact_number(), test_keyword_stop_words_only_returns_nothing(), test_keyword_survives_odd_input() (+5 more)
 
 ### Community 22 - "test_model_chain.py"
-Cohesion: 0.13
-Nodes (19): _fall_over_seconds(), retry_delay_s(), api_error(), Clock, make(), test_all_models_exhausted_is_a_clear_error(), call(), test_client_errors_never_fall_over() (+11 more)
+Cohesion: 0.17
+Nodes (17): retry_delay_s(), api_error(), Clock, make(), test_all_models_exhausted_is_a_clear_error(), call(), test_client_errors_never_fall_over(), call() (+9 more)
 
-### Community 23 - "get_settings"
-Cohesion: 0.13
-Nodes (12): _run(), _run_online(), get_settings(), make_engine(), main(), _main(), run(), go() (+4 more)
+### Community 23 - "worker/deps.py"
+Cohesion: 0.11
+Nodes (19): _run(), _run_online(), get_settings(), model_chain_names(), Settings, make_engine(), make_client(), make_s3() (+11 more)
 
-### Community 24 - "Hit"
-Cohesion: 0.12
-Nodes (11): Hit, FakeReranker, FlashRankReranker, Reranker, test_real_model_puts_the_relevant_passage_first(), hit(), hit(), StubRanker (+3 more)
+### Community 24 - "FlashRankReranker"
+Cohesion: 0.19
+Nodes (6): FlashRankReranker, hit(), StubRanker, test_empty_candidates_skip_the_model(), test_fake_reranker_orders_by_word_overlap_and_caps_top_k(), test_flashrank_adapter_maps_ids_sorts_by_score_and_stays_off_the_loop()
 
-### Community 25 - "test_agent_loop.py"
+### Community 25 - "typing"
 Cohesion: 0.05
-Nodes (65): call(), clean_schema(), FakeLLM, GeminiLLM, LLM, LLMError, LLMResponse, Message (+57 more)
+Nodes (48): clean_schema(), GeminiLLM, LLM, LLMError, LLMResponse, Message, parse_response(), _to_content() (+40 more)
 
 ### Community 26 - "generate_corpus.py"
-Cohesion: 0.05
-Nodes (28): small(), gt(), _inv_in_range(), questions(), test_aggregate_answers_match_independent_recomputation(), test_deterministic(), gt(), qs() (+20 more)
+Cohesion: 0.15
+Nodes (11): _doc(), _facts(), main(), _money(), _norm(), _q(), _render_contract(), render_corpus() (+3 more)
 
 ### Community 27 - "test_rrf.py"
 Cohesion: 0.20
 Nodes (11): prepare_keyword_query(), specific_terms(), rrf_fuse(), test_agreement_beats_a_single_high_rank(), test_empty_inputs(), test_k_controls_how_much_top_ranks_dominate(), test_prepare_keyword_query_turns_identifiers_into_phrases(), test_raw_scores_never_matter_only_ranks() (+3 more)
 
 ### Community 28 - "tools.py"
-Cohesion: 0.13
+Cohesion: 0.11
 Nodes (16): _Args, _attr(), doc_block(), escape_document_text(), invoices_tool(), _jsonable(), QueryInvoicesArgs, read_tool() (+8 more)
 
-### Community 29 - "run_evals.py"
-Cohesion: 0.13
+### Community 29 - "explain_search.py"
+Cohesion: 0.14
 Nodes (9): _explain(), main(), _vec(), _auth(), main(), _main(), _retry(), _statuses() (+1 more)
 
 ### Community 30 - "extraction.py"
-Cohesion: 0.06
-Nodes (30): _date(), FakeInvoiceExtractor, GeminiInvoiceExtractor, InvoiceExtractor, InvoiceFields, _LLMInvoice, _money(), review_reason() (+22 more)
+Cohesion: 0.08
+Nodes (26): _date(), FakeInvoiceExtractor, GeminiInvoiceExtractor, InvoiceExtractor, InvoiceFields, _LLMInvoice, _money(), review_reason() (+18 more)
 
 ### Community 31 - "tests/conftest.py"
-Cohesion: 0.15
-Nodes (6): get_bytes(), client(), configured(), pg(), s3(), sql()
+Cohesion: 0.12
+Nodes (8): client(), configured(), pg(), s3(), sql(), _create_db(), _tables(), test_every_migration_applies_from_scratch_and_the_agent_one_round_trips()
 
-### Community 32 - "ingestion.py"
-Cohesion: 0.17
-Nodes (3): reap_stale(), run_reaper(), main()
+### Community 32 - "gemini.py"
+Cohesion: 0.19
+Nodes (3): call_with_retry(), is_retryable(), test_daily_quota_429_is_not_retried_but_per_minute_429_is()
 
 ### Community 33 - "Evaluation results"
 Cohesion: 0.50
 Nodes (3): Agent evals (M6), Evaluation results, Reproduce
 
 ### Community 36 - "api/documents.py"
-Cohesion: 0.16
-Nodes (4): get_session(), create_app(), lifespan(), put_pdf()
+Cohesion: 0.23
+Nodes (3): get_session(), create_app(), lifespan()
 
 ### Community 37 - "upload"
 Cohesion: 0.15
 Nodes (3): list_documents(), _read_pdf(), upload()
 
-### Community 38 - "Document"
-Cohesion: 0.44
-Nodes (4): Document, create_with_job(), get_by_sha(), list_for_org()
+### Community 38 - "build_ground_truth"
+Cohesion: 0.21
+Nodes (8): small_corpus(), test_all_files_written_and_pdfs_are_byte_identical_across_runs(), test_every_fact_is_on_its_gold_page(), test_foreign_currency_vendors_only_get_net_15_or_60(), test_full_size_counts(), test_ground_truth_is_deterministic(), test_invoice_math_numbers_and_due_dates(), build_ground_truth()
 
 ### Community 39 - "0006: EXPLAIN ANALYZE of the search queries (generated, do not edit by hand)"
 Cohesion: 0.25
@@ -207,37 +215,65 @@ Nodes (7): 0006: EXPLAIN ANALYZE of the search queries (generated, do not edit b
 Cohesion: 0.83
 Nodes (3): downgrade(), _rebuild(), upgrade()
 
-### Community 42 - "test_migrations.py"
-Cohesion: 0.38
-Nodes (3): _create_db(), _tables(), test_every_migration_applies_from_scratch_and_the_agent_one_round_trips()
+### Community 42 - "test_auth.py"
+Cohesion: 0.41
+Nodes (11): _email(), _me(), _signup(), test_duplicate_email_409(), test_invalid_login_is_indistinguishable(), test_login_email_is_case_insensitive(), test_me_rejects_expired_token(), test_me_requires_token() (+3 more)
 
 ### Community 44 - "health.py"
 Cohesion: 0.43
 Nodes (3): _db_ok(), health(), s3_ok()
 
 ### Community 45 - "chunks.py"
-Cohesion: 0.20
-Nodes (5): fetch_by_ids(), first_chunks(), replace_for_document(), vector_search(), TextChunk
+Cohesion: 0.14
+Nodes (8): fetch_by_ids(), first_chunks(), Hit, replace_for_document(), vector_search(), RecordingReranker, test_real_model_puts_the_relevant_passage_first(), hit()
+
+### Community 52 - "run_agent_evals.py"
+Cohesion: 0.05
+Nodes (41): FakeReranker, Reranker, CannedLLM, run(), test_a_rerun_uses_the_cache_and_makes_no_llm_calls(), test_accuracy_counts_right_and_wrong_answers(), test_cache_keys_change_with_the_model_chain_and_search_mode(), test_docs_rows_only_for_complete_types_and_never_for_fakes() (+33 more)
+
+### Community 55 - "ModelChain"
+Cohesion: 0.18
+Nodes (5): _fall_over_seconds(), LLMUnavailable, ModelChain, generate(), test_empty_chain_is_rejected()
+
+### Community 57 - "FakeEmbeddingProvider"
+Cohesion: 0.14
+Nodes (6): EmbeddingProvider, FakeEmbeddingProvider, GeminiEmbeddingProvider, _normalize(), test_fake_is_deterministic_768d_and_unit_norm(), M3 — Ingestion worker (Days 5–6)
+
+### Community 58 - "test_build_retrieval_questions.py"
+Cohesion: 0.24
+Nodes (4): gt(), qs(), test_counts_ids_and_determinism(), build_retrieval_questions()
+
+### Community 60 - "build_questions.py"
+Cohesion: 0.24
+Nodes (8): test_deterministic(), _aggregates(), build_questions(), _in_range(), _lookups(), main(), _multi_hop(), _random_range()
+
+### Community 61 - "pytest"
+Cohesion: 0.22
+Nodes (4): gt(), _inv_in_range(), questions(), test_aggregate_answers_match_independent_recomputation()
+
+### Community 62 - "chunk_pages"
+Cohesion: 0.25
+Nodes (11): chunk_pages(), TextChunk, words(), test_blank_pages_are_skipped_but_page_numbers_stay_true(), test_consecutive_chunks_overlap_and_respect_size(), test_default_window_is_about_500_tokens_with_60_overlap(), test_deterministic(), test_never_crosses_a_page_boundary() (+3 more)
 
 ## Knowledge Gaps
-- **53 isolated node(s):** `Tool`, `JobStatus`, `groundwork`, `Rules`, `Git` (+48 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 326 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **19 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **53 isolated node(s):** `Tool`, `JobStatus`, `10. How to work with Claude Code on this`, `11. Metrics to capture (fill these in as you go)`, `12. Resume entry (fill in with your measured numbers, and don't use a number you didn't measure)` (+48 more)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 339 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **29 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Deps` connect `Deps` to `ingestion.py`, `sqlalchemy`, `worker/deps.py`, `run_agent_evals.py`, `test_eval_harness.py`, `test_search_modes.py`, `get_settings`, `test_agent_loop.py`, `extraction.py`?**
-  _High betweenness centrality (0.102) - this node is a cross-community bridge._
-- **Why does `get_settings()` connect `get_settings` to `ingestion.py`, `api/documents.py`, `upload`, `worker/deps.py`, `run_agent_evals.py`, `api/auth.py`, `test_migrations.py`, `health.py`, `test_eval_harness.py`, `test_queue.py`, `tests/conftest.py`?**
-  _High betweenness centrality (0.046) - this node is a cross-community bridge._
-- **Why does `ModelChain` connect `test_agent_loop.py` to `test_model_chain.py`, `extraction.py`, `worker/deps.py`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
-- **Are the 94 inferred relationships involving `Deps` (e.g. with `ask()` and `make_context()`) actually correct?**
-  _`Deps` has 94 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `Tool`, `JobStatus`, `groundwork` to the rest of the system?**
+- **Why does `Deps` connect `Deps` to `ingestion.py`, `runner.py`, `run_agent_evals.py`, `test_search_modes.py`, `worker/deps.py`, `typing`, `extraction.py`?**
+  _High betweenness centrality (0.086) - this node is a cross-community bridge._
+- **Why does `new_org()` connect `Deps` to `api/auth.py`, `test_search_modes.py`, `run_agent_evals.py`, `ingestion.py`?**
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+- **Why does `get_settings()` connect `worker/deps.py` to `api/documents.py`, `upload`, `ingestion.py`, `security.py`, `test_auth.py`, `health.py`, `api/auth.py`, `runner.py`, `run_agent_evals.py`, `tests/conftest.py`?**
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+- **Are the 74 inferred relationships involving `Deps` (e.g. with `ask()` and `make_context()`) actually correct?**
+  _`Deps` has 74 INFERRED edges - model-reasoned connections that need verification._
+- **What connects `Tool`, `JobStatus`, `10. How to work with Claude Code on this` to the rest of the system?**
   _53 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Groundwork: Build Spec` be split into smaller, more focused modules?**
   _Cohesion score 0.0625 - nodes in this community are weakly interconnected._
-- **Should `test_embeddings.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.10084033613445378 - nodes in this community are weakly interconnected._
+- **Should `ingestion.py` be split into smaller, more focused modules?**
+  _Cohesion score 0.052184769038701624 - nodes in this community are weakly interconnected._

@@ -12,8 +12,9 @@ import asyncio
 import logging
 import uuid
 from dataclasses import dataclass
+from typing import Any
 
-from sqlalchemy import exists, select
+from sqlalchemy import exists, or_, select
 
 from app.config import get_settings
 from app.models.chunk import Chunk
@@ -33,17 +34,26 @@ class BackfillResult:
     llm_calls: int = 0
 
 
-async def _next_batch(deps: Deps, size: int) -> list[tuple[uuid.UUID, uuid.UUID, str]]:
-    """(document_id, org_id, full text) for invoice documents still without an invoice row."""
+async def _next_batch(
+    deps: Deps, size: int, retry_flagged: bool, seen: set[uuid.UUID]
+) -> list[tuple[uuid.UUID, uuid.UUID, str]]:
+    """(document_id, org_id, full text) for invoice documents still without an invoice row, or
+    (retry_flagged) whose row is flagged. `seen` keeps a document that stays flagged from being
+    picked again within the same run."""
+    missing = ~exists().where(Invoice.document_id == Document.id)
+    flagged = exists().where(Invoice.document_id == Document.id, Invoice.needs_review.is_(True))
+    conds: list[Any] = [
+        Document.kind == DocKind.invoice,
+        Document.status == DocStatus.ready,
+        or_(missing, flagged) if retry_flagged else missing,
+    ]
+    if seen:
+        conds.append(Document.id.not_in(seen))
     async with deps.maker() as session:
         docs = (
             await session.execute(
                 select(Document.id, Document.org_id)
-                .where(
-                    Document.kind == DocKind.invoice,
-                    Document.status == DocStatus.ready,
-                    ~exists().where(Invoice.document_id == Document.id),
-                )
+                .where(*conds)
                 .order_by(Document.created_at, Document.id)
                 .limit(size)
             )
@@ -63,13 +73,17 @@ async def _next_batch(deps: Deps, size: int) -> list[tuple[uuid.UUID, uuid.UUID,
     return [(d.id, d.org_id, "\n".join(text.get(d.id, []))) for d in docs]
 
 
-async def backfill(deps: Deps, batch_size: int = 10, limit: int | None = None) -> BackfillResult:
+async def backfill(
+    deps: Deps, batch_size: int = 10, limit: int | None = None, retry_flagged: bool = False
+) -> BackfillResult:
     result = BackfillResult()
+    seen: set[uuid.UUID] = set()
     while limit is None or result.documents < limit:
         size = batch_size if limit is None else min(batch_size, limit - result.documents)
-        batch = await _next_batch(deps, size)
+        batch = await _next_batch(deps, size, retry_flagged, seen)
         if not batch:
             break
+        seen.update(doc_id for doc_id, _, _ in batch)
         fields = await deps.extractor.extract_many([t for _, _, t in batch])
         result.llm_calls += 1
         async with deps.maker.begin() as session:  # one transaction per batch
@@ -84,7 +98,7 @@ async def backfill(deps: Deps, batch_size: int = 10, limit: int | None = None) -
 async def _main(args: argparse.Namespace) -> int:
     deps, engine = build_deps(get_settings())
     try:
-        result = await backfill(deps, args.batch, args.limit)
+        result = await backfill(deps, args.batch, args.limit, args.retry_flagged)
     except Exception as e:  # quota or outage: progress so far is already committed
         print(f"stopped early: {type(e).__name__}: {e}")
         return 1
@@ -102,6 +116,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--batch", type=int, default=10)
     ap.add_argument("--limit", type=int, default=None, help="stop after this many documents")
+    ap.add_argument(
+        "--retry-flagged",
+        action="store_true",
+        help="also re-extract invoices flagged for review (each document at most once per run)",
+    )
     raise SystemExit(asyncio.run(_main(ap.parse_args())))
 
 
