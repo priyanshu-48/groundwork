@@ -1,0 +1,7 @@
+# 0014: Single-host deploy, portable to Oracle
+- **Context:** SPEC M9 proposes RDS, S3 + CloudFront, ECR and SSH deploys. The AWS Free plan (US$120 credits) ends 2027-04-17 and the target afterwards is Oracle Cloud's free tier (CLAUDE.md "Hosting portability"). This is the owner's first AWS account and spend must stay at zero.
+- **Decision:** everything on one EC2 (Ubuntu 24.04 arm64, t4g.small): Caddy + nginx frontend + api + worker + Postgres/pgvector in containers, real S3 for files, HTTPS via a free `<ip>.sslip.io` hostname. Nightly `pg_dump` to S3.
+- **Rejected:** RDS (about $12+/month of credits, AWS-only, a migration step later); S3 + CloudFront (per-GB billing, AWS-only, a second deploy path); ECR + GitHub Actions to AWS (needs long-lived cloud credentials or an OIDC role); SSH (open port, key management).
+- **Why:** each AWS-managed service skipped is one less thing to rebuild on Oracle. The only AWS-specific parts are the resource scripts in `deploy/aws/` and the secret fetch (`deploy/common/fetch-env.sh`); `docker-compose.prod.yml` and the images run unchanged anywhere. `docs/oracle-migration.md` is the checklist.
+- **Trade-offs:** no managed failover or point-in-time recovery (nightly dump, restore drill instead); one host is a single point of failure; builds happen on a 2 GB host (swap added).
+- **Also:** public signup is closed by an optional `SIGNUP_CODE`, because the demo uses the owner's free Gemini quota.

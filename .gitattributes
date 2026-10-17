@@ -1,1 +1,5 @@
 graphify-out/graph.json merge=graphify
+# Scripts and deploy config run on Linux: never CRLF, whatever the contributor OS or autocrlf setting.
+*.sh text eol=lf
+deploy/** text eol=lf
+docker-compose.prod.yml text eol=lf

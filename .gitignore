@@ -18,3 +18,4 @@ graphify-out/cache/
 .flashrank/
 evals/.cache/
 .coverage
+deploy/aws/state.env

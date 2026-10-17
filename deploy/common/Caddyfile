@@ -1,0 +1,9 @@
+# SITE_HOST is a hostname (Caddy then gets a Let's Encrypt certificate automatically), e.g.
+# 203-0-113-5.sslip.io, or a name like localhost for a local dry run (Caddy's internal CA).
+{$SITE_HOST} {
+	header Strict-Transport-Security "max-age=31536000"
+	# flush_interval -1: stream Server-Sent Events instead of buffering the answer
+	reverse_proxy frontend:80 {
+		flush_interval -1
+	}
+}

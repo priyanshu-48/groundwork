@@ -1,0 +1,96 @@
+# Production: one Docker host (AWS EC2 now, Oracle later; nothing here is AWS-specific).
+# Run with:  docker compose --env-file /opt/groundwork/runtime.env -f docker-compose.prod.yml up -d --build
+# runtime.env is written by deploy/common/fetch-env.sh (secrets come from the secret store, never git).
+# Only Caddy publishes ports. Memory limits are sized for a 2 GB host (plus swap for image builds).
+x-logging: &logging
+  driver: json-file
+  options: {max-size: "10m", max-file: "3"}
+
+x-api-env: &api-env
+  DATABASE_URL: postgresql+asyncpg://groundwork:${POSTGRES_PASSWORD:?}@postgres:5432/groundwork
+  JWT_SECRET: ${JWT_SECRET:?}
+  S3_BUCKET: ${S3_BUCKET:?}
+  S3_REGION: ${S3_REGION:-us-east-1}
+  # Empty on AWS: boto3 uses the instance role. On Oracle: the S3-compatible endpoint plus a key pair.
+  S3_ENDPOINT_URL: ${S3_ENDPOINT_URL:-}
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY:-}
+  S3_SECRET_KEY: ${S3_SECRET_KEY:-}
+  AI_PROVIDER: ${AI_PROVIDER:-gemini}
+  GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+  GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash}
+  GEMINI_MODELS: ${GEMINI_MODELS:-}
+  EMBEDDING_MODEL: ${EMBEDDING_MODEL:-gemini-embedding-001}
+  EMBEDDING_MIN_INTERVAL_S: ${EMBEDDING_MIN_INTERVAL_S:-2}
+  EXTRACTION_MIN_INTERVAL_S: ${EXTRACTION_MIN_INTERVAL_S:-6.5}
+  AGENT_MIN_INTERVAL_S: ${AGENT_MIN_INTERVAL_S:-0}
+  EXTRACTION_ENABLED: ${EXTRACTION_ENABLED:-true}
+  SEARCH_MODE: ${SEARCH_MODE:-hybrid}
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: groundwork
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: groundwork
+    volumes: [pgdata:/var/lib/postgresql/data]
+    mem_limit: 512m
+    logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U groundwork"]
+      interval: 5s
+      retries: 20
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres: {condition: service_healthy}
+    environment:
+      <<: *api-env
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+      SIGNUP_CODE: ${SIGNUP_CODE:-}
+      MODEL_PRICES: ${MODEL_PRICES:-}
+      CHAT_RATE_LIMIT_PER_MIN: ${CHAT_RATE_LIMIT_PER_MIN:-20}
+    mem_limit: 768m
+    logging: *logging
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      retries: 30
+
+  worker:
+    build: ./backend
+    restart: unless-stopped
+    command: ["python", "-m", "app.worker.runner"]
+    depends_on:
+      api: {condition: service_healthy}  # the api container runs the migrations first
+    environment: *api-env
+    mem_limit: 512m
+    logging: *logging
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      api: {condition: service_healthy}
+    mem_limit: 64m
+    logging: *logging
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on: [frontend]
+    ports: ["80:80", "443:443"]
+    environment:
+      SITE_HOST: ${SITE_HOST:?}
+    volumes:
+      - ./deploy/common/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data  # certificates: keep them or Let's Encrypt rate limits bite after rebuilds
+    mem_limit: 64m
+    logging: *logging
+
+volumes:
+  pgdata:
+  caddy_data:

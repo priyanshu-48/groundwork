@@ -5,6 +5,7 @@
 |---|---|---|---|
 | 2026-10-16 | Job queue = Postgres table with `FOR UPDATE SKIP LOCKED` | SQS, Redis/Celery | No extra infra, transactional with the document insert, portable across AWS/Oracle |
 | 2026-10-17 | M8: in-memory per-org rate limits + static admin token; query-embedding LRU cache; JSON logs with request ids | Redis/Postgres limiter, admin roles, Prometheus/Grafana | One process, no new infra; the upgrade path is behind one interface (ADR 0012, 0013). Metrics come from data we already store (`agent_runs`, `jobs`) |
+| 2026-10-17 | M9: deploy on ONE EC2 with Postgres in a container, Caddy + sslip.io HTTPS, S3 bundle + SSM Run Command (no RDS, CloudFront, ECR, SSH, or cloud keys); `deploy/aws/` isolates everything AWS-specific | SPEC plan (RDS + CloudFront + ECR + SSH), Elastic Beanstalk/ECS | The AWS free plan ends 2027-04-17 and the target is Oracle free tier: every managed service skipped is one less thing to rebuild; no long-lived credentials; lowest cost for a first AWS account. Checklist for the move: docs/oracle-migration.md (ADR 0014, 0015) |
 | 2026-10-16 | Hand-written tool-calling agent loop | LangChain, LangGraph | Shows understanding of the mechanics; fewer dependencies; full control of limits and citation validation |
 | 2026-10-16 | Host-agnostic deploy (Docker Compose, S3-compatible storage, plain Postgres+pgvector) | AWS-native services (Lambda, Cognito, etc.) | AWS free tier ends; planned move to Oracle free tier must be config-only |
 | 2026-10-16 | Strict AWS cost/secret guardrails (budget alarm, no NAT/multi-AZ, SSM, instance roles, gitleaks, user runs all AWS mutations) | Ad-hoc | Avoid leaked keys and surprise bills on a free-tier account |
@@ -55,3 +56,18 @@
 | 2026-10-17 | Live streaming measured: first token 5.6 s, finished 5.7 s, 3 token events for a short answer | Short answers arrive in few chunks; the wait is the tool round trip plus the model | Documented honestly in ADR 0011 | Streaming improves perceived latency of long answers, not of lookups |
 | 2026-10-17 | Rate limiter lost hits after many distinct keys (found by a unit test) | Idle-key pruning ran after `check()` had fetched the current key's deque, so the hit was appended to a dropped object | Prune first, then fetch | Cleanup that mutates a shared map must run before you take references into it |
 | 2026-10-17 | First k6 warm-search p95 of 419 ms contradicted the 15 ms median | k6 `__ITER` is per-VU, so the cold phase covered only half the queries and the warm phase still had cache misses | Scenario-wide counter (`iterationInTest`); warm p95 became 24 ms | Check that a benchmark measures what its label says before quoting it |
+| 2026-10-17 | Shell scripts written from Windows had CRLF line endings (shellcheck: literal carriage return); they would fail on Linux | Windows editors and Python's `write_text` write CRLF; Git's autocrlf hides it until the file runs on Linux | Converted to LF; `.gitattributes` pins `*.sh` and `deploy/**` to `eol=lf` | Anything that runs on Linux needs an explicit line-ending rule, and a linter in the loop catches it |
+| 2026-10-17 | Smoke test failed 'request id header' against a working stack | nginx re-cases upstream headers (`X-Request-Id`), my check looked for `X-Request-ID` | Lower-case all header names before comparing | HTTP header names are case-insensitive; compare them that way |
+
+## AWS resources (M9)
+
+Created by `deploy/aws/02-create-infra.sh`, removed by `99-teardown.sh`. Region ap-southeast-2. Ids go here when created (no secrets):
+
+| Resource | Name / id | Created | Notes |
+|---|---|---|---|
+| S3 bucket | groundwork-<account>-ap-southeast-2 | not yet | private, lifecycle rules |
+| IAM role + profile | groundwork-ec2 | not yet | read /groundwork* params, one bucket |
+| Security group | groundwork-sg | not yet | 80/443 only |
+| EC2 | t4g.small | not yet | stop when not demoing |
+| Elastic IP | - | not yet | billed while allocated |
+| SSM parameters | /groundwork/* | not yet | secrets |

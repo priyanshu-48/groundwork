@@ -80,8 +80,16 @@ export async function login(email: string, password: string): Promise<string> {
   return ((await res.json()) as { access_token: string }).access_token;
 }
 
-export async function signup(orgName: string, email: string, password: string): Promise<string> {
-  const res = await request("/auth/signup", json({ org_name: orgName, email, password }));
+export async function signup(
+  orgName: string,
+  email: string,
+  password: string,
+  inviteCode?: string,
+): Promise<string> {
+  const res = await request(
+    "/auth/signup",
+    json({ org_name: orgName, email, password, invite_code: inviteCode || undefined }),
+  );
   return ((await res.json()) as { access_token: string }).access_token;
 }
 
@@ -112,8 +120,8 @@ export async function getMessages(conversationId: string): Promise<ChatMessage[]
   return (await (await request(`/conversations/${conversationId}/messages`)).json()) as ChatMessage[];
 }
 
-export async function getMeta(): Promise<{ chat: ChatMode }> {
-  return (await (await request("/meta")).json()) as { chat: ChatMode };
+export async function getMeta(): Promise<{ chat: ChatMode; signup_code_required?: boolean }> {
+  return (await (await request("/meta")).json()) as { chat: ChatMode; signup_code_required?: boolean };
 }
 
 /** Starts a chat turn; the caller reads the SSE body (see api/sse.ts). */

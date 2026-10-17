@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { login, signup } from "../api/client";
+import { getMeta, login, signup } from "../api/client";
 import { useAuth } from "../auth";
 
 export function LoginPage() {
@@ -13,9 +13,11 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [orgName, setOrgName] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
+  const meta = useQuery({ queryKey: ["meta"], queryFn: getMeta, staleTime: 60_000 });
 
   const auth = useMutation({
-    mutationFn: () => (mode === "login" ? login(email, password) : signup(orgName, email, password)),
+    mutationFn: () => (mode === "login" ? login(email, password) : signup(orgName, email, password, inviteCode)),
     onSuccess: (t) => {
       signIn(t);
       navigate(from, { replace: true });
@@ -38,6 +40,12 @@ export function LoginPage() {
           <label className="block text-sm font-medium">
             Company name
             <input className={field} value={orgName} onChange={(e) => setOrgName(e.target.value)} required maxLength={100} />
+          </label>
+        )}
+        {mode === "signup" && meta.data?.signup_code_required && (
+          <label className="block text-sm font-medium">
+            Invite code
+            <input className={field} value={inviteCode} onChange={(e) => setInviteCode(e.target.value)} required maxLength={100} />
           </label>
         )}
         <label className="block text-sm font-medium">

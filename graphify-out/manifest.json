@@ -6,9 +6,9 @@
     "semantic_hash": ""
   },
   "CLAUDE.md": {
-    "mtime": 1792239078.1443076,
-    "seen": 1792239106.1679957,
-    "ast_hash": "eccd69399895b8b30b3faa63fb1843c6",
+    "mtime": 1792250623.8235083,
+    "seen": 1792250796.8788326,
+    "ast_hash": "297c7940c38fbe14a16b40367f0d6b5e",
     "semantic_hash": ""
   },
   "SPEC.md": {
@@ -18,9 +18,9 @@
     "semantic_hash": ""
   },
   "docs/journal.md": {
-    "mtime": 1792239078.072434,
-    "seen": 1792239106.1679957,
-    "ast_hash": "43ef416cbc47b8f21fab7cf27b106b32",
+    "mtime": 1792250623.8218071,
+    "seen": 1792250796.8788326,
+    "ast_hash": "d486cec3add11a198385b303d1fc26be",
     "semantic_hash": ""
   },
   "backend/alembic/env.py": {
@@ -48,15 +48,15 @@
     "semantic_hash": ""
   },
   "backend/app/api/health.py": {
-    "mtime": 1792235033.7515543,
-    "seen": 1792236277.3828633,
-    "ast_hash": "8142c088a159e929a646fb94c3c219b5",
+    "mtime": 1792249915.3553333,
+    "seen": 1792250796.8778343,
+    "ast_hash": "03a2efa9ddef435c2e22638cb3746bd0",
     "semantic_hash": ""
   },
   "backend/app/config.py": {
-    "mtime": 1792237872.856197,
-    "seen": 1792239106.1664758,
-    "ast_hash": "0b976f150bbcdf7e04b489e62ed292b5",
+    "mtime": 1792249915.3203466,
+    "seen": 1792250796.8788326,
+    "ast_hash": "240b1b944d645aee0f83bf298834c73b",
     "semantic_hash": ""
   },
   "backend/app/db.py": {
@@ -120,9 +120,9 @@
     "semantic_hash": ""
   },
   ".github/workflows/ci.yml": {
-    "mtime": 1792239078.2210157,
-    "seen": 1792239106.1679957,
-    "ast_hash": "f4b41adc2312e3c9fa25b153244537dc",
+    "mtime": 1792250629.6787555,
+    "seen": 1792250796.8788326,
+    "ast_hash": "3707a6df0981c46e7402f538407f50f2",
     "semantic_hash": ""
   },
   "docker-compose.yml": {
@@ -144,9 +144,9 @@
     "semantic_hash": ""
   },
   "backend/app/api/auth.py": {
-    "mtime": 1792237872.8581967,
-    "seen": 1792239106.1664758,
-    "ast_hash": "8dab5488d99a8eb3a977858d8c181be6",
+    "mtime": 1792249915.3465693,
+    "seen": 1792250796.8778343,
+    "ast_hash": "7a6d19f78ba0096dbcd44c06a37f8418",
     "semantic_hash": ""
   },
   "backend/app/api/deps.py": {
@@ -198,9 +198,9 @@
     "semantic_hash": ""
   },
   "backend/app/schemas/auth.py": {
-    "mtime": 1792173019.3252718,
-    "seen": 1792173091.014098,
-    "ast_hash": "b18e7d25d38ed1d1a991093494a31a65",
+    "mtime": 1792249915.3203466,
+    "seen": 1792250796.8788326,
+    "ast_hash": "c54108d404c8ae10a7438fe9d9e87567",
     "semantic_hash": ""
   },
   "backend/app/services/security.py": {
@@ -822,9 +822,9 @@
     "semantic_hash": ""
   },
   "backend/tests/integration/test_chat_api.py": {
-    "mtime": 1792235539.152137,
-    "seen": 1792236277.3828633,
-    "ast_hash": "74519c554305143416e415229bff8347",
+    "mtime": 1792249915.4243336,
+    "seen": 1792250796.8788326,
+    "ast_hash": "728085a4c3dd3a848ea87cc3207e335d",
     "semantic_hash": ""
   },
   "backend/tests/unit/test_gemini_stream.py": {
@@ -870,9 +870,9 @@
     "semantic_hash": ""
   },
   "frontend/src/api/client.ts": {
-    "mtime": 1792235463.4671388,
-    "seen": 1792236277.3828633,
-    "ast_hash": "7b456cc6d2ef6b233b90a97711e6216f",
+    "mtime": 1792250017.8269098,
+    "seen": 1792250796.8788326,
+    "ast_hash": "ece0b916a37ba6e8a2d4367100b448e1",
     "semantic_hash": ""
   },
   "frontend/src/api/sse.test.ts": {
@@ -996,9 +996,9 @@
     "semantic_hash": ""
   },
   "frontend/src/pages/LoginPage.tsx": {
-    "mtime": 1792235500.9205973,
-    "seen": 1792236277.3828633,
-    "ast_hash": "fa4536ba158b7f4fe9e9b4656d6eadbc",
+    "mtime": 1792250018.1001496,
+    "seen": 1792250796.8788326,
+    "ast_hash": "ea2b289f386bf50f6b5b7924674044d5",
     "semantic_hash": ""
   },
   "frontend/src/test/setup.ts": {
@@ -1149,6 +1149,150 @@
     "mtime": 1792239065.9382086,
     "seen": 1792239106.1679957,
     "ast_hash": "00a9c7e35a95a54f70b3a0b5f6f1aa05",
+    "semantic_hash": ""
+  },
+  "backend/tests/integration/test_signup_code.py": {
+    "mtime": 1792249929.859926,
+    "seen": 1792250796.8788326,
+    "ast_hash": "f98d2dafef0d92ad711dbc70031bd0dc",
+    "semantic_hash": ""
+  },
+  "deploy/aws/01-preflight.sh": {
+    "mtime": 1792250510.6295965,
+    "seen": 1792250796.8788326,
+    "ast_hash": "b382c6d4c5e383d99ac2fe0b2e28f2ee",
+    "semantic_hash": ""
+  },
+  "deploy/aws/02-create-infra.sh": {
+    "mtime": 1792250510.6316037,
+    "seen": 1792250796.8788326,
+    "ast_hash": "d4d4e2d8e9b3dff1e10d22187c048ecd",
+    "semantic_hash": ""
+  },
+  "deploy/aws/03-set-secrets.sh": {
+    "mtime": 1792250510.6337118,
+    "seen": 1792250796.8788326,
+    "ast_hash": "7eb36f246d1fd00d624a9cc1e2dd37b8",
+    "semantic_hash": ""
+  },
+  "deploy/aws/04-deploy.sh": {
+    "mtime": 1792250561.7961073,
+    "seen": 1792250796.8788326,
+    "ast_hash": "63599e462cfa52bb8a923f58c7dd0e94",
+    "semantic_hash": ""
+  },
+  "deploy/aws/99-teardown.sh": {
+    "mtime": 1792250510.656623,
+    "seen": 1792250796.8788326,
+    "ast_hash": "b09c51165f8d970a65ffad2b8023bc37",
+    "semantic_hash": ""
+  },
+  "deploy/aws/lib.sh": {
+    "mtime": 1792250510.658619,
+    "seen": 1792250796.8788326,
+    "ast_hash": "6e37c0921507e5e137aeeda15bfe5b09",
+    "semantic_hash": ""
+  },
+  "deploy/aws/show-secret.sh": {
+    "mtime": 1792250510.6765316,
+    "seen": 1792250796.8788326,
+    "ast_hash": "9f5565b991846097b925d6e99275dd90",
+    "semantic_hash": ""
+  },
+  "deploy/aws/start.sh": {
+    "mtime": 1792250510.679043,
+    "seen": 1792250796.8788326,
+    "ast_hash": "97cd704e29aced8e0ee34dac85a84cee",
+    "semantic_hash": ""
+  },
+  "deploy/aws/stop.sh": {
+    "mtime": 1792250510.680042,
+    "seen": 1792250796.8788326,
+    "ast_hash": "12b9715a7f6a0f5796e957210b7f5a43",
+    "semantic_hash": ""
+  },
+  "deploy/common/backup.sh": {
+    "mtime": 1792250510.6840549,
+    "seen": 1792250796.8788326,
+    "ast_hash": "0ad945400b602adba20ca3a5b267751d",
+    "semantic_hash": ""
+  },
+  "deploy/common/fetch-env.sh": {
+    "mtime": 1792250510.6875677,
+    "seen": 1792250796.8788326,
+    "ast_hash": "c9eb8c26cddf75affd31ae8ae17269cd",
+    "semantic_hash": ""
+  },
+  "deploy/common/instance-setup.sh": {
+    "mtime": 1792250510.6895688,
+    "seen": 1792250796.8788326,
+    "ast_hash": "e0b42e1dbe72396903646249a8b81aa7",
+    "semantic_hash": ""
+  },
+  "deploy/common/release.sh": {
+    "mtime": 1792250510.7080512,
+    "seen": 1792250796.8788326,
+    "ast_hash": "7af0a5514e8470277943e09936390b5a",
+    "semantic_hash": ""
+  },
+  "deploy/common/restore.sh": {
+    "mtime": 1792250510.7150629,
+    "seen": 1792250796.8788326,
+    "ast_hash": "3497ff2ba7379e7b1397795a156375bc",
+    "semantic_hash": ""
+  },
+  "deploy/common/smoke.py": {
+    "mtime": 1792250510.7183702,
+    "seen": 1792250796.8788326,
+    "ast_hash": "d8ba50d6d7f2ddd1f9473465fdcd6300",
+    "semantic_hash": ""
+  },
+  "frontend/src/pages/LoginPage.test.tsx": {
+    "mtime": 1792250159.7188818,
+    "seen": 1792250796.8788326,
+    "ast_hash": "dead64539351bfab6c5a91cd7f809983",
+    "semantic_hash": ""
+  },
+  "deploy/common/compose.dryrun.yml": {
+    "mtime": 1792250510.6855624,
+    "seen": 1792250796.8788326,
+    "ast_hash": "45f0a32aec59ff17c4cd8d896ac6c087",
+    "semantic_hash": ""
+  },
+  "docker-compose.prod.yml": {
+    "mtime": 1792250510.75503,
+    "seen": 1792250796.8788326,
+    "ast_hash": "4d92be97e9029cb450d6f28fbe3e1679",
+    "semantic_hash": ""
+  },
+  "docs/architecture.md": {
+    "mtime": 1792250610.2587874,
+    "seen": 1792250796.8788326,
+    "ast_hash": "1837bcdc2de79ac8eb03ca9b47411462",
+    "semantic_hash": ""
+  },
+  "docs/decisions/0014-single-host-deploy-portable-to-oracle.md": {
+    "mtime": 1792250610.3133545,
+    "seen": 1792250796.8788326,
+    "ast_hash": "dc4a784b30d161ac036b500b3c8b5003",
+    "semantic_hash": ""
+  },
+  "docs/decisions/0015-bundle-deploys-over-ssm.md": {
+    "mtime": 1792250610.3444345,
+    "seen": 1792250796.8788326,
+    "ast_hash": "7d06a7523caae67aceb015effbdff808",
+    "semantic_hash": ""
+  },
+  "docs/deploy.md": {
+    "mtime": 1792250610.225449,
+    "seen": 1792250796.8788326,
+    "ast_hash": "142953b1888a2c5b18c25db52642b40e",
+    "semantic_hash": ""
+  },
+  "docs/oracle-migration.md": {
+    "mtime": 1792250610.2808118,
+    "seen": 1792250796.8788326,
+    "ast_hash": "1b7d3094bd5b7acccdb33ca7545b128d",
     "semantic_hash": ""
   }
 }
