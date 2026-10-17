@@ -1,6 +1,7 @@
 from functools import lru_cache
 from typing import Literal
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -15,6 +16,14 @@ class Settings(BaseSettings):
     # Leave empty on AWS so boto3 uses the EC2 instance role (no keys on disk).
     s3_access_key: str | None = None
     s3_secret_key: str | None = None
+
+    @field_validator("s3_endpoint_url", "s3_access_key", "s3_secret_key", mode="before")
+    @classmethod
+    def _empty_means_unset(cls, v: object) -> object:
+        """Compose passes unset variables as empty strings; boto3 rejects an empty endpoint and
+        would treat empty keys as real credentials, not fall back to the instance role."""
+        return None if isinstance(v, str) and not v.strip() else v
+
     # No usable default: the app refuses to start without a real secret (see main.lifespan).
     jwt_secret: str = ""
     jwt_ttl_minutes: int = 60

@@ -21,6 +21,7 @@ echo; echo "== Instance types this account can use for the Free plan ($REGION)"
 free="$(aws_ ec2 describe-instance-types --filters Name=free-tier-eligible,Values=true \
   --query 'InstanceTypes[].InstanceType' --output text 2>&1)" || free=""
 echo "${free:-(could not determine; the create script will fail safely if the type is not allowed)}"
+free="$(echo "$free" | tr -s '[:space:]' ' ')" # the API separates names with tabs and newlines
 case " $free " in
   *" $INSTANCE_TYPE "*) echo "OK: $INSTANCE_TYPE is eligible." ;;
   *) echo "WARNING: $INSTANCE_TYPE is not in the list above. Re-run with INSTANCE_TYPE=<a smaller arm64 type from the list, e.g. t4g.micro>." ;;
