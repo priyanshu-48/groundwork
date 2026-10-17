@@ -89,3 +89,55 @@ async def ingest_corpus(deps: Deps, org_id: uuid.UUID, gt: dict[str, Any], out: 
         await seed(deps, org_id, (out / "invoices" / name).read_bytes(), "invoice", name)
     while await process_one(deps, "w"):
         pass
+
+
+async def new_org_user(deps: Deps) -> tuple[uuid.UUID, uuid.UUID]:
+    async with deps.maker.begin() as s:
+        user = await users.create_org_with_user(
+            s, "Test Org", f"{uuid.uuid4().hex}@example.com", hash_password("x" * 12)
+        )
+        return user.org_id, user.id
+
+
+async def add_invoice_row(
+    deps: Deps,
+    org_id: uuid.UUID,
+    vendor: str,
+    number: str,
+    issue: str,
+    total: str,
+    currency: str = "USD",
+    review: bool = False,
+) -> uuid.UUID:
+    """A trusted invoice row without going through PDFs, for tool and agent tests."""
+    from datetime import date
+    from decimal import Decimal
+
+    from app.models.document import DocStatus, Document
+    from app.models.invoice import Invoice
+
+    async with deps.maker.begin() as s:
+        doc = Document(
+            org_id=org_id,
+            filename=f"invoice_{number}.pdf",
+            s3_key=f"k/{number}",
+            sha256=uuid.uuid4().hex + uuid.uuid4().hex,
+            kind=DocKind.invoice,
+            status=DocStatus.ready,
+        )
+        s.add(doc)
+        await s.flush()
+        s.add(
+            Invoice(
+                org_id=org_id,
+                document_id=doc.id,
+                vendor=vendor,
+                invoice_number=number,
+                issue_date=date.fromisoformat(issue),
+                currency=currency,
+                total=Decimal(total),
+                needs_review=review,
+                review_reason="test" if review else None,
+            )
+        )
+        return doc.id

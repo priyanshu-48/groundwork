@@ -1,3 +1,4 @@
+import json
 import re
 from datetime import date
 from decimal import Decimal, InvalidOperation
@@ -5,7 +6,7 @@ from typing import Any, Protocol
 
 from pydantic import BaseModel, ValidationError, field_validator
 
-from app.services.gemini import Throttle, call_with_retry
+from app.services.gemini import ModelChain, Throttle, call_with_retry
 
 _MAX_CHARS = 20_000  # bound the prompt (and the bill) for huge documents
 
@@ -47,6 +48,10 @@ def review_reason(f: InvoiceFields) -> str | None:
 class InvoiceExtractor(Protocol):
     async def extract(self, text: str) -> InvoiceFields: ...
 
+    async def extract_many(self, texts: list[str]) -> list[InvoiceFields]:
+        """One result per input, in order. Real models batch these into a single request."""
+        ...
+
 
 def _date(v: str | None) -> date | None:
     try:
@@ -66,6 +71,9 @@ class FakeInvoiceExtractor:
     """Reads 'Label: value' lines. Stands in for the LLM in tests."""
 
     _LINE = re.compile(r"^\s*([A-Za-z #]+?)\s*:\s*(.+?)\s*$", re.MULTILINE)
+
+    async def extract_many(self, texts: list[str]) -> list[InvoiceFields]:
+        return [await self.extract(t) for t in texts]
 
     async def extract(self, text: str) -> InvoiceFields:
         kv = {k.strip().lower(): v for k, v in self._LINE.findall(text)}
@@ -102,39 +110,80 @@ _SYSTEM = (
 )
 
 
-class GeminiInvoiceExtractor:
-    def __init__(self, client: Any, model: str, throttle: Throttle | None = None) -> None:
-        self._client, self._model, self._throttle = client, model, throttle
+_BATCH_DOC_CHARS = 4000  # an invoice is one page; this bounds a batch of 10 to ~10k tokens
+_ITEM = {
+    "type": "object",
+    "properties": {"index": {"type": "integer"}, **_LLMInvoice.model_json_schema()["properties"]},
+    "required": ["index"],
+}
+_BATCH_SCHEMA = {
+    "type": "object",
+    "properties": {"invoices": {"type": "array", "items": _ITEM}},
+    "required": ["invoices"],
+}
+_BATCH_SYSTEM = (
+    _SYSTEM + " Several documents follow, each in <document index=N> tags. Return one entry per "
+    "document in `invoices`, with the same index N."
+)
 
-    async def extract(self, text: str) -> InvoiceFields:
+
+def _to_fields(raw: _LLMInvoice) -> InvoiceFields:
+    return InvoiceFields(
+        vendor=raw.vendor,
+        invoice_number=raw.invoice_number,
+        issue_date=_date(raw.issue_date),
+        due_date=_date(raw.due_date),
+        currency=raw.currency,
+        subtotal=_money(raw.subtotal),
+        tax=_money(raw.tax),
+        total=_money(raw.total),
+    )
+
+
+class GeminiInvoiceExtractor:
+    """Structured extraction. The model chain lets a quota-exhausted model hand over to the next."""
+
+    def __init__(self, client: Any, chain: ModelChain, throttle: Throttle | None = None) -> None:
+        self._client, self._chain, self._throttle = client, chain, throttle
+
+    async def _generate(self, contents: str, system: str, schema: dict[str, Any]) -> str:
         from google.genai import types
 
         cfg = types.GenerateContentConfig(
-            system_instruction=_SYSTEM,
+            system_instruction=system,
             response_mime_type="application/json",
-            response_json_schema=_LLMInvoice.model_json_schema(),
+            response_json_schema=schema,
             temperature=0,
         )
         if self._throttle:
             await self._throttle.wait()
-        resp = await call_with_retry(
-            lambda: self._client.models.generate_content(
-                model=self._model,
-                contents=f"<document>\n{text[:_MAX_CHARS]}\n</document>",
-                config=cfg,
+        _, resp = await self._chain.run(
+            lambda m: call_with_retry(
+                lambda: self._client.models.generate_content(model=m, contents=contents, config=cfg)
             )
         )
+        return str(resp.text or "")
+
+    async def extract(self, text: str) -> InvoiceFields:
+        doc = "<document>\n" + text[:_MAX_CHARS] + "\n</document>"
+        body = await self._generate(doc, _SYSTEM, _LLMInvoice.model_json_schema())
         try:
-            raw = _LLMInvoice.model_validate_json(resp.text or "")
+            return _to_fields(_LLMInvoice.model_validate_json(body))
         except ValidationError:
             return InvoiceFields()  # unusable output: all-null, which review_reason flags
-        return InvoiceFields(
-            vendor=raw.vendor,
-            invoice_number=raw.invoice_number,
-            issue_date=_date(raw.issue_date),
-            due_date=_date(raw.due_date),
-            currency=raw.currency,
-            subtotal=_money(raw.subtotal),
-            tax=_money(raw.tax),
-            total=_money(raw.total),
+
+    async def extract_many(self, texts: list[str]) -> list[InvoiceFields]:
+        if not texts:
+            return []
+        docs = "\n".join(
+            f"<document index={i}>\n" + t[:_BATCH_DOC_CHARS] + "\n</document>"
+            for i, t in enumerate(texts, start=1)
         )
+        body = await self._generate(docs, _BATCH_SYSTEM, _BATCH_SCHEMA)
+        found: dict[int, InvoiceFields] = {}
+        try:
+            for item in json.loads(body).get("invoices", []):
+                found[int(item["index"])] = _to_fields(_LLMInvoice.model_validate(item))
+        except (ValueError, KeyError, TypeError, ValidationError):
+            pass  # whatever parsed stays; the rest become all-null and get flagged for review
+        return [found.get(i, InvoiceFields()) for i in range(1, len(texts) + 1)]

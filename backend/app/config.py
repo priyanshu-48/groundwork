@@ -25,12 +25,17 @@ class Settings(BaseSettings):
     gemini_api_key: str | None = None
     # Model names change; both are settings. Verify against the Gemini docs on first real run.
     gemini_model: str = "gemini-3.5-flash"
+    # Comma-separated fallback chain for generation (agent + extraction), best first. Quotas are
+    # per model, so listing several adds them up. Empty = just gemini_model.
+    # Never used for embeddings (vectors from different models are not comparable).
+    gemini_models: str = ""
     embedding_model: str = "gemini-embedding-001"
     embedding_dims: int = 768
     ai_timeout_s: float = 30
     # Minimum seconds between Gemini calls (0 = off). Keeps bulk loads inside free-tier quotas.
     embedding_min_interval_s: float = 0
     extraction_min_interval_s: float = 0
+    agent_min_interval_s: float = 0
     # Free-tier generate_content quotas can be ~20 requests/day; with this off, invoices are
     # still chunked and embedded (searchable) but no invoice row is extracted.
     extraction_enabled: bool = True
@@ -45,8 +50,16 @@ class Settings(BaseSettings):
     rerank_model: str = "ms-marco-MiniLM-L-12-v2"
     rerank_cache_dir: str = ".flashrank"
     candidate_k: int = 20
+    # Agent loop limits (SPEC 6.5): bound steps, and what a tool may feed back to the model.
+    agent_max_steps: int = 6
+    tool_result_char_budget: int = 12000  # about 3000 tokens
     rrf_k: int = 60
     check_timeout_s: float = 3.0
+
+
+def model_chain_names(s: Settings) -> list[str]:
+    names = [m.strip() for m in s.gemini_models.split(",") if m.strip()]
+    return names or [s.gemini_model]
 
 
 @lru_cache

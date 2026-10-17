@@ -4,7 +4,8 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 
-from app.config import Settings
+from app.agent.llm import GeminiLLM
+from app.config import Settings, model_chain_names
 from app.db import make_engine
 from app.services.embeddings import (
     EmbeddingProvider,
@@ -12,7 +13,8 @@ from app.services.embeddings import (
     GeminiEmbeddingProvider,
 )
 from app.services.extraction import FakeInvoiceExtractor, GeminiInvoiceExtractor, InvoiceExtractor
-from app.services.gemini import Throttle, make_client
+from app.services.gemini import ModelChain, Throttle, make_client
+from app.services.rerank import FlashRankReranker
 from app.services.storage import make_s3
 
 log = logging.getLogger(__name__)
@@ -28,6 +30,8 @@ class Deps:
     embedder: EmbeddingProvider
     extractor: InvoiceExtractor
     settings: Settings
+    reranker: Any = None  # app.services.rerank.Reranker, built only when a mode needs it
+    llm: Any = None  # app.agent.llm.LLM; None in fake mode (agent needs a scripted FakeLLM)
 
 
 def build_deps(s: Settings) -> tuple[Deps, AsyncEngine]:
@@ -45,11 +49,14 @@ def build_deps(s: Settings) -> tuple[Deps, AsyncEngine]:
             s.embedding_dims,
             throttle=Throttle(s.embedding_min_interval_s),
         )
+        chain = ModelChain(model_chain_names(s))
         extractor: InvoiceExtractor = GeminiInvoiceExtractor(
-            client, s.gemini_model, Throttle(s.extraction_min_interval_s)
+            client, chain, Throttle(s.extraction_min_interval_s)
         )
+        llm: GeminiLLM | None = GeminiLLM(client, chain, Throttle(s.agent_min_interval_s))
     else:
         log.warning("AI_PROVIDER=fake: embeddings and extraction are NOT real")
+        llm = None
         embedder, extractor = FakeEmbeddingProvider(s.embedding_dims), FakeInvoiceExtractor()
     deps = Deps(
         maker=async_sessionmaker(engine, expire_on_commit=False),
@@ -58,5 +65,9 @@ def build_deps(s: Settings) -> tuple[Deps, AsyncEngine]:
         embedder=embedder,
         extractor=extractor,
         settings=s,
+        reranker=FlashRankReranker(s.rerank_model, s.rerank_cache_dir)
+        if s.search_mode == "hybrid_rerank"
+        else None,
+        llm=llm,
     )
     return deps, engine

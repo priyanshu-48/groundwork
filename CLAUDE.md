@@ -41,6 +41,8 @@ After each milestone run `graphify update .` (details in the graphify section be
 ## Commands
 - Backend: `cd backend && uv run pytest`, `uv run alembic upgrade head`, `uv run python -m app.worker.runner`
 - Frontend: `cd frontend && npm run dev`, `npm test`
+- Invoice extraction backfill (from `backend/`): `uv run python -m app.worker.backfill_invoices`
+- Agent evals (from `backend/`): `uv run python ../evals/run_agent_evals.py --types contract_lookup --max-llm-calls 25 --label m6`
 - Evals (from `backend/`): `uv run python ../evals/generate_corpus.py`, `build_questions.py`, `load_corpus.py`, `run_evals.py --sets easy hard --modes vector hybrid hybrid_rerank --label m5`
 
 ## graphify
