@@ -53,8 +53,8 @@ Open the URL in a browser too (the first request waits a few seconds for the HTT
 | Pause (no compute charge) | `bash deploy/aws/stop.sh` / `bash deploy/aws/start.sh` |
 | Look at logs | Console → EC2 → instance → **Connect → Session Manager**, then `cd /opt/groundwork/current && sudo docker compose --env-file /opt/groundwork/runtime.env -f docker-compose.prod.yml logs --tail 100 api` |
 | Metrics | `curl -H "X-Admin-Token: $(bash deploy/aws/show-secret.sh ADMIN_TOKEN)" https://<host>/api/admin/metrics` |
-| Backup now | in the Session Manager shell: `sudo /opt/groundwork/current/deploy/common/backup.sh` (also nightly 03:15 UTC) |
-| Restore | `sudo /opt/groundwork/current/deploy/common/restore.sh latest` (asks first) |
+| Backup now | in the Session Manager shell: `sudo bash /opt/groundwork/current/deploy/common/backup.sh` (also nightly 03:15 UTC) |
+| Restore | `sudo bash /opt/groundwork/current/deploy/common/restore.sh latest` (asks first) |
 | Delete everything | `bash deploy/aws/99-teardown.sh` (asks before each group) |
 
 Every log line is JSON with a `request_id`; the browser shows it as the `X-Request-ID` response header.
