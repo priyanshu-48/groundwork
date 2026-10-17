@@ -79,6 +79,11 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     # Public demo guard: when set, signup must include this code (protects the Gemini free quota).
     signup_code: str = ""
+    # Public demo (M10): the account that owns the demo corpus. Empty = demo login disabled.
+    demo_account_email: str = ""
+    demo_daily_chat_cap: int = 100  # questions per 24 h across ALL demo visitors (protects quota)
+    demo_rate_limit_per_min: int = 10  # demo logins per client IP
+    demo_token_ttl_minutes: int = 120
 
 
 def model_chain_names(s: Settings) -> list[str]:

@@ -8,6 +8,7 @@ import json
 import logging
 import uuid
 from collections.abc import AsyncIterator
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -49,8 +50,19 @@ async def send(
     if deps is None or deps.llm is None:
         raise HTTPException(503, "Chat is not configured on this server")
     async with deps.maker() as session:
-        if await conversations.get_conversation(session, p.org_id, conversation_id) is None:
+        only = p.user_id if p.demo else None  # demo visitors only reach their own conversations
+        if await conversations.get_conversation(session, p.org_id, conversation_id, only) is None:
             raise HTTPException(404, "Conversation not found")
+        if p.demo:
+            cap = deps.settings.demo_daily_chat_cap
+            since = datetime.now(UTC) - timedelta(hours=24)
+            if await conversations.count_questions_since(session, p.org_id, since) >= cap:
+                raise HTTPException(
+                    429,
+                    "The demo has reached its daily question limit. Try again tomorrow, "
+                    "or ask for an invite code to use your own workspace.",
+                    headers={"Retry-After": "3600"},
+                )
 
     key = str(p.org_id)
     if (wait := limits.chat.check(key)) is not None:

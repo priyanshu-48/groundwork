@@ -2,6 +2,8 @@
 
 Run (from backend/, API + worker up):  uv run python ../evals/load_corpus.py
 Credentials come from EVAL_EMAIL / EVAL_PASSWORD (a local eval-only account is created if needed).
+Against a real deployment: set a strong EVAL_PASSWORD (the local default is refused) and, if signup
+is gated, EVAL_INVITE_CODE. Pass these as environment variables, never on the command line.
 Re-running is safe: uploads are idempotent, so already-loaded files are skipped by the server.
 """
 
@@ -30,9 +32,14 @@ async def _retry(fn):  # type: ignore[no-untyped-def]
             await asyncio.sleep(0.5 * attempt)
 
 
-async def _auth(c: httpx.AsyncClient, email: str) -> dict[str, str]:
+def _is_local(api: str) -> bool:
+    return any(h in api for h in ("localhost", "127.0.0.1", "[::1]"))
+
+
+async def _auth(c: httpx.AsyncClient, email: str, invite_code: str = "") -> dict[str, str]:
     body = {"email": email, "password": PASSWORD}
-    r = await c.post("/auth/signup", json={**body, "org_name": "Eval Org"})
+    extra = {"invite_code": invite_code} if invite_code else {}
+    r = await c.post("/auth/signup", json={**body, **extra, "org_name": "Eval Org"})
     if r.status_code == 409:
         r = await c.post("/auth/login", json=body)
     r.raise_for_status()
@@ -75,7 +82,7 @@ async def _main(a: argparse.Namespace) -> int:
     ]
     files += [(a.corpus / "invoices" / i["filename"], "invoice") for i in gt["invoices"]]
     async with httpx.AsyncClient(base_url=a.api, timeout=60) as c:
-        h = await _auth(c, a.email)
+        h = await _auth(c, a.email, a.invite_code)
         sem = asyncio.Semaphore(8)
         await asyncio.gather(*(_upload(c, h, sem, p, k) for p, k in files))
         print(f"uploaded {len(files)} files; waiting for the worker")
@@ -95,9 +102,13 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--api", default="http://localhost:8000")
     ap.add_argument("--email", default=os.environ.get("EVAL_EMAIL", "eval@example.com"))
+    ap.add_argument("--invite-code", default=os.environ.get("EVAL_INVITE_CODE", ""))
     ap.add_argument("--corpus", type=Path, default=ROOT / "evals" / "corpus")
     ap.add_argument("--ground-truth", type=Path, default=ROOT / "evals" / "ground_truth.json")
-    sys.exit(asyncio.run(_main(ap.parse_args())))
+    args = ap.parse_args()
+    if not _is_local(args.api) and PASSWORD == "eval-local-only-password":
+        sys.exit("Refusing the default password against a non-local API: set a strong EVAL_PASSWORD")
+    sys.exit(asyncio.run(_main(args)))
 
 
 if __name__ == "__main__":

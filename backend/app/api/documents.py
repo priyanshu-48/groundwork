@@ -48,6 +48,8 @@ async def upload(
     p: Principal = Depends(current_user),
     session: AsyncSession = Depends(get_session),
 ) -> object:
+    if p.demo:
+        raise HTTPException(403, "The demo workspace is read-only")
     s = get_settings()
     data = await _read_pdf(file, s.max_upload_bytes)
     sha = hashlib.sha256(data).hexdigest()

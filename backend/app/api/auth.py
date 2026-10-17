@@ -1,5 +1,6 @@
 import asyncio
 import hmac
+import secrets
 import uuid
 from datetime import timedelta
 
@@ -23,10 +24,11 @@ from app.services.security import (
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-def _token(user_id: uuid.UUID, org_id: uuid.UUID) -> TokenOut:
+def _token(user_id: uuid.UUID, org_id: uuid.UUID, demo: bool = False) -> TokenOut:
     s = get_settings()
-    ttl = timedelta(minutes=s.jwt_ttl_minutes)
-    return TokenOut(access_token=create_token(user_id, org_id, s.jwt_secret, ttl))
+    minutes = s.demo_token_ttl_minutes if demo else s.jwt_ttl_minutes
+    ttl = timedelta(minutes=minutes)
+    return TokenOut(access_token=create_token(user_id, org_id, s.jwt_secret, ttl, demo=demo))
 
 
 @router.post("/signup", status_code=201, response_model=TokenOut)
@@ -71,6 +73,31 @@ async def login(
     return _token(user.id, user.org_id)
 
 
+@router.post("/demo", response_model=TokenOut)
+async def demo(
+    request: Request,
+    session: AsyncSession = Depends(get_session),
+    limits: Limits = Depends(get_limits),
+) -> TokenOut:
+    """One click into the shared demo workspace. Each visit is a fresh user inside the org that
+    holds the demo corpus: visitors share the documents but not their conversations. The token
+    carries demo=True: read-only, and questions count against a daily cap (see api/chat.py)."""
+    s = get_settings()
+    if not s.demo_account_email:
+        raise HTTPException(404, "Not found")  # feature off: the route does not exist
+    if (wait := limits.demo.check(client_ip(request))) is not None:
+        raise too_many(wait, "demo sign-ins")
+    owner = await users.get_user_by_email(session, s.demo_account_email.lower())
+    if owner is None:
+        raise HTTPException(503, "The demo workspace is not set up yet")
+    # "!" is not a valid hash, so verify_password rejects it: no password login for these users
+    visitor = await users.create_user(
+        session, owner.org_id, f"demo-{secrets.token_hex(8)}@demo.invalid", "!demo-no-password"
+    )
+    await session.commit()
+    return _token(visitor.id, visitor.org_id, demo=True)
+
+
 @router.get("/me", response_model=MeOut)
 async def me(p: Principal = Depends(current_user)) -> MeOut:
-    return MeOut(user_id=p.user_id, org_id=p.org_id)
+    return MeOut(user_id=p.user_id, org_id=p.org_id, demo=p.demo)

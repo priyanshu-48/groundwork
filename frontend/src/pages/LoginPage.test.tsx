@@ -8,6 +8,7 @@ import { LoginPage } from "./LoginPage";
 
 const api = vi.hoisted(() => ({
   login: vi.fn(),
+  demoLogin: vi.fn(),
   signup: vi.fn(),
   getMeta: vi.fn(),
   tokenStore: { get: () => null, set: vi.fn(), clear: vi.fn() },

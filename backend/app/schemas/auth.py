@@ -30,3 +30,4 @@ class TokenOut(BaseModel):
 class MeOut(BaseModel):
     user_id: uuid.UUID
     org_id: uuid.UUID
+    demo: bool = False

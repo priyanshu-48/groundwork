@@ -120,8 +120,24 @@ export async function getMessages(conversationId: string): Promise<ChatMessage[]
   return (await (await request(`/conversations/${conversationId}/messages`)).json()) as ChatMessage[];
 }
 
-export async function getMeta(): Promise<{ chat: ChatMode; signup_code_required?: boolean }> {
-  return (await (await request("/meta")).json()) as { chat: ChatMode; signup_code_required?: boolean };
+export interface Meta {
+  chat: ChatMode;
+  signup_code_required?: boolean;
+  demo_available?: boolean;
+}
+
+export async function getMeta(): Promise<Meta> {
+  return (await (await request("/meta")).json()) as Meta;
+}
+
+export async function getMe(): Promise<{ user_id: string; org_id: string; demo: boolean }> {
+  return (await (await request("/auth/me")).json()) as { user_id: string; org_id: string; demo: boolean };
+}
+
+/** One click into the shared, read-only demo workspace (no credentials). */
+export async function demoLogin(): Promise<string> {
+  const res = await request("/auth/demo", { method: "POST" });
+  return ((await res.json()) as { access_token: string }).access_token;
 }
 
 /** Starts a chat turn; the caller reads the SSE body (see api/sse.ts). */

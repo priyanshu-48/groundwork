@@ -11,6 +11,7 @@ const api = vi.hoisted(() => ({
   createConversation: vi.fn(),
   getMessages: vi.fn(),
   sendMessage: vi.fn(),
+  getMe: vi.fn(),
 }));
 vi.mock("../api/client", () => api);
 
@@ -57,6 +58,7 @@ beforeEach(() => {
   api.listConversations.mockResolvedValue([]);
   api.createConversation.mockResolvedValue({ id: "c1", title: null, created_at: "t" });
   api.getMessages.mockResolvedValue([]);
+  api.getMe.mockResolvedValue({ user_id: "u", org_id: "o", demo: false });
 });
 
 describe("ChatPage", () => {

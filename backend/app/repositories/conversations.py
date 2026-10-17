@@ -1,7 +1,8 @@
 import uuid
+from datetime import datetime
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.agent import AgentRun, AgentStep, Conversation, Message, MessageRole, RunStatus
@@ -17,16 +18,26 @@ async def create_conversation(
 
 
 async def get_conversation(
-    session: AsyncSession, org_id: uuid.UUID, conversation_id: uuid.UUID
+    session: AsyncSession,
+    org_id: uuid.UUID,
+    conversation_id: uuid.UUID,
+    user_id: uuid.UUID | None = None,
 ) -> Conversation | None:
+    """user_id narrows to one user's conversations (demo visitors share an org, not chats)."""
     stmt = select(Conversation).where(
         Conversation.id == conversation_id, Conversation.org_id == org_id
     )
+    if user_id is not None:
+        stmt = stmt.where(Conversation.user_id == user_id)
     return (await session.execute(stmt)).scalar_one_or_none()
 
 
 async def history(
-    session: AsyncSession, org_id: uuid.UUID, conversation_id: uuid.UUID, limit: int = 20
+    session: AsyncSession,
+    org_id: uuid.UUID,
+    conversation_id: uuid.UUID,
+    limit: int = 20,
+    user_id: uuid.UUID | None = None,
 ) -> list[Message]:
     """Oldest-first text history of a conversation; empty if it belongs to another org."""
     stmt = (
@@ -36,6 +47,8 @@ async def history(
         .order_by(Message.created_at.desc(), Message.id)
         .limit(limit)
     )
+    if user_id is not None:
+        stmt = stmt.where(Conversation.user_id == user_id)
     return list(reversed((await session.execute(stmt)).scalars().all()))
 
 
@@ -91,7 +104,7 @@ async def record_run(
 
 
 async def list_conversations(
-    session: AsyncSession, org_id: uuid.UUID, limit: int = 50
+    session: AsyncSession, org_id: uuid.UUID, limit: int = 50, user_id: uuid.UUID | None = None
 ) -> list[Conversation]:
     stmt = (
         select(Conversation)
@@ -99,6 +112,8 @@ async def list_conversations(
         .order_by(Conversation.created_at.desc(), Conversation.id)
         .limit(limit)
     )
+    if user_id is not None:
+        stmt = stmt.where(Conversation.user_id == user_id)
     return list((await session.execute(stmt)).scalars().all())
 
 
@@ -141,3 +156,19 @@ async def runs_for_messages(
             }
         )
     return out
+
+
+async def count_questions_since(session: AsyncSession, org_id: uuid.UUID, since: datetime) -> int:
+    """User messages in an org since a time: the demo's daily budget, counted from the database
+    so it survives restarts and covers every visitor."""
+    stmt = (
+        select(func.count())
+        .select_from(Message)
+        .join(Conversation, Conversation.id == Message.conversation_id)
+        .where(
+            Conversation.org_id == org_id,
+            Message.role == MessageRole.user,
+            Message.created_at >= since,
+        )
+    )
+    return int((await session.execute(stmt)).scalar_one())

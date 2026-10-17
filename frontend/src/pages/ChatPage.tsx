@@ -3,11 +3,20 @@ import { useEffect, useReducer, useRef, useState, type FormEvent, type KeyboardE
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { createConversation, getMessages, listConversations, sendMessage } from "../api/client";
 import { chatEvents } from "../api/sse";
+import { useIsDemo } from "../useIsDemo";
 import type { Citation } from "../api/types";
 import { idle, reducer } from "../chat/reducer";
 import { CitationDetail } from "../components/CitationDetail";
 import { CitedText } from "../components/CitedText";
 import { StepsPanel } from "../components/StepsPanel";
+
+// Questions that work on the synthetic demo corpus: a clause lookup, an aggregate, a multi-hop.
+const DEMO_QUESTIONS = [
+  "What is the termination notice period in the Kestrel Security contract?",
+  "Does the Redwood Staffing contract renew automatically?",
+  "How much did Ironbridge Facilities bill us between 2025-11-01 and 2025-11-30?",
+  "Which vendor on net-45 terms billed us the most in October 2025?",
+];
 
 function Bubble({ role, children }: { role: "user" | "assistant"; children: ReactNode }) {
   const mine = role === "user";
@@ -33,6 +42,7 @@ function AnswerWithSources({ text, citations }: { text: string; citations: Citat
 
 export function ChatPage() {
   const { conversationId } = useParams();
+  const isDemo = useIsDemo();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [run, dispatch] = useReducer(reducer, idle);
@@ -139,7 +149,24 @@ export function ChatPage() {
       <section className="flex min-w-0 flex-1 flex-col">
         <div className="flex-1 space-y-3 overflow-auto p-4" aria-label="Conversation">
           {messages.length === 0 && !busy && (
-            <p className="mt-10 text-center text-slate-500">Ask a question about your contracts and invoices.</p>
+            <div className="mt-10 text-center">
+              <p className="text-slate-500">Ask a question about your contracts and invoices.</p>
+              {isDemo && (
+                <ul className="mx-auto mt-4 flex max-w-xl flex-col gap-2" aria-label="Suggested questions">
+                  {DEMO_QUESTIONS.map((q) => (
+                    <li key={q}>
+                      <button
+                        type="button"
+                        onClick={() => void send(q)}
+                        className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-left text-sm hover:bg-slate-50"
+                      >
+                        {q}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
           {messages.map((m) => (
             <div key={m.id}>

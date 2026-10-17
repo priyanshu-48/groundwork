@@ -8,7 +8,7 @@ import time
 import uuid
 from collections import deque
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from fastapi import HTTPException, Request
 
@@ -80,6 +80,7 @@ class Limits:
     search: SlidingWindowLimiter
     login: SlidingWindowLimiter
     signup: SlidingWindowLimiter
+    demo: SlidingWindowLimiter = field(default_factory=lambda: SlidingWindowLimiter(10))
 
 
 def build_limits(s: Settings) -> Limits:
@@ -89,6 +90,7 @@ def build_limits(s: Settings) -> Limits:
         search=SlidingWindowLimiter(s.search_rate_limit_per_min),
         login=SlidingWindowLimiter(s.login_rate_limit_per_min),
         signup=SlidingWindowLimiter(s.signup_rate_limit_per_min),
+        demo=SlidingWindowLimiter(s.demo_rate_limit_per_min),
     )
 
 
