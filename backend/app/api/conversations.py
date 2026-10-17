@@ -50,7 +50,9 @@ async def list_(
     p: Principal = Depends(current_user),
     session: AsyncSession = Depends(get_session),
 ) -> object:
-    return await conversations.list_conversations(session, p.org_id, limit)
+    return await conversations.list_conversations(
+        session, p.org_id, limit, user_id=p.user_id if p.demo else None
+    )
 
 
 @router.get("/{conversation_id}/messages", response_model=list[MessageOut])
@@ -59,9 +61,10 @@ async def history(
     p: Principal = Depends(current_user),
     session: AsyncSession = Depends(get_session),
 ) -> object:
-    if await conversations.get_conversation(session, p.org_id, conversation_id) is None:
+    only = p.user_id if p.demo else None  # demo visitors share an org but not their chats
+    if await conversations.get_conversation(session, p.org_id, conversation_id, only) is None:
         raise HTTPException(404, "Conversation not found")
-    msgs = await conversations.history(session, p.org_id, conversation_id, limit=200)
+    msgs = await conversations.history(session, p.org_id, conversation_id, limit=200, user_id=only)
     runs = await conversations.runs_for_messages(session, [m.id for m in msgs])
     return [
         MessageOut(

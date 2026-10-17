@@ -40,8 +40,12 @@ async def meta(request: Request) -> dict[str, str | bool]:
     from app.agent.demo import DemoLLM
 
     deps = getattr(request.app.state, "agent_deps", None)
-    needs_code = bool(get_settings().signup_code)
+    s = get_settings()
+    flags = {
+        "signup_code_required": bool(s.signup_code),
+        "demo_available": bool(s.demo_account_email),
+    }
     if deps is None or deps.llm is None:
-        return {"chat": "unavailable", "signup_code_required": needs_code}
+        return {"chat": "unavailable", **flags}
     chat = "demo" if isinstance(deps.llm, DemoLLM) else "model"
-    return {"chat": chat, "signup_code_required": needs_code}
+    return {"chat": chat, **flags}

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { NavLink, Outlet } from "react-router-dom";
 import { getMeta } from "../api/client";
 import { useAuth } from "../auth";
+import { useIsDemo } from "../useIsDemo";
 
 const link = ({ isActive }: { isActive: boolean }) =>
   `rounded px-3 py-1.5 text-sm font-medium ${isActive ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-200"}`;
@@ -9,6 +10,7 @@ const link = ({ isActive }: { isActive: boolean }) =>
 export function Layout() {
   const { signOut } = useAuth();
   const meta = useQuery({ queryKey: ["meta"], queryFn: getMeta, staleTime: 60_000 });
+  const isDemo = useIsDemo();
   return (
     <div className="flex h-screen flex-col">
       <header className="flex items-center gap-4 border-b border-slate-200 bg-white px-4 py-2">
@@ -25,6 +27,12 @@ export function Layout() {
           Sign out
         </button>
       </header>
+      {isDemo && (
+        <p role="status" className="bg-indigo-100 px-4 py-1.5 text-sm text-indigo-900">
+          Shared demo workspace with synthetic data. It is read-only, and your questions are private to
+          this session.
+        </p>
+      )}
       {meta.data?.chat === "demo" && (
         <p role="status" className="bg-amber-100 px-4 py-1.5 text-sm text-amber-900">
           Demo mode: answers come from a simple document lookup, not a language model.

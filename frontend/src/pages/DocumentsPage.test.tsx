@@ -6,7 +6,7 @@ import type { DocumentOut } from "../api/types";
 import { StatusBadge } from "../components/StatusBadge";
 import { DocumentsPage } from "./DocumentsPage";
 
-const api = vi.hoisted(() => ({ listDocuments: vi.fn(), uploadDocument: vi.fn() }));
+const api = vi.hoisted(() => ({ listDocuments: vi.fn(), uploadDocument: vi.fn(), getMe: vi.fn() }));
 vi.mock("../api/client", () => api);
 
 const doc = (over: Partial<DocumentOut>): DocumentOut => ({
@@ -32,6 +32,7 @@ function renderPage() {
 beforeEach(() => {
   vi.clearAllMocks();
   api.listDocuments.mockResolvedValue([]);
+  api.getMe.mockResolvedValue({ user_id: "u", org_id: "o", demo: false });
 });
 
 describe("StatusBadge", () => {

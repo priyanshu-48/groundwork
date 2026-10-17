@@ -2,6 +2,8 @@
 
 Usage:  python3 deploy/common/smoke.py https://1-2-3-4.sslip.io [--code INVITE] [--admin-token TOKEN]
 (or SMOKE_CODE / ADMIN_TOKEN in the environment, which keeps secrets out of shell history).
+With --demo it checks the public demo workspace instead (no invite code needed): demo login,
+read-only uploads, a loaded corpus, and cited answers to real questions.
 
 Creates a throwaway org, uploads a small PDF, waits until it is ingested, asks one question and checks
 the stream ends with a cited answer. With real Gemini this uses a handful of free-tier calls."""
@@ -47,13 +49,62 @@ def multipart(filename: str, data: bytes, fields: dict[str, str]) -> tuple[bytes
     return b"".join(parts), f"multipart/form-data; boundary={boundary}"
 
 
+def ask(base: str, auth: dict[str, str], question: str) -> str:
+    """Asks one question in a fresh conversation; returns the raw event stream text."""
+    j = {"Content-Type": "application/json"}
+    _, _, body = call(base, "/api/conversations", method="POST", body=b"{}", headers={**auth, **j})
+    conv = json.loads(body)["id"]
+    payload = json.dumps({"content": question}).encode()
+    status, _, body = call(base, f"/api/chat/{conv}/messages", method="POST", body=payload,
+                           headers={**auth, **j}, timeout=180)
+    step(f"chat streams: {question[:48]}...", status == 200 and "event: done" in body.decode(), f"status {status}")
+    return body.decode()
+
+
+def answer_text(stream: str) -> str:
+    for block in stream.split("\n\n"):
+        if block.startswith("event: answer"):
+            return str(json.loads(block.split("data: ", 1)[1])["text"])
+    return ""
+
+
+def demo_checks(base: str) -> None:
+    status, _, body = call(base, "/api/meta")
+    meta = json.loads(body)
+    step("demo is available", status == 200 and meta.get("demo_available") is True, str(meta))
+    status, _, body = call(base, "/api/auth/demo", method="POST")
+    step("demo login", status == 200, f"status {status}")
+    auth = {"Authorization": f"Bearer {json.loads(body)['access_token']}"}
+    status, _, body = call(base, "/api/auth/me", headers=auth)
+    step("token is a demo token", status == 200 and json.loads(body)["demo"] is True)
+    status, _, body = call(base, "/api/documents?limit=100", headers=auth)
+    docs = json.loads(body)
+    step("demo workspace has documents", status == 200 and len(docs) >= 20, f"{len(docs)} on first page")
+    data, ctype = multipart("net45.pdf", PDF.read_bytes(), {"kind": "contract"})
+    status, _, _ = call(base, "/api/documents", method="POST", body=data, headers={**auth, "Content-Type": ctype})
+    step("uploads are refused", status == 403, f"status {status}")
+
+    stream = ask(base, auth, "What is the termination notice period in the Kestrel Security contract?")
+    step("contract answer is cited", "event: citations" in stream and '"ref": "C1"' in stream)
+    step("contract answer mentions days", "day" in answer_text(stream).lower(), answer_text(stream)[:80])
+    stream = ask(base, auth, "How much did Ironbridge Facilities bill us between 2025-11-01 and 2025-11-30?")
+    text = answer_text(stream)
+    step("aggregate answer has a figure", any(ch.isdigit() for ch in text), text[:80])
+    step("run finished ok", '"status": "ok"' in stream.split("event: done")[-1])
+    print("DEMO ALL PASSED")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("base")
+    ap.add_argument("--demo", action="store_true", help="check the public demo workspace instead")
     ap.add_argument("--code", default=os.environ.get("SMOKE_CODE", ""))
     ap.add_argument("--admin-token", default=os.environ.get("ADMIN_TOKEN", ""))
     a = ap.parse_args()
     base = a.base.rstrip("/")
+    if a.demo:
+        demo_checks(base)
+        return
     j = {"Content-Type": "application/json"}
 
     status, headers, body = call(base, "/api/health")

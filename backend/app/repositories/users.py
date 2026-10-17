@@ -1,3 +1,5 @@
+import uuid
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +14,15 @@ async def create_org_with_user(
     session.add(org)
     await session.flush()
     user = User(org_id=org.id, email=email, password_hash=password_hash)
+    session.add(user)
+    await session.flush()
+    return user
+
+
+async def create_user(
+    session: AsyncSession, org_id: uuid.UUID, email: str, password_hash: str
+) -> User:
+    user = User(org_id=org_id, email=email, password_hash=password_hash)
     session.add(user)
     await session.flush()
     return user
