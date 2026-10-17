@@ -190,6 +190,7 @@ async def test_query_contracts_filters_by_terms_renewal_and_law(deps: Deps, org:
     one = (await q(deps, org, "query_contracts", vendor="acme"))["rows"][0]
     assert one["payment_terms_days"] == 30 and one["liability_cap_amount"] == "250000.00"
     assert one["liability_cap_currency"] == "USD" and "document_id" not in one
+    assert "ref" not in one  # structured rows have no page, so there is no citation handle
 
 
 async def test_query_contracts_wildcards_are_literal_and_other_orgs_see_nothing(

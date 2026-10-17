@@ -32,7 +32,8 @@ def numbers(text: str) -> list[Decimal]:
 
 
 def _ints_in(text: str, allowed: set[int]) -> set[int]:
-    return {int(n) for n in numbers(text) if n == int(n) and int(n) in allowed}
+    # abs(): in 'Net-15' the hyphen is a dash, which the number regex reads as a minus sign
+    return {abs(int(n)) for n in numbers(text) if n == int(n) and abs(int(n)) in allowed}
 
 
 def _auto_renewal(answer: str) -> str | None:

@@ -255,17 +255,9 @@ async def contracts_tool(ctx: AgentContext, a: QueryContractsArgs) -> ToolOutput
             governing_law=a.governing_law,
             limit=a.limit,
         )
-        firsts = (
-            await chunks_repo.first_chunks(session, ctx.org_id, [r["document_id"] for r in rows])
-            if rows
-            else {}
-        )
-    out_rows: list[dict[str, Any]] = []
-    for r in rows:
-        row = {k: _jsonable(v) for k, v in r.items() if k != "document_id"}
-        if (chunk := firsts.get(r["document_id"])) is not None:
-            row["ref"] = ctx.register(chunk)  # the contract's opening page, for traceability
-        out_rows.append(row)
+    # No refs here: a structured row has no page, so it cannot be cited. (An earlier version cited
+    # the contract's first page, which made citations point at the wrong page.)
+    out_rows = [{k: _jsonable(v) for k, v in r.items() if k != "document_id"} for r in rows]
     note = "Vendors whose contract matches. Only contracts that passed validation are listed."
     if not out_rows:
         note = "No matching contracts (vendor and law match by substring)."
@@ -309,7 +301,8 @@ TOOLS: dict[str, Tool] = {
             "auto_renewal, governing_law (substring), or one vendor. Returns each vendor's payment "
             "terms, late fee % per month, termination notice days, auto-renewal, liability cap "
             "and governing law. Use this for 'which vendors have ...' questions; unlike search it "
-            "returns every match.",
+            "returns every match. It gives no citations: to quote or cite one contract's clause, "
+            "use search_documents.",
             QueryContractsArgs,
             contracts_tool,
         ),

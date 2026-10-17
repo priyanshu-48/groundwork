@@ -13,6 +13,7 @@ VENDORS = ["Acme Labs", "Globex Cloud", "Initech Print"]
             "Payment is due within forty-five (45) days (Net 45). [C1]",
             True,
         ),
+        ("payment_terms", "net-15", "The payment terms are Net-15 [C1].", True),
         ("payment_terms", "net-45", "The terms are net-30.", False),
         ("payment_terms", "net-45", "Net 30 for services, Net 45 for goods.", False),  # hedged
         ("late_fee", "1.5%", "A late fee of 1.5% per month applies [C2].", True),
