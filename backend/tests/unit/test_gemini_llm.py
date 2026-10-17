@@ -24,8 +24,9 @@ DAILY = "GenerateRequestsPerDayPerProjectPerModel-FreeTier 'retryDelay': '3600s'
 def response(parts: list[types.Part], prompt: int = 11, out: int = 4, thoughts: int = 3) -> Any:
     return SimpleNamespace(
         candidates=[SimpleNamespace(content=types.Content(role="model", parts=parts))],
-        usage_metadata=SimpleNamespace(
-            prompt_token_count=prompt, response_token_count=out, thoughts_token_count=thoughts
+        # the real SDK class, so a wrong field name here fails the test (it did, once, live)
+        usage_metadata=types.GenerateContentResponseUsageMetadata(
+            prompt_token_count=prompt, candidates_token_count=out, thoughts_token_count=thoughts
         ),
     )
 

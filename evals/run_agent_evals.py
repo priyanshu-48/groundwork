@@ -276,7 +276,11 @@ async def _main(args: argparse.Namespace) -> int:
             )
         elif any(v["answered"] < v["total"] for v in result["summary"].values()):
             print("some questions errored (quota or outage) and will be retried on the next run")
-        written = append_agent_rows(args.docs, meta, result["summary"], fake=False)
+        if args.limit:  # a sample is not a headline number: --limit never writes docs rows
+            written: list[str] = []
+            print("--limit given: this is a sample, docs/evals.md not updated")
+        else:
+            written = append_agent_rows(args.docs, meta, result["summary"], fake=False)
         print(f"docs/evals.md rows written for: {written or 'none (no type is complete yet)'}")
         args.results.mkdir(parents=True, exist_ok=True)
         path = args.results / f"{meta['date']}_{meta['git_sha']}_agent_{args.label or 'run'}.json"
