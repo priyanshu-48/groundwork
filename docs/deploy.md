@@ -75,6 +75,48 @@ python deploy/common/smoke.py http://localhost --code dry-code --admin-token dry
 docker compose -p gwdry --env-file /tmp/dry.env -f docker-compose.prod.yml -f deploy/common/compose.dryrun.yml down -v
 ```
 
+## Public demo (M10)
+A "Try the demo" button logs visitors into a shared, read-only workspace holding the synthetic corpus
+(ADR 0016). It needs three things: a corpus owner account, the corpus loaded, and the settings below.
+Quota matters: loading uses about 330 embedding requests and about 40 generation calls on your free tier.
+
+1. **Settings** (CloudShell, then deploy). Copy `GEMINI_MODELS` from your local `.env` so the live
+   site has the same fallback chain; extraction is off while loading so it can run in cheap batches:
+   ```bash
+   bash deploy/aws/set-param.sh EXTRACTION_ENABLED false
+   bash deploy/aws/set-param.sh DEMO_ACCOUNT_EMAIL demo-owner@example.com
+   bash deploy/aws/set-param.sh GEMINI_MODELS "<the list from your local .env>"
+   # (upload a fresh archive as in step 1 first, then)
+   bash deploy/aws/04-deploy.sh
+   ```
+2. **Load the corpus** (your laptop, Git Bash; the corpus is `evals/corpus/`, made by
+   `evals/generate_corpus.py`). Secrets are typed hidden and cleared afterwards; the password is for
+   the corpus-owner account, keep it in your password manager:
+   ```bash
+   cd /c/Projects/groundwork/backend
+   read -r -s -p "Demo owner password (new, strong): " EVAL_PASSWORD; echo; export EVAL_PASSWORD
+   read -r -s -p "Invite code: " EVAL_INVITE_CODE; echo; export EVAL_INVITE_CODE
+   EVAL_EMAIL=demo-owner@example.com uv run python ../evals/load_corpus.py --api https://<your-host>/api
+   unset EVAL_PASSWORD EVAL_INVITE_CODE
+   ```
+   It uploads 325 PDFs and waits until all are `ready` (20-30 minutes: the live worker is throttled to
+   stay inside the embedding quota). Safe to re-run; it skips what exists.
+3. **Extract invoice and contract fields in batches** (CloudShell; each takes a few minutes):
+   ```bash
+   C="cd /opt/groundwork/current && docker compose --env-file /opt/groundwork/runtime.env -f docker-compose.prod.yml exec -T api"
+   bash deploy/aws/remote.sh "$C python -m app.worker.backfill_invoices"
+   bash deploy/aws/remote.sh "$C python -m app.worker.backfill_contracts"
+   ```
+4. **Turn per-upload extraction back on** and redeploy:
+   `bash deploy/aws/set-param.sh EXTRACTION_ENABLED --delete` then `bash deploy/aws/04-deploy.sh`.
+5. **Check and back up:**
+   ```bash
+   python3 deploy/common/smoke.py "https://<your-host>" --demo
+   bash deploy/aws/remote.sh "bash /opt/groundwork/current/deploy/common/backup.sh"
+   ```
+Tune the cap with `bash deploy/aws/set-param.sh DEMO_DAILY_CHAT_CAP 50` (then deploy). Turn the demo
+off with `bash deploy/aws/set-param.sh DEMO_ACCOUNT_EMAIL --delete` (then deploy).
+
 ## Safety notes
 - Secrets live only in SSM Parameter Store and in `/opt/groundwork/runtime.env` (mode 600) on the instance.
   They are never in git, the bundle, logs, or this chat. `state.env` holds resource ids only.
