@@ -55,6 +55,19 @@ class Settings(BaseSettings):
     tool_result_char_budget: int = 12000  # about 3000 tokens
     rrf_k: int = 60
     check_timeout_s: float = 3.0
+    # M8 limits. In-memory and per API process (docs/decisions/0012).
+    chat_rate_limit_per_min: int = 20  # per org; each chat can cost several model calls
+    chat_max_concurrent: int = 3  # per org; a long run holds model quota the whole time
+    search_rate_limit_per_min: int = 60  # per org; each uncached search is an embedding call
+    login_rate_limit_per_min: int = 10  # per client IP (brute force)
+    signup_rate_limit_per_min: int = 5  # per client IP
+    query_embedding_cache_size: int = 1000
+    # /admin/metrics needs this in X-Admin-Token. Empty = the route does not exist (404).
+    admin_token: str = ""
+    # JSON: {"model-name": [usd_per_1M_input_tokens, usd_per_1M_output_tokens]}. Empty = no cost
+    # estimate (null), never a guessed price. Free tier is billed $0 whatever this says.
+    model_prices: str = ""
+    log_level: str = "INFO"
 
 
 def model_chain_names(s: Settings) -> list[str]:

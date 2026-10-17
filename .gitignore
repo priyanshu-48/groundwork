@@ -13,3 +13,4 @@ dist/
 evals/corpus/
 .flashrank/
 evals/.cache/
+.coverage

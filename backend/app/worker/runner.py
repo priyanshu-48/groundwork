@@ -7,13 +7,15 @@ import logging
 import os
 import signal
 import socket
+import time
 import uuid
 
 from app.config import get_settings
+from app.logging import configure_logging, document_id_var, job_id_var
 from app.services.ingestion import ingest_document, mark_failed
 from app.services.parsing import PermanentError
 from app.worker.deps import Deps, build_deps
-from app.worker.queue import claim, complete, fail
+from app.worker.queue import ClaimedJob, claim, complete, fail
 from app.worker.reaper import run_reaper
 
 log = logging.getLogger(__name__)
@@ -26,6 +28,16 @@ async def process_one(deps: Deps, worker_id: str) -> bool:
     if job is None:
         return False
 
+    tokens = (job_id_var.set(str(job.id)), document_id_var.set(job.payload.get("document_id")))
+    started = time.perf_counter()
+    try:
+        return await _run_job(deps, job, started)
+    finally:
+        job_id_var.reset(tokens[0])
+        document_id_var.reset(tokens[1])
+
+
+async def _run_job(deps: Deps, job: ClaimedJob, started: float) -> bool:
     permanent = False
     try:
         if job.type != "ingest":
@@ -39,6 +51,10 @@ async def process_one(deps: Deps, worker_id: str) -> bool:
     else:
         async with deps.maker.begin() as session:
             await complete(session, job.id)
+        log.info(
+            "job done",
+            extra={"fields": {"duration_ms": round((time.perf_counter() - started) * 1000)}},
+        )
         return True
 
     async with deps.maker.begin() as session:
@@ -61,8 +77,8 @@ async def run_worker(deps: Deps, worker_id: str, stop: asyncio.Event, poll_s: fl
 
 
 async def main() -> None:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     s = get_settings()
+    configure_logging(s.log_level)
     deps, engine = build_deps(s)
     stop = asyncio.Event()
     loop = asyncio.get_running_loop()
