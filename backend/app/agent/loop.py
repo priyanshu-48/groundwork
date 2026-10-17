@@ -9,7 +9,7 @@ from collections.abc import AsyncIterator, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from app.agent.llm import LLM, LLMError, Message, ToolResult, Usage
+from app.agent.llm import LLM, LLMError, LLMResponse, Message, ToolResult, Usage
 from app.agent.prompts import SYSTEM
 from app.agent.tools import AgentContext, execute, specs
 from app.services.gemini import LLMUnavailable
@@ -27,6 +27,35 @@ class AgentEvent:
 def snippet(text: str, n: int = 200) -> str:
     flat = " ".join(text.split())
     return flat if len(flat) <= n else flat[:n] + "..."
+
+
+_SENTENCE = re.compile(r"(?<=[.!?])\s+")
+_WORD = re.compile(r"[a-z0-9]{4,}")
+
+
+def relevant_snippet(content: str, answer: str, limit: int = 280) -> str:
+    """The part of a cited chunk that supports the answer, not just its first characters.
+
+    A chunk is up to a page of text; showing its opening would often show an unrelated clause.
+    We pick the sentence sharing the most words with the answer (a cheap stand-in for 'the
+    supporting sentence'; no extra model call) and add following sentences while they fit."""
+    flat = " ".join(content.split())
+    if len(flat) <= limit:
+        return flat
+    wanted = set(_WORD.findall(re.sub(r"\[[^\]]*\]", " ", answer).lower()))
+    sentences = _SENTENCE.split(flat)
+    best = max(
+        range(len(sentences)),
+        key=lambda i: (len(wanted & set(_WORD.findall(sentences[i].lower()))), -i),
+    )
+    out = sentences[best]
+    for nxt in sentences[best + 1 :]:
+        if len(out) + 1 + len(nxt) > limit:
+            break
+        out += " " + nxt
+    if len(out) > limit:
+        out = out[:limit].rstrip() + "..."
+    return ("... " if best > 0 else "") + out
 
 
 def validate_citations(answer: str, ctx: AgentContext) -> tuple[str, list[dict[str, Any]], int]:
@@ -56,7 +85,7 @@ def validate_citations(answer: str, ctx: AgentContext) -> tuple[str, list[dict[s
             "document_id": str(ctx.refs[r].document_id),
             "filename": ctx.refs[r].filename,
             "page": ctx.refs[r].page,
-            "snippet": snippet(ctx.refs[r].content),
+            "snippet": relevant_snippet(ctx.refs[r].content, answer),
         }
         for r in seen
     ]
@@ -83,6 +112,7 @@ async def run_agent(
     history: Sequence[Message] = (),
     *,
     max_steps: int | None = None,
+    stream: bool = False,
 ) -> AsyncIterator[AgentEvent]:
     limit = max_steps or ctx.settings.agent_max_steps
     messages: list[Message] = [*history, Message("user", question)]
@@ -96,7 +126,21 @@ async def run_agent(
 
     try:
         for _ in range(limit):
-            resp = await llm.generate(SYSTEM, messages, specs())
+            resp: LLMResponse | None = None
+            streamer = getattr(llm, "generate_stream", None) if stream else None
+            if streamer is not None:
+                # Text deltas go out as "token" events as they arrive. A turn that then asks for a
+                # tool may have streamed a preface; clients clear streamed text on the next step
+                # event, and the final "answer" event replaces it with the validated text.
+                async for item in streamer(SYSTEM, messages, specs()):
+                    if isinstance(item, str):
+                        yield AgentEvent("token", {"text": item})
+                    else:
+                        resp = item
+                if resp is None:
+                    raise LLMError("the model stream ended without a response")
+            else:
+                resp = await llm.generate(SYSTEM, messages, specs())
             usage = Usage(
                 usage.prompt_tokens + resp.usage.prompt_tokens,
                 usage.completion_tokens + resp.usage.completion_tokens,

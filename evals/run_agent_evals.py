@@ -27,6 +27,7 @@ for p in (ROOT, ROOT / "backend"):
 
 from sqlalchemy import text  # noqa: E402
 
+from app.agent.demo import DemoLLM  # noqa: E402
 from app.agent.llm import LLM, LLMResponse, Message, ToolSpec  # noqa: E402
 from app.agent.loop import run_agent  # noqa: E402
 from app.agent.prompts import SYSTEM  # noqa: E402
@@ -219,7 +220,7 @@ async def _main(args: argparse.Namespace) -> int:
     s = eval_settings()
     deps, engine = build_deps(s)
     try:
-        if deps.llm is None:
+        if deps.llm is None or isinstance(deps.llm, DemoLLM):
             raise SystemExit("no real LLM: set AI_PROVIDER=gemini and GEMINI_API_KEY")
         async with deps.maker() as session:
             org_id = (

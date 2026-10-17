@@ -33,6 +33,8 @@ async def ask(
     conversation_id: uuid.UUID,
     question: str,
     llm: LLM | None = None,
+    *,
+    stream: bool = False,
 ) -> AsyncIterator[AgentEvent]:
     """Yield the loop's events; after the last one, the run is stored and 'done' carries its ids.
 
@@ -47,9 +49,11 @@ async def ask(
         past = await conversations.history(session, org_id, conversation_id, HISTORY_LIMIT)
         history = [Message(m.role.value, m.content) for m in past]  # plain text, no tool traffic
         await conversations.add_message(session, conversation_id, MessageRole.user, question)
+        if conv.title is None:  # the sidebar needs something to show
+            conv.title = " ".join(question.split())[:60]
 
     done: AgentEvent | None = None
-    async for event in run_agent(make_context(deps, org_id), llm, question, history):
+    async for event in run_agent(make_context(deps, org_id), llm, question, history, stream=stream):
         if event.type == "done":
             done = event
         else:

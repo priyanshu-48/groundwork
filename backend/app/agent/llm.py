@@ -5,8 +5,10 @@ thought signatures, JSON-schema cleanup, the model fallback chain) stays in Gemi
 
 from __future__ import annotations
 
-from collections.abc import Callable
+import asyncio
+from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
+from types import SimpleNamespace
 from typing import Any, Literal, Protocol
 
 from google.genai import types
@@ -64,10 +66,16 @@ class LLMResponse:
     raw: Any = None
 
 
+StreamItem = str | LLMResponse  # text deltas as they arrive, then exactly one final LLMResponse
+
+
 class LLM(Protocol):
     async def generate(
         self, system: str, messages: list[Message], tools: list[ToolSpec]
     ) -> LLMResponse: ...
+
+    # Optional: providers that can stream also provide
+    #   generate_stream(system, messages, tools) -> AsyncIterator[StreamItem]
 
 
 # ------------------------------------------------------------------ fake
@@ -101,6 +109,15 @@ class FakeLLM:
         step = self._script.pop(0)
         resp = step(messages) if callable(step) else step
         return LLMResponse(resp.text, resp.tool_calls, resp.usage, self._model, resp.raw)
+
+    async def generate_stream(
+        self, system: str, messages: list[Message], tools: list[ToolSpec]
+    ) -> AsyncIterator[StreamItem]:
+        """Same script as generate(), with the text released in small pieces like a real stream."""
+        resp = await self.generate(system, messages, tools)
+        for i in range(0, len(resp.text), 8):
+            yield resp.text[i : i + 8]
+        yield resp
 
 
 # ---------------------------------------------------------------- gemini
@@ -164,10 +181,9 @@ class GeminiLLM:
             max_tries,
         )
 
-    async def generate(
+    def _request(
         self, system: str, messages: list[Message], tools: list[ToolSpec]
-    ) -> LLMResponse:
-        contents = [_to_content(m) for m in messages]
+    ) -> tuple[list[types.Content], types.GenerateContentConfig]:
         decls = [
             types.FunctionDeclaration(
                 name=t.name,
@@ -182,6 +198,12 @@ class GeminiLLM:
             automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
             temperature=0,
         )
+        return [_to_content(m) for m in messages], cfg
+
+    async def generate(
+        self, system: str, messages: list[Message], tools: list[ToolSpec]
+    ) -> LLMResponse:
+        contents, cfg = self._request(system, messages, tools)
         if self._throttle:
             await self._throttle.wait()
         model, resp = await self._chain.run(
@@ -193,6 +215,60 @@ class GeminiLLM:
             )
         )
         return parse_response(resp, model)
+
+    async def generate_stream(
+        self, system: str, messages: list[Message], tools: list[ToolSpec]
+    ) -> AsyncIterator[StreamItem]:
+        """Yield text deltas as the model produces them, then the assembled LLMResponse.
+
+        The stream is opened (first chunk fetched) inside the model chain, so a quota or overload
+        error at the start still falls over to the next model. An error after text has started
+        propagates: switching models mid-answer would splice two answers together."""
+        contents, cfg = self._request(system, messages, tools)
+        if self._throttle:
+            await self._throttle.wait()
+
+        def open_stream(model: str) -> tuple[Any, Any]:
+            it = iter(
+                self._client.models.generate_content_stream(
+                    model=model, contents=contents, config=cfg
+                )
+            )
+            return it, next(it, None)  # the HTTP request happens on the first next()
+
+        model, (it, first) = await self._chain.run(
+            lambda m: call_with_retry(lambda: open_stream(m), max_tries=self._max_tries)
+        )
+        chunks: list[Any] = []
+        chunk = first
+        while chunk is not None:
+            chunks.append(chunk)
+            for cand in chunk.candidates or []:
+                for part in (cand.content.parts if cand.content else None) or []:
+                    if part.text and not part.thought:
+                        yield part.text
+            chunk = await asyncio.to_thread(next, it, None)
+        yield assemble_stream(chunks, model)
+
+
+def assemble_stream(chunks: list[Any], model: str) -> LLMResponse:
+    """One response from many chunks. Parts are kept in arrival order (function calls and thought
+    signatures included) so the next turn can replay the model's own content verbatim."""
+    parts = [
+        p
+        for c in chunks
+        for cand in (c.candidates or [])[:1]
+        for p in (cand.content.parts if cand.content else None) or []
+    ]
+    usage = next((c.usage_metadata for c in reversed(chunks) if c.usage_metadata), None)
+    merged = SimpleNamespace(
+        candidates=[SimpleNamespace(content=types.Content(role="model", parts=parts))]
+        if parts
+        else [],
+        usage_metadata=usage,
+        prompt_feedback=chunks[-1].prompt_feedback if chunks else None,
+    )
+    return parse_response(merged, model)
 
 
 def parse_response(resp: Any, model: str) -> LLMResponse:

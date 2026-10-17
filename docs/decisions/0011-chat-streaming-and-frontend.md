@@ -1,0 +1,8 @@
+# 0011: Chat streaming and frontend design
+- **SSE over fetch, not EventSource:** the chat call is a POST with an Authorization header; EventSource can do neither. We read the response body stream and parse events ourselves (`src/api/sse.ts`, tested for split chunks, multi-byte characters, CR/LF, keep-alives).
+- **Real token streaming:** `generate_content_stream` deltas become `token` events. The final `answer` event replaces the streamed text with the citation-validated version, so a streamed invented ref never survives. Honest limit: it only shortens the last model call; tool round trips are unchanged. A measured live run: first token at 5.6 s, finished at 5.7 s, because the answer was short.
+- **Same-origin API under `/api`:** Vite proxy in dev, nginx in the container (`proxy_buffering off` for SSE). No CORS configuration anywhere.
+- **JWT in sessionStorage:** gone when the tab closes. Any script on the page could read it, so answers and snippets are rendered as plain text (no HTML, no markdown), and nginx sends a strict CSP.
+- **Demo model:** `AI_PROVIDER=fake` uses a deterministic `DemoLLM`; the UI shows a visible banner from `GET /meta`. It is never used when a real provider is configured but missing a key (chat returns 503 instead).
+- **Citation snippets** show the sentence that supports the answer, not the chunk's opening (found in the first live run: the chip pointed at the right page but displayed an unrelated clause).
+- **Known limits:** a browser disconnect cancels the run (the user message is kept, no answer is stored); the conversation list is hidden below the `md` breakpoint; steps in history show every call as done because failures are not stored per step; no PDF viewer (cited page is shown as text).
