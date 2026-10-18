@@ -61,13 +61,15 @@ was slower and, on this set, worse, so it is off by default (reasoning in [ADR 0
 
 **Agent** (90 questions, answers scored by rules in [ADR 0008](docs/decisions/0008-answer-scoring.md))
 
-| Type | Answered correctly | Citation precision |
-|---|---|---|
-| Contract lookup (35) | 35/35 | 100% (of answers that cite) |
-| Invoice aggregates (35) | 35/35 | 100% |
-| Multi-hop (20) | 20/20 (was 6/20 before [structured contract facts](docs/decisions/0010-structured-contract-facts.md)) | n/a |
+| Type | Answered correctly | Citation precision | Answers with a citation |
+|---|---|---|---|
+| Contract lookup (35) | 35/35 | 100% | **35/35** (was 26/35, [ADR 0017](docs/decisions/0017-structured-answers-carry-citations.md)) |
+| Invoice aggregates (35) | 35/35 | 100% | 10/35 |
+| Multi-hop (20) | 20/20 (was 6/20 before [structured contract facts](docs/decisions/0010-structured-contract-facts.md)) | n/a | 0/20 |
 
-Known gap: 9 of the 35 contract answers cite nothing (they came from the structured table).
+Every contract answer cites the page that states the fact (150 of 150 facts on all 25 contracts point at
+the ground-truth page). Totals and "which vendor billed the most" are computed by the SQL tool from
+extracted rows and do not point at a source document, so those answers carry no citation by design.
 Latency is dominated by the model: about 9 s per question with live Gemini.
 
 **Load and operations** (one laptop, one API process; [details](docs/evals.md#load-tests-m8))
@@ -112,7 +114,8 @@ Logs, metrics and limits: [docs/observability.md](docs/observability.md).
 
 ## Honest limitations
 - Synthetic data only; the Gemini free tier may use submitted content, so never upload real documents.
-- 9 of 35 contract answers are uncited; rerank is not tuned; the PDF is shown as text, not a page image.
+- Computed answers (invoice totals, multi-hop) cite no source document; rerank is not tuned; the PDF is shown as text, not a page image.
+- Contract citations find the page with search phrases tuned on the generated contracts' clause wording; messy real-world contracts may need those phrases re-tuned.
 - Rate limits are per process (one API process); one host is a single point of failure, with nightly
   backups as the recovery story (restore drill passed).
 - Evaluation is on templated questions over a generated corpus: a regression benchmark, not proof of

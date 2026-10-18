@@ -64,8 +64,10 @@ every invoice, subtotal on 299/300.
 **Reading the agent table:** all 90 questions are answered correctly on this synthetic corpus. Multi-hop
 went from 30% to 100% once contract terms became structured data (ADR 0010). Models: the first 10
 answers came from gemini-3.5-flash-lite, which then hit its 500/day free quota, and the fallback chain
-finished on gemini-3.1-flash-lite (ADR 0009). Known gap: 9 of 35 contract-lookup answers carry no
-citation (precision is measured over cited chunks only). Scoring rules and limits: ADR 0008. These
+finished on gemini-3.1-flash-lite (ADR 0009). The m6c row had 26 of 35 contract-lookup answers cited
+(precision is measured over cited chunks only); after ADR 0017 (m10 row) all 35 are cited with
+precision still 100%. Invoice aggregates and multi-hop answers are computed totals with no source page,
+so their coverage (10/35, 0/20) is unchanged by design. Scoring rules and limits: ADR 0008. These
 are templated questions over a synthetic corpus, a regression benchmark rather than a claim about
 real-world accuracy.
 
@@ -81,6 +83,9 @@ Real agent (tools + model), answers scored by rules in `evals/scoring.py` (docs/
 | 2026-10-17 | 6c45814 | m6c | contract_lookup | gemini-3.1-flash-lite, gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 26/35 | 1.1 | 3445/50 | 9.2 | 26.6 |
 | 2026-10-17 | 6c45814 | m6c | invoice_aggregate | gemini-3.1-flash-lite | 35/35 | 100.0% | 100.0% | 10/35 | 1.0 | 2503/115 | 9.1 | 27.7 |
 | 2026-10-17 | 6c45814 | m6c | multi_hop | gemini-3.1-flash-lite | 20/20 | 100.0% | n/a | 0/20 | 1.0 | 2509/104 | 8.7 | 22.3 |
+| 2026-10-18 | f15a3ad | m10 | contract_lookup | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 35/35 | 1.1 | 2961/43 | 9.0 | 13.7 |
+| 2026-10-18 | f15a3ad | m10 | invoice_aggregate | gemini-3.5-flash-lite | 35/35 | 100.0% | 100.0% | 10/35 | 1.0 | 2663/110 | 9.0 | 9.4 |
+| 2026-10-18 | f15a3ad | m10 | multi_hop | gemini-3.5-flash-lite | 20/20 | 100.0% | n/a | 0/20 | 1.0 | 2669/101 | 9.0 | 9.4 |
 <!-- agent:end -->
 
 ## Load tests (M8)

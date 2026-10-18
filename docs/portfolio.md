@@ -14,7 +14,7 @@ corpus with known answers, and a deployment on AWS with HTTPS and tested backups
 demo workspace has a daily cap to protect a free API quota. Links: live demo, GitHub, README.
 
 ## Resume bullets
-- Built a **tool-calling AI agent** (FastAPI, Gemini) that answers questions over invoices and contracts with **cited sources**, combining **hybrid retrieval** (pgvector + Postgres full-text, reciprocal rank fusion) with **parameterised SQL tools** for aggregates; **100% (90/90) correct** on a 90-question rule-scored evaluation over a synthetic corpus.
+- Built a **tool-calling AI agent** (FastAPI, Gemini) that answers questions over invoices and contracts with **cited sources**, combining **hybrid retrieval** (pgvector + Postgres full-text, reciprocal rank fusion) with **parameterised SQL tools** for aggregates; **100% (90/90) correct** on a 90-question rule-scored evaluation over a synthetic corpus, with every contract answer (35/35) citing the page that states the fact.
 - Raised retrieval **recall@5 from 81.7% to 93.3%** on a 60-question hard set (exact invoice-number queries **50% to 100%**) by adding keyword search and rank fusion to vector search, measured with a custom harness; measured a cross-encoder reranker too, found it slower (about 1.4 s) and worse on this set, and left it off.
 - Moved multi-hop questions ("which net-30 vendor billed the most in March?") from **30% to 100%** by extracting contract terms into structured tables instead of searching for them.
 - Designed **crash-safe ingestion** on a Postgres `SKIP LOCKED` queue with idempotent uploads, retries with backoff and a stuck-job reaper; a fault-injection test shows a crash before commit leaves nothing and the re-run leaves **0 duplicate chunks**.
