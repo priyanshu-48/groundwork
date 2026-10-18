@@ -61,6 +61,14 @@ def ask(base: str, auth: dict[str, str], question: str) -> str:
     return body.decode()
 
 
+def citations(stream: str) -> list[dict[str, object]]:
+    """The cited sources of an answer (any ref: which Cn holds the clause varies by question)."""
+    for block in stream.split("\n\n"):
+        if block.startswith("event: citations"):
+            return list(json.loads(block.split("data: ", 1)[1])["items"])
+    return []
+
+
 def answer_text(stream: str) -> str:
     for block in stream.split("\n\n"):
         if block.startswith("event: answer"):
@@ -85,7 +93,12 @@ def demo_checks(base: str) -> None:
     step("uploads are refused", status == 403, f"status {status}")
 
     stream = ask(base, auth, "What is the termination notice period in the Kestrel Security contract?")
-    step("contract answer is cited", "event: citations" in stream and '"ref": "C1"' in stream)
+    cites = citations(stream)
+    step(
+        "contract answer is cited from the Kestrel contract",
+        any("kestrel" in str(c.get("filename", "")) for c in cites),
+        ", ".join(f"{c.get('filename')} p{c.get('page')}" for c in cites),
+    )
     step("contract answer mentions days", "day" in answer_text(stream).lower(), answer_text(stream)[:80])
     stream = ask(base, auth, "How much did Ironbridge Facilities bill us between 2025-11-01 and 2025-11-30?")
     text = answer_text(stream)
@@ -143,7 +156,7 @@ def main() -> None:
                            headers={**auth, **j}, timeout=180)
     text = body.decode()
     step("chat streams", status == 200 and "event: done" in text, f"status {status}")
-    step("answer is cited", "event: citations" in text and '"ref": "C1"' in text)
+    step("answer is cited", len(citations(text)) > 0)
     step("run finished ok", '"status": "ok"' in text.split("event: done")[-1])
 
     if a.admin_token:
