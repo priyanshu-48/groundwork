@@ -24,6 +24,19 @@ async def _tables(url: str) -> set[str]:
         await engine.dispose()
 
 
+async def _columns(url: str, table: str) -> set[str]:
+    engine = create_async_engine(url)
+    try:
+        async with engine.connect() as c:
+            rows = await c.execute(
+                text("SELECT column_name FROM information_schema.columns WHERE table_name = :t"),
+                {"t": table},
+            )
+            return {r[0] for r in rows}
+    finally:
+        await engine.dispose()
+
+
 async def _create_db(admin_url: str, name: str) -> None:
     engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
     try:
@@ -46,6 +59,10 @@ def test_every_migration_applies_from_scratch_and_the_agent_one_round_trips(
     try:
         command.upgrade(cfg, "head")
         assert AGENT_TABLES <= asyncio.run(_tables(scratch))
+        assert "contracts" in asyncio.run(_tables(scratch))
+        assert "evidence" in asyncio.run(_columns(scratch, "agent_steps"))
+        command.downgrade(cfg, "0007")  # the evidence column is additive: only it goes away
+        assert "evidence" not in asyncio.run(_columns(scratch, "agent_steps"))
         assert "contracts" in asyncio.run(_tables(scratch))
         command.downgrade(cfg, "0006")
         tables = asyncio.run(_tables(scratch))

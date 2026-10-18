@@ -69,6 +69,17 @@ def citations(stream: str) -> list[dict[str, object]]:
     return []
 
 
+def step_evidence(stream: str) -> list[dict[str, object]]:
+    """Evidence attached to finished tool steps (the rows behind a computed answer)."""
+    found: list[dict[str, object]] = []
+    for block in stream.split("\n\n"):
+        if block.startswith("event: step"):
+            data = json.loads(block.split("data: ", 1)[1])
+            if data.get("status") == "ok" and data.get("evidence"):
+                found.append(data["evidence"])
+    return found
+
+
 def answer_text(stream: str) -> str:
     for block in stream.split("\n\n"):
         if block.startswith("event: answer"):
@@ -103,6 +114,15 @@ def demo_checks(base: str) -> None:
     stream = ask(base, auth, "How much did Ironbridge Facilities bill us between 2025-11-01 and 2025-11-30?")
     text = answer_text(stream)
     step("aggregate answer has a figure", any(ch.isdigit() for ch in text), text[:80])
+    evidence = [e for e in step_evidence(stream) if e.get("kind") == "invoices"]
+    step("aggregate answer comes with evidence rows", bool(evidence) and bool(evidence[0]["rows"]))
+    totals = evidence[0]["totals"]
+    shown = ", ".join(f"{cur} {amount}" for cur, amount in dict(totals).items())  # type: ignore[call-overload]
+    step(
+        "the evidence total is the figure in the answer",
+        any(str(amount) in text.replace(",", "") for amount in dict(totals).values()),  # type: ignore[call-overload]
+        shown,
+    )
     step("run finished ok", '"status": "ok"' in stream.split("event: done")[-1])
     print("DEMO ALL PASSED")
 

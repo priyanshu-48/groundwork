@@ -21,7 +21,7 @@ to protect a free-tier API quota; if it is used up, it says so and resets the ne
 - **Ask in plain language.** The agent chooses between `search_documents` (hybrid retrieval),
   `read_chunks`, `query_invoices` and `query_contracts` (parameterised SQL, the model never writes SQL),
   then answers with `[C1]`-style citations that open the source page and sentence.
-- **See the work.** Every answer lists the tool calls that produced it, with latency.
+- **See the work.** Every answer lists the tool calls that produced it, with latency, and computed answers show the exact rows behind the number.
 - **Multi-tenant.** Every query is scoped by an organisation id taken from the verified token, never from
   the request or the model.
 
@@ -69,7 +69,10 @@ was slower and, on this set, worse, so it is off by default (reasoning in [ADR 0
 
 Every contract answer cites the page that states the fact (150 of 150 facts on all 25 contracts point at
 the ground-truth page). Totals and "which vendor billed the most" are computed by the SQL tool from
-extracted rows and do not point at a source document, so those answers carry no citation by design.
+extracted rows, so they cannot cite one page; instead an **Evidence** panel under the answer lists the
+exact invoices that were summed (number, vendor, date, total, source file and page) with a per-currency
+total you can check by hand ([ADR 0018](docs/decisions/0018-evidence-for-computed-answers.md)). The
+"answers with a citation" column counts model-written citations only, so it stays at 10/35 and 0/20.
 Latency is dominated by the model: about 9 s per question with live Gemini.
 
 **Load and operations** (one laptop, one API process; [details](docs/evals.md#load-tests-m8))
@@ -98,6 +101,7 @@ what went wrong and how each problem was found is in [docs/journal.md](docs/jour
 | In-memory limits, static admin token | One process today; upgrade path noted | [0012](docs/decisions/0012-in-memory-limits-and-admin-token.md) |
 | Query-embedding cache | Saves free quota and about 450 ms per repeated question | [0013](docs/decisions/0013-query-embedding-cache.md) |
 | One host, no RDS/CloudFront, portable to Oracle | The AWS free plan ends in April 2027 | [0014](docs/decisions/0014-single-host-deploy-portable-to-oracle.md), [0015](docs/decisions/0015-bundle-deploys-over-ssm.md), [migration checklist](docs/oracle-migration.md) |
+| Evidence rows under computed answers, shown from the database | So a total can be checked by hand | [0018](docs/decisions/0018-evidence-for-computed-answers.md) |
 | Public demo: fresh read-only user per visit, daily cap | Protects a free API quota from strangers | [0016](docs/decisions/0016-public-demo-workspace.md) |
 
 ## Run it locally (no API key needed)
@@ -114,7 +118,7 @@ Logs, metrics and limits: [docs/observability.md](docs/observability.md).
 
 ## Honest limitations
 - Synthetic data only; the Gemini free tier may use submitted content, so never upload real documents.
-- Computed answers (invoice totals, multi-hop) cite no source document; rerank is not tuned; the PDF is shown as text, not a page image.
+- Computed answers (invoice totals, multi-hop) show their evidence rows with source file and page, not a clickable citation; rerank is not tuned; the PDF is shown as text, not a page image.
 - Contract citations find the page with search phrases tuned on the generated contracts' clause wording; messy real-world contracts may need those phrases re-tuned.
 - Rate limits are per process (one API process); one host is a single point of failure, with nightly
   backups as the recovery story (restore drill passed).

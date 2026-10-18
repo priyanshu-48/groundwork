@@ -29,6 +29,7 @@ from app.config import Settings
 from app.models.document import DocKind
 from app.repositories import chunks as chunks_repo
 from app.repositories import contracts as contracts_repo
+from app.repositories import documents as documents_repo
 from app.repositories import invoices as invoices_repo
 from app.repositories.chunks import Hit
 from app.services.embeddings import EmbeddingError, EmbeddingProvider
@@ -64,6 +65,8 @@ class ToolOutput:
     text: str
     preview: str
     is_error: bool = False
+    # The rows behind a computed answer, shown to the user next to it. Never sent to the model.
+    evidence: dict[str, Any] | None = None
 
 
 class ToolError(Exception):
@@ -224,6 +227,7 @@ async def invoices_tool(ctx: AgentContext, a: QueryInvoicesArgs) -> ToolOutput:
             if a.aggregate == "list" and rows
             else {}
         )
+        evidence = await invoice_evidence(ctx, session, a, vendors)
     out_rows: list[dict[str, Any]] = []
     for r in rows:
         row = {k: _jsonable(v) for k, v in r.items() if k != "document_id"}
@@ -240,8 +244,48 @@ async def invoices_tool(ctx: AgentContext, a: QueryInvoicesArgs) -> ToolOutput:
         payload["note"] = "No matching invoices (vendor names match by substring, dates inclusive)."
     text = json.dumps(payload)
     return ToolOutput(
-        truncate(text, ctx.settings.tool_result_char_budget), f"{a.aggregate}: {len(out_rows)} rows"
+        truncate(text, ctx.settings.tool_result_char_budget),
+        f"{a.aggregate}: {len(out_rows)} rows",
+        evidence=evidence,
     )
+
+
+async def invoice_evidence(
+    ctx: AgentContext, session: Any, a: QueryInvoicesArgs, vendors: list[str]
+) -> dict[str, Any]:
+    """The invoices behind the aggregate, with where each one came from. Built with the same filter
+    as the aggregate (invoices_repo._conditions), so the rows add up to the figure in the answer."""
+    rows, totals, count = await invoices_repo.contributing(
+        session,
+        ctx.org_id,
+        vendors=vendors,
+        date_from=a.date_from,
+        date_to=a.date_to,
+        payment_terms_days=a.payment_terms_days,
+        limit=ctx.settings.evidence_max_rows,
+    )
+    firsts = (
+        await chunks_repo.first_chunks(session, ctx.org_id, [r["document_id"] for r in rows])
+        if rows
+        else {}
+    )
+    shown = []
+    for r in rows:
+        chunk = firsts.get(r["document_id"])
+        shown.append(
+            {
+                **{k: _jsonable(v) for k, v in r.items() if k != "document_id"},
+                "filename": chunk.filename if chunk else None,
+                "page": chunk.page if chunk else None,
+            }
+        )
+    return {
+        "kind": "invoices",
+        "rows": shown,
+        "totals": {cur: str(total) for cur, total in sorted(totals.items())},
+        "count": count,
+        "truncated": count > len(shown),
+    }
 
 
 # One search phrase per fact in the contracts table (its schema is fixed), used to find the page
@@ -296,12 +340,27 @@ async def contracts_tool(ctx: AgentContext, a: QueryContractsArgs) -> ToolOutput
             if 0 < len(rows) <= MAX_CITED_CONTRACTS
             else [{} for _ in rows]
         )
+        names = await documents_repo.filenames(
+            session, ctx.org_id, [r["document_id"] for r in rows]
+        )
     out_rows = []
     for r, sources in zip(rows, cited, strict=True):
         row = {k: _jsonable(v) for k, v in r.items() if k != "document_id"}
         if sources:
             row["sources"] = sources
         out_rows.append(row)
+    evidence = {
+        "kind": "contracts",
+        "rows": [
+            {
+                **{k: _jsonable(v) for k, v in r.items() if k != "document_id"},
+                "filename": names.get(r["document_id"]),
+            }
+            for r in rows
+        ],
+        "count": len(rows),
+        "truncated": len(rows) >= a.limit,
+    }
     note = "Vendors whose contract matches. Only contracts that passed validation are listed."
     if any(cited):
         note += " Cite a fact with its ref from 'sources', for example [C3]."
@@ -309,7 +368,9 @@ async def contracts_tool(ctx: AgentContext, a: QueryContractsArgs) -> ToolOutput
         note = "No matching contracts (vendor and law match by substring)."
     text = json.dumps({"rows": out_rows, "note": note})
     return ToolOutput(
-        truncate(text, ctx.settings.tool_result_char_budget), f"contracts: {len(out_rows)} rows"
+        truncate(text, ctx.settings.tool_result_char_budget),
+        f"contracts: {len(out_rows)} rows",
+        evidence=evidence,
     )
 
 

@@ -38,6 +38,34 @@ export interface ChatMessage {
   steps?: StepData[] | null;
 }
 
+export interface InvoiceEvidenceRow {
+  invoice_number: string;
+  vendor: string;
+  issue_date: string;
+  due_date?: string | null;
+  currency: string | null;
+  total: string; // money stays a string from the database to the screen
+  filename: string | null;
+  page: number | null;
+}
+
+export interface ContractEvidenceRow {
+  vendor: string | null;
+  filename: string | null;
+  payment_terms_days?: number | null;
+  late_fee_percent?: string | null;
+  termination_notice_days?: number | null;
+  auto_renewal?: boolean | null;
+  liability_cap_amount?: string | null;
+  liability_cap_currency?: string | null;
+  governing_law?: string | null;
+}
+
+/** The rows behind a computed answer (invoice sums, contract lists), stored with the step. */
+export type Evidence =
+  | { kind: "invoices"; rows: InvoiceEvidenceRow[]; totals: Record<string, string>; count: number; truncated: boolean }
+  | { kind: "contracts"; rows: ContractEvidenceRow[]; count: number; truncated: boolean };
+
 export interface StepData {
   step_no: number;
   tool: string;
@@ -45,6 +73,7 @@ export interface StepData {
   status: "running" | "ok" | "error";
   latency_ms?: number;
   preview?: string;
+  evidence?: Evidence;
 }
 
 export interface DoneData {

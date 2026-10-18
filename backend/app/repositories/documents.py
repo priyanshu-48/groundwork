@@ -44,3 +44,15 @@ async def list_for_org(
         .offset(offset)
     )
     return (await session.execute(stmt)).scalars().all()
+
+
+async def filenames(
+    session: AsyncSession, org_id: uuid.UUID, document_ids: list[uuid.UUID]
+) -> dict[uuid.UUID, str]:
+    """File names of documents in one org (ids from other orgs simply do not appear)."""
+    if not document_ids:
+        return {}
+    stmt = select(Document.id, Document.filename).where(
+        Document.org_id == org_id, Document.id.in_(document_ids)
+    )
+    return {r.id: r.filename for r in (await session.execute(stmt)).all()}
