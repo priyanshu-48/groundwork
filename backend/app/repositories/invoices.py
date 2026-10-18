@@ -1,5 +1,6 @@
 import uuid
 from datetime import date
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import delete, desc, exists, func, or_, select
@@ -35,22 +36,15 @@ async def find_trusted(
 _vendor_key = func.lower(func.trim(Invoice.vendor))
 
 
-async def aggregate(
-    session: AsyncSession,
+def _conditions(
     org_id: uuid.UUID,
-    *,
-    aggregate: str,
     vendors: list[str],
     date_from: date | None,
     date_to: date | None,
-    group_by_vendor: bool,
-    limit: int,
-    payment_terms_days: int | None = None,
-) -> list[dict[str, Any]]:
-    """Parameterised invoice aggregates for the agent. The LLM chooses values, never SQL.
-
-    Only rows that passed validation count (needs_review = false): a doubtful total must not
-    leak into a sum. Sums are grouped by currency because adding EUR to USD is meaningless."""
+    payment_terms_days: int | None,
+) -> list[Any]:
+    """The one WHERE clause behind both an answer and the evidence shown with it: sharing it is
+    what guarantees the evidence rows are exactly the rows that were counted."""
     conds: list[Any] = [Invoice.org_id == org_id, Invoice.needs_review.is_(False)]
     if vendors:
         conds.append(or_(*[Invoice.vendor.ilike(like_pattern(v), escape="\\") for v in vendors]))
@@ -68,6 +62,68 @@ async def aggregate(
         conds.append(Invoice.issue_date >= date_from)
     if date_to:
         conds.append(Invoice.issue_date <= date_to)
+    return conds
+
+
+async def contributing(
+    session: AsyncSession,
+    org_id: uuid.UUID,
+    *,
+    vendors: list[str],
+    date_from: date | None,
+    date_to: date | None,
+    payment_terms_days: int | None,
+    limit: int,
+) -> tuple[list[dict[str, Any]], dict[str, Decimal], int]:
+    """The invoices behind an aggregate: (rows up to limit, per-currency totals over ALL matching
+    rows, number of matching rows). Totals are computed in SQL, so they stay exact when the rows
+    shown are cut."""
+    conds = _conditions(org_id, vendors, date_from, date_to, payment_terms_days)
+    sums = (
+        await session.execute(
+            select(Invoice.currency, func.sum(Invoice.total), func.count())
+            .where(*conds)
+            .group_by(Invoice.currency)
+        )
+    ).all()
+    totals = {cur or "unknown": Decimal(total or 0) for cur, total, _ in sums}
+    count = sum(n for _, _, n in sums)
+    rows = (
+        await session.execute(
+            select(
+                Invoice.document_id,
+                Invoice.invoice_number,
+                Invoice.vendor,
+                Invoice.issue_date,
+                Invoice.due_date,
+                Invoice.currency,
+                Invoice.total,
+            )
+            .where(*conds)
+            .order_by(_vendor_key, Invoice.issue_date, Invoice.invoice_number)
+            .limit(limit)
+        )
+    ).all()
+    return [dict(r._mapping) for r in rows], totals, count
+
+
+async def aggregate(
+    session: AsyncSession,
+    org_id: uuid.UUID,
+    *,
+    aggregate: str,
+    vendors: list[str],
+    date_from: date | None,
+    date_to: date | None,
+    group_by_vendor: bool,
+    limit: int,
+    payment_terms_days: int | None = None,
+) -> list[dict[str, Any]]:
+    """Parameterised invoice aggregates for the agent. The LLM chooses values, never SQL.
+
+    Only rows that passed validation count (needs_review = false): a doubtful total must not
+    leak into a sum. Sums are grouped by currency because adding EUR to USD is meaningless."""
+    conds = _conditions(org_id, vendors, date_from, date_to, payment_terms_days)
 
     if aggregate == "list":
         stmt = (

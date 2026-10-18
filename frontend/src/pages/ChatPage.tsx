@@ -8,6 +8,7 @@ import type { Citation } from "../api/types";
 import { idle, reducer } from "../chat/reducer";
 import { CitationDetail } from "../components/CitationDetail";
 import { CitedText } from "../components/CitedText";
+import { EvidencePanel } from "../components/EvidencePanel";
 import { StepsPanel } from "../components/StepsPanel";
 
 // Questions that work on the synthetic demo corpus: a clause lookup, an aggregate, a multi-hop.
@@ -177,6 +178,7 @@ export function ChatPage() {
                   <span className="whitespace-pre-wrap">{m.content}</span>
                 )}
               </Bubble>
+              {m.role === "assistant" && m.steps && <EvidencePanel steps={m.steps} />}
               {m.role === "assistant" && m.steps && <StepsPanel steps={m.steps} />}
             </div>
           ))}
@@ -197,6 +199,7 @@ export function ChatPage() {
                   )}
                 </div>
               </Bubble>
+              {run.answer !== null && <EvidencePanel steps={run.steps} />}
               <StepsPanel steps={run.steps} />
             </div>
           )}

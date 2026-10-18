@@ -158,6 +158,7 @@ async def run_agent(
                     t0 = time.perf_counter()
                     out = await execute(ctx, tc.name, tc.args)
                     ms = int((time.perf_counter() - t0) * 1000)
+                    extra = {"evidence": out.evidence} if out.evidence is not None else {}
                     steps.append(
                         {
                             "step_no": n,
@@ -165,6 +166,7 @@ async def run_agent(
                             "args": tc.args,
                             "preview": out.preview[:500],
                             "latency_ms": ms,
+                            **extra,
                         }
                     )
                     yield AgentEvent(
@@ -176,6 +178,7 @@ async def run_agent(
                             "status": "error" if out.is_error else "ok",
                             "latency_ms": ms,
                             "preview": out.preview[:500],
+                            **extra,
                         },
                     )
                     results.append(ToolResult(tc.name, out.text, tc.id, out.is_error))

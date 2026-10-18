@@ -96,6 +96,7 @@ async def record_run(
             args=s["args"],
             result_preview=s["preview"],
             latency_ms=s["latency_ms"],
+            evidence=s.get("evidence"),
         )
         for s in steps
     )
@@ -153,6 +154,7 @@ async def runs_for_messages(
                 "status": "ok",  # failed calls are not distinguished in storage; the preview says
                 "latency_ms": st.latency_ms,
                 "preview": st.result_preview,
+                **({"evidence": st.evidence} if st.evidence is not None else {}),
             }
         )
     return out

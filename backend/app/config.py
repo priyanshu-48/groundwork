@@ -62,6 +62,8 @@ class Settings(BaseSettings):
     # Agent loop limits (SPEC 6.5): bound steps, and what a tool may feed back to the model.
     agent_max_steps: int = 6
     tool_result_char_budget: int = 12000  # about 3000 tokens
+    # Rows shown under a computed answer ("evidence"); totals still cover every matching row.
+    evidence_max_rows: int = 100
     rrf_k: int = 60
     check_timeout_s: float = 3.0
     # M8 limits. In-memory and per API process (docs/decisions/0012).

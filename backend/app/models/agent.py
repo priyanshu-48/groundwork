@@ -63,3 +63,5 @@ class AgentStep(IdMixin, Base):
     args: Mapped[dict[str, Any]] = mapped_column(JSONB)
     result_preview: Mapped[str] = mapped_column(Text)
     latency_ms: Mapped[int] = mapped_column(default=0)
+    # Rows behind a computed answer, kept so history shows what the agent actually used.
+    evidence: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
