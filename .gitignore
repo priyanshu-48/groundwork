@@ -23,3 +23,5 @@ deploy/aws/state.env
 *.tgz
 # machine-specific Claude Code settings (absolute paths); keep local
 .claude/
+# local AI-assistant instructions (kept on disk, not published)
+CLAUDE.md

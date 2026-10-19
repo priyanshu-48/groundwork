@@ -82,7 +82,7 @@ Latency is dominated by the model: about 9 s per question with live Gemini.
 | Search, cold (real query embedding) / warm (cached) | p95 538 ms / 24 ms at 20 req/s, 0 errors |
 | Chat overhead with the demo model, 10 users | p95 190 ms, 72 req/s, 0 errors |
 | Ingestion pipeline ceiling (fake AI, 1 worker) | about 2,900 pages/min |
-| Tests | 373 backend (93% line coverage) + 62 frontend + 1 Playwright e2e |
+| Tests | 396 backend (93% line coverage) + 68 frontend + 1 Playwright e2e |
 
 ## Design decisions
 Short records with alternatives and reasons live in [docs/decisions/](docs/decisions/); the story of
@@ -99,7 +99,7 @@ what went wrong and how each problem was found is in [docs/journal.md](docs/jour
 | Rule-based answer scoring | Reproducible, no LLM judge | [0008](docs/decisions/0008-answer-scoring.md) |
 | SSE streaming over `fetch`, plain-text answers | POST with auth header; no HTML injection from documents | [0011](docs/decisions/0011-chat-streaming-and-frontend.md) |
 | In-memory limits, static admin token | One process today; upgrade path noted | [0012](docs/decisions/0012-in-memory-limits-and-admin-token.md) |
-| Query-embedding cache | Saves free quota and about 450 ms per repeated question | [0013](docs/decisions/0013-query-embedding-cache.md) |
+| Query-embedding cache | Saves free quota and about 470 ms per repeated question | [0013](docs/decisions/0013-query-embedding-cache.md) |
 | One host, no RDS/CloudFront, portable to Oracle | The AWS free plan ends in April 2027 | [0014](docs/decisions/0014-single-host-deploy-portable-to-oracle.md), [0015](docs/decisions/0015-bundle-deploys-over-ssm.md), [migration checklist](docs/oracle-migration.md) |
 | Evidence rows under computed answers, shown from the database | So a total can be checked by hand | [0018](docs/decisions/0018-evidence-for-computed-answers.md) |
 | Public demo: fresh read-only user per visit, daily cap | Protects a free API quota from strangers | [0016](docs/decisions/0016-public-demo-workspace.md) |
@@ -110,7 +110,7 @@ AI_PROVIDER=fake docker compose up -d --build     # UI at http://localhost:8080
 ```
 Demo mode answers with a simple document lookup so everything works offline; the UI says so. With a
 Gemini key (free tier): `GEMINI_API_KEY=... docker compose up -d --build`. Development commands, tests,
-evals and load tests are in [CLAUDE.md](CLAUDE.md#commands) and [loadtest/](loadtest/README.md).
+evals and load tests are in [docs/development.md](docs/development.md) and [loadtest/](loadtest/README.md).
 
 ## Deploy
 One command per step in AWS CloudShell, no access keys and no SSH: [docs/deploy.md](docs/deploy.md).
